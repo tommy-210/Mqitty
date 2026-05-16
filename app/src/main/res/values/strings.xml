@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Mqitty</string>
+    <string name="send_label">Send</string>
+    <string name="receive_label">Receive</string>
+    <string name="settings_label">Settings</string>
+    <string name="sub_title">Mqtt client</string>
+    <string name="filter_label">Filter</string>
+    <string name="search_label">Search</string>
+    <string name="search_hint">Search...</string>
+</resources>

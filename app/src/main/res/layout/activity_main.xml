@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+<!--    header section (title, subtitle)-->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/header_section"
+        android:background="@color/black"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/header_height"
+        app:layout_constraintTop_toTopOf="@id/root_main"
+        app:layout_constraintLeft_toLeftOf="@id/root_main"
+        app:layout_constraintRight_toRightOf="@id/root_main">
+
+<!--        title-->
+        <TextView
+            android:text="@string/app_name"
+            android:textColor="@color/white"
+            android:textSize="@dimen/title_size"
+            android:fontFamily="cursive"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="@id/header_section"
+            app:layout_constraintLeft_toLeftOf="@id/header_section"
+            app:layout_constraintBottom_toBottomOf="@id/header_section"
+            android:layout_marginStart="@dimen/margin_20dp"/>
+
+<!--        subtitle-->
+        <TextView
+            android:text="@string/sub_title"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="@id/header_section"
+            app:layout_constraintBottom_toBottomOf="@id/header_section"
+            app:layout_constraintRight_toRightOf="@id/header_section"
+            android:layout_marginEnd="@dimen/margin_20dp"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+<!--    search and filter section-->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        app:layout_constraintTop_toBottomOf="@id/header_section"
+        app:layout_constraintLeft_toLeftOf="@id/root_main"
+        app:layout_constraintRight_toRightOf="@id/root_main"
+        android:id="@+id/search_filter_section"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal">
+
+<!--        search text input-->
+        <LinearLayout
+            android:id="@+id/search_section"
+            android:layout_width="340dp"
+            android:layout_height="@dimen/search_filter_input_height"
+            android:orientation="horizontal"
+            app:flow_verticalAlign="center"
+            android:background="@drawable/border"
+            android:padding="@dimen/padding_2dp"
+            app:layout_constraintTop_toTopOf="@id/search_filter_section"
+            app:layout_constraintBottom_toBottomOf="@id/search_filter_section"
+            app:layout_constraintLeft_toLeftOf="@id/search_filter_section"
+            app:layout_constraintRight_toLeftOf="@id/filter_btn">
+
+<!--            search icon-->
+            <ImageView
+                android:id="@+id/search_icon"
+                android:layout_width="@dimen/icon_size"
+                android:layout_height="@dimen/icon_size"
+                android:contentDescription="@string/search_label"
+                android:src="@drawable/search_black"/>
+
+<!--            text input for search-->
+            <EditText
+                android:id="@+id/search_edittext"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:autofillHints="none"
+                android:hint="@string/search_hint"
+                android:inputType="text"
+                android:translationY="@dimen/translateY_search_text"
+                android:textSize="@dimen/text_size_search" />
+
+        </LinearLayout>
+
+<!--        filter icon-->
+        <ImageView
+            android:id="@+id/filter_btn"
+            android:contentDescription="@string/filter_label"
+            android:src="@drawable/filter_black"
+            android:layout_width="@dimen/search_filter_input_height"
+            android:layout_height="@dimen/search_filter_input_height"
+            android:background="@drawable/border"
+            android:padding="@dimen/padding_2dp"
+            app:layout_constraintTop_toTopOf="@id/search_filter_section"
+            app:layout_constraintBottom_toBottomOf="@id/search_filter_section"
+            app:layout_constraintRight_toRightOf="@id/search_filter_section"
+            android:layout_marginEnd="15dp"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+<!--    navigation bar (send, receive, settings)-->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/navbar_section"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/navbar_height"
+        android:background="@color/black"
+        app:layout_constraintBottom_toBottomOf="@id/root_main"
+        app:layout_constraintLeft_toLeftOf="@id/root_main"
+        app:layout_constraintRight_toRightOf="@id/root_main">
+
+<!--        send-->
+        <ImageView
+            android:id="@+id/send_btn"
+            android:layout_width="@dimen/icon_size"
+            android:layout_height="@dimen/icon_size"
+            android:textAlignment="center"
+            android:contentDescription="@string/send_label"
+            app:srcCompat="@drawable/send_white"
+            app:layout_constraintLeft_toLeftOf="@id/navbar_section"
+            app:layout_constraintRight_toLeftOf="@id/receive_btn"
+            app:layout_constraintTop_toTopOf="@id/navbar_section"
+            app:layout_constraintBottom_toBottomOf="@id/navbar_section"/>
+
+<!--        receive-->
+        <ImageView
+            android:id="@+id/receive_btn"
+            android:layout_width="@dimen/icon_size"
+            android:layout_height="@dimen/icon_size"
+            android:textAlignment="center"
+            android:contentDescription="@string/receive_label"
+            app:srcCompat="@drawable/receive_white"
+            app:layout_constraintLeft_toRightOf="@id/send_btn"
+            app:layout_constraintRight_toLeftOf="@id/settings_btn"
+            app:layout_constraintTop_toTopOf="@id/navbar_section"
+            app:layout_constraintBottom_toBottomOf="@id/navbar_section"/>
+
+<!--        settings-->
+        <ImageView
+            android:id="@+id/settings_btn"
+            android:layout_width="@dimen/icon_size"
+            android:layout_height="@dimen/icon_size"
+            android:contentDescription="@string/settings_label"
+            app:layout_constraintBottom_toBottomOf="@id/navbar_section"
+            app:layout_constraintLeft_toRightOf="@id/receive_btn"
+            app:layout_constraintRight_toRightOf="@id/navbar_section"
+            app:layout_constraintTop_toTopOf="@id/navbar_section"
+            app:srcCompat="@drawable/settings_white" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
