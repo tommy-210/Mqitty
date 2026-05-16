@@ -46,38 +46,38 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 <!--    search and filter section-->
-    <androidx.constraintlayout.widget.ConstraintLayout
-        app:layout_constraintTop_toBottomOf="@id/header_section"
-        app:layout_constraintLeft_toLeftOf="@id/root_main"
-        app:layout_constraintRight_toRightOf="@id/root_main"
+    <LinearLayout
         android:id="@+id/search_filter_section"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:orientation="horizontal">
+        android:layout_height="@dimen/search_filter_section_height"
+        android:orientation="horizontal"
+        android:paddingVertical="3dp"
+        app:layout_constraintLeft_toLeftOf="@id/root_main"
+        app:layout_constraintRight_toRightOf="@id/root_main"
+        app:layout_constraintTop_toBottomOf="@id/header_section">
 
-<!--        search text input-->
+        <!--        search text input-->
         <LinearLayout
             android:id="@+id/search_section"
-            android:layout_width="340dp"
+            android:layout_width="0dp"
             android:layout_height="@dimen/search_filter_input_height"
-            android:orientation="horizontal"
-            app:flow_verticalAlign="center"
+            android:layout_weight="1"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="10dp"
             android:background="@drawable/border"
+            android:orientation="horizontal"
             android:padding="@dimen/padding_2dp"
-            app:layout_constraintTop_toTopOf="@id/search_filter_section"
-            app:layout_constraintBottom_toBottomOf="@id/search_filter_section"
-            app:layout_constraintLeft_toLeftOf="@id/search_filter_section"
-            app:layout_constraintRight_toLeftOf="@id/filter_btn">
+            app:flow_verticalAlign="center">
 
-<!--            search icon-->
+            <!--            search icon-->
             <ImageView
                 android:id="@+id/search_icon"
                 android:layout_width="@dimen/icon_size"
                 android:layout_height="@dimen/icon_size"
                 android:contentDescription="@string/search_label"
-                android:src="@drawable/search_black"/>
+                android:src="@drawable/search_black" />
 
-<!--            text input for search-->
+            <!--            text input for search-->
             <EditText
                 android:id="@+id/search_edittext"
                 android:layout_width="match_parent"
@@ -85,28 +85,34 @@
                 android:autofillHints="none"
                 android:hint="@string/search_hint"
                 android:inputType="text"
-                android:translationY="@dimen/translateY_search_text"
-                android:textSize="@dimen/text_size_search" />
+                android:textColorHint="@color/gun_metal"
+                android:textSize="@dimen/text_size_search"
+                android:translationY="@dimen/translateY_search_text" />
 
         </LinearLayout>
 
-<!--        filter icon-->
+        <!--        filter icon-->
         <ImageView
             android:id="@+id/filter_btn"
-            android:contentDescription="@string/filter_label"
-            android:src="@drawable/filter_black"
             android:layout_width="@dimen/search_filter_input_height"
             android:layout_height="@dimen/search_filter_input_height"
+            android:layout_marginEnd="15dp"
             android:background="@drawable/border"
+            android:contentDescription="@string/filter_label"
             android:padding="@dimen/padding_2dp"
-            app:layout_constraintTop_toTopOf="@id/search_filter_section"
-            app:layout_constraintBottom_toBottomOf="@id/search_filter_section"
-            app:layout_constraintRight_toRightOf="@id/search_filter_section"
-            android:layout_marginEnd="15dp"/>
+            android:src="@drawable/filter_black" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 
 <!--    ___________________________|main content|______________________________-->
+    <include
+        layout="@layout/activity_send"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/search_filter_section"
+        app:layout_constraintBottom_toTopOf="@id/navbar_section"
+        app:layout_constraintLeft_toLeftOf="@id/root_main"
+        app:layout_constraintRight_toRightOf="@id/root_main"/>
 
 <!--    navigation bar (send, receive, settings)-->
     <androidx.constraintlayout.widget.ConstraintLayout

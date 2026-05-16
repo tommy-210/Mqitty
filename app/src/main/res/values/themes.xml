@@ -9,7 +9,7 @@
         <item name="colorPrimaryDark">@color/blue_dark</item>
         <item name="colorPrimaryVariant">@color/blue_light</item>
 
-        <item name="hintTextColor">@color/pale_slate_gray</item>
+        <item name="hintTextColor">@color/gun_metal</item>
     </style>
 
     <style name="Theme.Mqitty" parent="Base.Theme.Mqitty" />
