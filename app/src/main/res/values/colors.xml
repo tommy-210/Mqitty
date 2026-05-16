@@ -1,5 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+<!--    basic color-->
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+    
+<!--    color graduation from white to black -->
+    <color name="bright_snow">#F8F9FA</color>
+    <color name="platinium">#E9ECEF</color>
+    <color name="alabaster_gray">#DEE2E6</color>
+    <color name="pale_slate">#CED4DA</color>
+    <color name="pale_slate_gray">#91939B</color>
+    <color name="iron_gray">#495057</color>
+    <color name="gun_metal">#343A40</color>
+    <color name="shadow_gray">#212529</color>
+    <color name="shadow_black">#181818</color>
+
+<!--    different type of theme-->
+    <color name="blue_dark">#0E0E52</color>
+    <color name="blue">#153AB1</color>
+    <color name="blue_light">#4C7AD9</color>
+    <color name="violet">#7316CA</color>
+    <color name="green">#307104</color>
+    <color name="yellow">#CE9A10</color>
+    <color name="orange">#C15113</color>
+    <color name="red">#B81113</color>
 </resources>

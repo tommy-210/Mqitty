@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root_main"
+    android:fitsSystemWindows="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
@@ -105,6 +106,7 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+<!--    ___________________________|main content|______________________________-->
 
 <!--    navigation bar (send, receive, settings)-->
     <androidx.constraintlayout.widget.ConstraintLayout
