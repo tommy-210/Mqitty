@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import com.mqitty.MainActivity;
 import com.mqitty.R;
+import com.mqitty.database.DataBaseHelper;
 import com.mqitty.model.SendModel;
 
 public class CreateSendActivity extends AppCompatActivity {
@@ -18,6 +19,7 @@ public class CreateSendActivity extends AppCompatActivity {
     ImageView return_btn;
     Button create_btn;
     EditText name, description, broker, topic, message;
+    DataBaseHelper dataBaseHelper;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -46,12 +48,19 @@ public class CreateSendActivity extends AppCompatActivity {
         });
 
         create_btn.setOnClickListener(v -> {
-//            create send message model
+            dataBaseHelper = DataBaseHelper.getInstance(this);
+
+            //create send message model
             SendModel sendModel = new SendModel(-1, name.getText().toString(), description.getText().toString(), broker.getText().toString(),
                                                 topic.getText().toString(), message.getText().toString());
-            Toast.makeText(CreateSendActivity.this, sendModel.toString(), Toast.LENGTH_SHORT).show();
-
-            returnToMainActivity();
+            
+            boolean success = dataBaseHelper.addOneSend(sendModel);
+            if (success) {
+                Toast.makeText(CreateSendActivity.this, "Success!", Toast.LENGTH_SHORT).show();
+                returnToMainActivity();
+            } else {
+                Toast.makeText(CreateSendActivity.this, "Error saving", Toast.LENGTH_SHORT).show();
+            }
         });
     }
 

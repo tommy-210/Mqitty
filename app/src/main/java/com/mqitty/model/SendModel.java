@@ -1,6 +1,8 @@
 package com.mqitty.model;
 
-public class SendModel {
+import java.io.Serializable;
+
+public class SendModel implements Serializable {
 
     private int id;
     private String name, description, broker, topic, message;
@@ -29,6 +31,15 @@ public class SendModel {
     }
 
     //    getters and setters
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public String getName() {
         return name;
     }

@@ -3,7 +3,11 @@ package com.mqitty.model;
 public class ReceiverModel {
 
     private int id;
-    private String name, description, broker, topic;
+    private String name;
+
+    private String description;
+    private String broker;
+    private String topic;
 
     public ReceiverModel(int id, String name, String description, String broker, String topic) {
         this.id = id;
@@ -27,6 +31,14 @@ public class ReceiverModel {
     }
 
     //    getters and setters
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public String getName() {
         return name;
     }
