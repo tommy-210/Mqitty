@@ -3,22 +3,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/create_send_root"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/create_receiver_root"
     android:fitsSystemWindows="true"
-    tools:context=".ui.CreateSendActivity"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    tools:context=".ui.CreateReceiveActivity">
 
-<!--    header section-->
+
+    <!--    header section-->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:id="@+id/return_section"
         android:background="?attr/colorBackgroundFloating"
-        app:layout_constraintTop_toTopOf="@id/create_send_root"
-        app:layout_constraintRight_toRightOf="@id/create_send_root"
-        app:layout_constraintLeft_toLeftOf="@id/create_send_root">
+        app:layout_constraintTop_toTopOf="@id/create_receiver_root"
+        app:layout_constraintRight_toRightOf="@id/create_receiver_root"
+        app:layout_constraintLeft_toLeftOf="@id/create_receiver_root">
 
-<!--        return icon-->
+        <!--        return icon-->
         <ImageView
             android:id="@+id/return_btn"
             android:layout_width="44dp"
@@ -32,21 +33,21 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-<!--    title-->
+    <!--    title-->
     <TextView
         android:id="@+id/create_send_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/create_send_title_label"
+        android:text="@string/custom_receiver_label"
         android:textStyle="bold"
         android:textSize="24sp"
         android:layout_marginTop="@dimen/margin_20dp"
         style="@style/TEXT"
         app:layout_constraintTop_toBottomOf="@id/return_section"
-        app:layout_constraintRight_toRightOf="@id/create_send_root"
-        app:layout_constraintLeft_toLeftOf="@id/create_send_root"/>
+        app:layout_constraintRight_toRightOf="@id/create_receiver_root"
+        app:layout_constraintLeft_toLeftOf="@id/create_receiver_root"/>
 
-<!--    form input layout-->
+    <!--    form input layout-->
     <LinearLayout
         android:id="@+id/send_form"
         android:layout_width="match_parent"
@@ -56,11 +57,11 @@
         android:layout_marginVertical="30dp"
         android:paddingHorizontal="@dimen/padding_form_horizontal"
         app:layout_constraintTop_toBottomOf="@id/create_send_title"
-        app:layout_constraintRight_toRightOf="@id/create_send_root"
-        app:layout_constraintLeft_toLeftOf="@id/create_send_root"
-        app:layout_constraintBottom_toBottomOf="@id/create_send_root">
+        app:layout_constraintRight_toRightOf="@id/create_receiver_root"
+        app:layout_constraintLeft_toLeftOf="@id/create_receiver_root"
+        app:layout_constraintBottom_toBottomOf="@id/create_receiver_root">
 
-<!--        name of custom send message-->
+        <!--        name of custom send message-->
         <EditText
             android:id="@+id/name_msg"
             android:textSize="15sp"
@@ -72,7 +73,7 @@
             android:inputType="text"
             android:textColorHint="?attr/hintTextColor" />
 
-<!--        description of custom send message-->
+        <!--        description of custom send message-->
         <EditText
             android:background="@drawable/border"
             android:padding="2dp"
@@ -88,7 +89,7 @@
             android:inputType="textMultiLine"
             android:textColorHint="?attr/hintTextColor" />
 
-<!--        broker of custom send message for mqtt-->
+        <!--        broker of custom send message for mqtt-->
         <EditText
             android:id="@+id/broker_msg"
             android:textSize="15sp"
@@ -100,7 +101,7 @@
             android:inputType="text"
             android:textColorHint="?attr/hintTextColor" />
 
-<!--        topic of custom send message for mqtt-->
+        <!--        topic of custom send message for mqtt-->
         <EditText
             android:id="@+id/topic_msg"
             android:textSize="15sp"
@@ -112,22 +113,6 @@
             android:inputType="text"
             android:textColorHint="?attr/hintTextColor" />
 
-<!--        message of custom send message-->
-        <EditText
-            android:background="@drawable/border"
-            android:padding="2dp"
-            android:id="@+id/message_msg"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:textSize="15sp"
-            android:layout_marginVertical="@dimen/padding_divider"
-            android:autofillHints="none"
-            android:ems="10"
-            android:gravity="start|top"
-            android:hint="@string/message_form"
-            android:inputType="textMultiLine"
-            android:textColorHint="?attr/hintTextColor" />
-
         <Space
             android:layout_weight="1"
             android:layout_width="match_parent"
@@ -135,7 +120,7 @@
 
         <!--    create btn-->
         <Button
-            android:id="@+id/save_send_btn"
+            android:id="@+id/save_receiver_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/create_label_btn"
@@ -149,5 +134,6 @@
             android:layout_height="0dp"/>
 
     </LinearLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

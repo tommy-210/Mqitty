@@ -67,7 +67,7 @@
             android:layout_weight="1"
             android:layout_marginStart="15dp"
             android:layout_marginEnd="10dp"
-            android:background="@drawable/border"
+            android:background="@drawable/border_round"
             android:orientation="horizontal"
             android:padding="@dimen/padding_2dp"
             app:flow_verticalAlign="center">
@@ -102,7 +102,7 @@
             android:layout_width="@dimen/search_filter_input_height"
             android:layout_height="@dimen/search_filter_input_height"
             android:layout_marginEnd="15dp"
-            android:background="@drawable/border"
+            android:background="@drawable/border_round"
             android:contentDescription="@string/filter_label"
             android:padding="@dimen/padding_4dp"
             style="@style/FILTER_ICON"/>

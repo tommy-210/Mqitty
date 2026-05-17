@@ -11,9 +11,10 @@
     <string name="create_send_title_label">Create your custom send \nmessage.</string>
     <string name="return_label">Return</string>
     <string name="create_label_btn">CREATE</string>
-    <string name="name_hint">Name (ex. Msg)</string>
+    <string name="name_hint">Name...</string>
     <string name="description_form">Description...</string>
     <string name="broker_form">Broker...</string>
     <string name="topic_form">Topic...</string>
     <string name="message_form">Message...</string>
+    <string name="custom_receiver_label">Create your custom receiver.</string>
 </resources>

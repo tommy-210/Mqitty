@@ -9,6 +9,8 @@ import android.widget.ImageView;
 import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import com.mqitty.ui.CreateReceiveActivity;
+import com.mqitty.ui.CreateSendActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -32,17 +34,14 @@ public class MainActivity extends AppCompatActivity {
         send_btn = findViewById(R.id.send_btn);
         receive_btn = findViewById(R.id.receive_btn);
         settings_btn = findViewById(R.id.settings_btn);
-        // Use the actual container defined in activity_main.xml
         panelContainer = findViewById(R.id.panel_include_main_activity);
     }
 
     private void componentListener() {
         send_btn.setOnClickListener(v -> {
-            Toast.makeText(MainActivity.this, "send", Toast.LENGTH_SHORT).show();
             showPanel(R.layout.activity_send);
         });
         receive_btn.setOnClickListener(v -> {
-            Toast.makeText(MainActivity.this, "receive", Toast.LENGTH_SHORT).show();
             showPanel(R.layout.activity_receive);
         });
         settings_btn.setOnClickListener(v -> {
@@ -65,7 +64,6 @@ public class MainActivity extends AppCompatActivity {
         View addSendBtn = findViewById(R.id.add_send_btn);
         if (addSendBtn != null) {
             addSendBtn.setOnClickListener(v -> {
-                Toast.makeText(MainActivity.this, "add send", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(MainActivity.this, CreateSendActivity.class);
                 startActivity(intent);
             });
@@ -74,8 +72,8 @@ public class MainActivity extends AppCompatActivity {
         View addReceiveBtn = findViewById(R.id.add_receive_btn);
         if (addReceiveBtn != null) {
             addReceiveBtn.setOnClickListener(v -> {
-                Toast.makeText(MainActivity.this, "add receive", Toast.LENGTH_SHORT).show();
-                // Add intent for CreateReceiveActivity if it exists
+                Intent intent = new Intent(MainActivity.this, CreateReceiveActivity.class);
+                startActivity(intent);
             });
         }
     }

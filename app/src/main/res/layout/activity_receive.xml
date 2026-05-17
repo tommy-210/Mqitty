@@ -9,7 +9,7 @@
 
 
     <LinearLayout
-        android:background="@drawable/border"
+        android:background="@drawable/border_round"
         android:layout_width="match_parent"
         android:layout_height="70dp"
         android:orientation="horizontal">
@@ -43,7 +43,7 @@
 
         <ImageView
             style="@style/PLAY_ICON"
-            android:background="@drawable/border"
+            android:background="@drawable/border_round"
             android:padding="3dp"
             android:layout_width="46dp"
             android:layout_height="46dp"

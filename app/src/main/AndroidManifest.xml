@@ -22,10 +22,10 @@
         </activity>
 
 <!--        create send message activity-->
-        <activity android:name=".CreateSendActivity"
-            android:exported="true">
+        <activity android:name=".ui.CreateSendActivity" android:exported="true"/>
 
-        </activity>
+<!--        create receiver activity-->
+        <activity android:name=".ui.CreateReceiveActivity" android:exported="true"/>
     </application>
 
 </manifest>
