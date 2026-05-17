@@ -5,7 +5,7 @@
         <item name="color">@color/white</item>
         <item name="background">@color/shadow_black</item>
         <item name="backgroundColor">@color/gun_metal</item>
-        <item name="hintTextColor">@color/alabaster_gray</item>
+        <item name="hintTextColor">@color/pale_slate</item>
 
         <item name="colorPrimary">@color/blue_light</item>
         <item name="colorPrimaryVariant">@color/blue</item>

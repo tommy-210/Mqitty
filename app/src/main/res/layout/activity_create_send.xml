@@ -2,7 +2,10 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/create_send_root"
+    android:fitsSystemWindows="true"
+    tools:context=".CreateSendActivity"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
 <!--    header section-->
@@ -17,6 +20,7 @@
 
 <!--        return icon-->
         <ImageView
+            android:id="@+id/return_btn"
             android:layout_width="44dp"
             android:layout_height="38dp"
             style="@style/RETURN_ICON"
@@ -120,16 +124,25 @@
             android:inputType="textMultiLine"
             android:textColorHint="?attr/hintTextColor" />
 
+        <Space
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"/>
+
         <!--    create btn-->
         <Button
             android:id="@+id/save_send"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:textSize="20sp"
             android:text="@string/create_label_btn"
             android:textColor="?attr/background"
-            android:layout_margin="90dp"/>
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <Space
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"/>
 
     </LinearLayout>
 

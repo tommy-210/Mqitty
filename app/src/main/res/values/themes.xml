@@ -6,7 +6,7 @@
         <item name="background">@color/bright_snow</item>
         <item name="colorBackgroundFloating">@color/alabaster_gray</item>
         <item name="backgroundColor">@color/pale_slate</item>
-        <item name="hintTextColor">@color/gun_metal</item>
+        <item name="hintTextColor">@color/pale_slate_gray</item>
 
         <item name="colorPrimary">@color/blue_light</item>
 <!--        <item name="colorPrimaryVariant">@color/blue</item>-->
