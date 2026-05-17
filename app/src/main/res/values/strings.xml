@@ -7,4 +7,13 @@
     <string name="filter_label">Filter</string>
     <string name="search_label">Search</string>
     <string name="search_hint">Search...</string>
+    <string name="add_label">Add</string>
+    <string name="create_send_title_label">Create your custom send \nmessage.</string>
+    <string name="return_label">Return</string>
+    <string name="create_label_btn">CREATE</string>
+    <string name="name_hint">Name (ex. Msg)</string>
+    <string name="description_form">Description...</string>
+    <string name="broker_form">Broker...</string>
+    <string name="topic_form">Topic...</string>
+    <string name="message_form">Message...</string>
 </resources>

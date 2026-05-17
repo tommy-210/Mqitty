@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="margin_20dp">20dp</dimen>
-    <dimen name="header_height">60dp</dimen>
+    <dimen name="header_height">70dp</dimen>
     <dimen name="title_size">38sp</dimen>
     <dimen name="navbar_height">42dp</dimen>
     <dimen name="icon_size">30dp</dimen>
@@ -11,4 +11,9 @@
     <dimen name="translateY_search_text">-10dp</dimen>
     <dimen name="text_size_search">15sp</dimen>
     <dimen name="search_filter_section_height">40dp</dimen>
+    <dimen name="add_icon_size">40dp</dimen>
+    <dimen name="icon_section_size">24dp</dimen>
+    <dimen name="padding_4dp">4dp</dimen>
+    <dimen name="padding_form_horizontal">30dp</dimen>
+    <dimen name="padding_divider">10dp</dimen>
 </resources>

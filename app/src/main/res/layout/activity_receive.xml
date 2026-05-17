@@ -29,7 +29,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Title1" />
+                android:text="Chat1" />
 
             <TextView
                 style="@style/TEXT"
@@ -42,7 +42,7 @@
         </LinearLayout>
 
         <ImageView
-            style="@style/SEND_ICON"
+            style="@style/PLAY_ICON"
             android:background="@drawable/border"
             android:padding="3dp"
             android:layout_width="46dp"
@@ -58,15 +58,15 @@
         android:layout_width="match_parent"
         android:layout_height="50dp">
 
-    <ImageView
-        android:layout_width="@dimen/add_icon_size"
-        android:layout_height="@dimen/add_icon_size"
-        style="@style/ADD_ICON"
-        android:contentDescription="@string/add_label"
-        app:layout_constraintTop_toTopOf="@id/add_container"
-        app:layout_constraintBottom_toBottomOf="@id/add_container"
-        app:layout_constraintRight_toRightOf="@id/add_container"
-        app:layout_constraintLeft_toLeftOf="@id/add_container"/>
+        <ImageView
+            android:layout_width="@dimen/add_icon_size"
+            android:layout_height="@dimen/add_icon_size"
+            style="@style/ADD_ICON"
+            android:contentDescription="@string/add_label"
+            app:layout_constraintTop_toTopOf="@id/add_container"
+            app:layout_constraintBottom_toBottomOf="@id/add_container"
+            app:layout_constraintRight_toRightOf="@id/add_container"
+            app:layout_constraintLeft_toLeftOf="@id/add_container"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

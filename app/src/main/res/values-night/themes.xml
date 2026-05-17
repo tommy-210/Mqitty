@@ -2,13 +2,69 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.Mqitty" parent="Theme.Material3.DayNight.NoActionBar">
 <!--        dark theme-->
-        <item name="color">@color/bright_snow</item>
+        <item name="color">@color/white</item>
         <item name="background">@color/shadow_black</item>
+        <item name="backgroundColor">@color/gun_metal</item>
+        <item name="hintTextColor">@color/alabaster_gray</item>
 
-        <item name="colorPrimary">@color/blue</item>
-        <item name="colorPrimaryDark">@color/blue_dark</item>
-        <item name="colorPrimaryVariant">@color/blue_light</item>
+        <item name="colorPrimary">@color/blue_light</item>
+        <item name="colorPrimaryVariant">@color/blue</item>
+        <item name="colorOnPrimary">@color/white</item>
 
-        <item name="hintTextColor">@color/pale_slate</item>
+        <item name="colorSecondary">@color/violet_light</item>
+        <item name="colorSecondaryVariant">@color/violet</item>
+        <item name="colorOnSecondary">@color/white</item>
+
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
     </style>
+
+    <!--    dark mode-->
+    <!--    screen background-->
+    <style name="SCREEN">
+        <item name="backgroundColor">@color/shadow_black</item>
+    </style>
+
+    <!--    text color-->
+    <style name="TEXT">
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <!--    icon navigation bar-->
+    <!--    send-->
+    <style name="SEND_ICON">
+        <item name="android:src">@drawable/send_white</item>
+    </style>
+    <!--    receive-->
+    <style name="RECEIVE_ICON">
+        <item name="android:src">@drawable/receive_white</item>
+    </style>
+    <!--    settings-->
+    <style name="SETTINGS_ICON">
+        <item name="android:src">@drawable/settings_white</item>
+    </style>
+    <!--    filter-->
+    <style name="FILTER_ICON">
+        <item name="android:src">@drawable/filter_white</item>
+    </style>
+    <!--    search-->
+    <style name="SEARCH_ICON">
+        <item name="android:src">@drawable/search_white</item>
+    </style>
+    <!--    add-->
+    <style name="ADD_ICON">
+        <item name="android:src">@drawable/add_white</item>
+    </style>
+    <!--    play-->
+    <style name="PLAY_ICON">
+        <item name="android:src">@drawable/play_white</item>
+    </style>
+    <!--    pause-->
+    <style name="PAUSE_ICON">
+        <item name="android:src">@drawable/pause_white</item>
+    </style>
+    <!--    return-->
+    <style name="RETURN_ICON">
+        <item name="android:src">@drawable/arrow_back_white</item>
+    </style>
+
 </resources>
