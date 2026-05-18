@@ -20,4 +20,5 @@
     <string name="modify_send_title">Modify your custom send\nmessage</string>
     <string name="save_btn">SAVE</string>
     <string name="delete_btn">DELETE</string>
+    <string name="modify_label">Modify your receiver.</string>
 </resources>

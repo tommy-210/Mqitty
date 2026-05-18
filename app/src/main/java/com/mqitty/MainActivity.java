@@ -12,6 +12,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import com.mqitty.database.DataBaseHelper;
 import com.mqitty.manager.ReceiveManager;
+import com.mqitty.manager.SendModify;
 import com.mqitty.model.ReceiverModel;
 import com.mqitty.model.SendModel;
 import com.mqitty.ui.CreateReceiveActivity;
@@ -82,8 +83,7 @@ public class MainActivity extends AppCompatActivity {
         View addSendBtn = findViewById(R.id.add_send_btn);
         if (addSendBtn != null) {
             addSendBtn.setOnClickListener(v -> {
-                Intent intent = new Intent(MainActivity.this, CreateSendActivity.class);
-                startActivity(intent);
+                changeActivity(CreateSendActivity.class);
             });
         }
         
@@ -91,8 +91,7 @@ public class MainActivity extends AppCompatActivity {
         View addReceiveBtn = findViewById(R.id.add_receive_btn);
         if (addReceiveBtn != null) {
             addReceiveBtn.setOnClickListener(v -> {
-                Intent intent = new Intent(MainActivity.this, CreateReceiveActivity.class);
-                startActivity(intent);
+                changeActivity(CreateReceiveActivity.class);
             });
         }
     }
@@ -109,6 +108,8 @@ public class MainActivity extends AppCompatActivity {
                 if (view != null) {
                     view.setOnClickListener(v -> {
                         Toast.makeText(MainActivity.this, "Send: " + model.getName(), Toast.LENGTH_SHORT).show();
+                        changeActivity(SendModify.class);
+                        new SendModify(model);
                     });
                 }
             }
@@ -131,5 +132,10 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
+    }
+
+    public void changeActivity(Class toClass) {
+        Intent intent = new Intent(MainActivity.this, toClass);
+        startActivity(intent);
     }
 }

@@ -1,6 +1,150 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/modify_receiver_root"
+    android:fitsSystemWindows="true"
+    tools:context=".manager.ReceiveModify">
+
+
+    <!--    header section-->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:id="@+id/return_section"
+        android:background="?attr/colorBackgroundFloating"
+        app:layout_constraintTop_toTopOf="@id/modify_receiver_root"
+        app:layout_constraintRight_toRightOf="@id/modify_receiver_root"
+        app:layout_constraintLeft_toLeftOf="@id/modify_receiver_root">
+
+        <!--        return icon-->
+        <ImageView
+            android:id="@+id/return_btn"
+            android:layout_width="44dp"
+            android:layout_height="38dp"
+            style="@style/RETURN_ICON"
+            android:contentDescription="@string/return_label"
+            app:layout_constraintTop_toTopOf="@id/return_section"
+            app:layout_constraintLeft_toLeftOf="@id/return_section"
+            app:layout_constraintBottom_toBottomOf="@id/return_section"
+            android:layout_marginStart="@dimen/margin_20dp"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!--    title-->
+    <TextView
+        android:id="@+id/modify_receiver_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/modify_label"
+        android:textStyle="bold"
+        android:textSize="24sp"
+        android:layout_marginTop="@dimen/margin_20dp"
+        style="@style/TEXT"
+        app:layout_constraintTop_toBottomOf="@id/return_section"
+        app:layout_constraintRight_toRightOf="@id/modify_receiver_root"
+        app:layout_constraintLeft_toLeftOf="@id/modify_receiver_root"/>
+
+    <!--    form input layout-->
+    <LinearLayout
+        android:id="@+id/receiver_form"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintVertical_weight="1"
+        android:layout_marginVertical="30dp"
+        android:paddingHorizontal="@dimen/padding_form_horizontal"
+        app:layout_constraintTop_toBottomOf="@id/modify_receiver_title"
+        app:layout_constraintRight_toRightOf="@id/modify_receiver_root"
+        app:layout_constraintLeft_toLeftOf="@id/modify_receiver_root"
+        app:layout_constraintBottom_toBottomOf="@id/modify_receiver_root">
+
+        <!--        name of custom send message-->
+        <EditText
+            android:id="@+id/name_receiver"
+            android:textSize="15sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/padding_divider"
+            android:autofillHints="none"
+            android:hint="@string/name_hint"
+            android:inputType="text"
+            android:textColorHint="?attr/hintTextColor" />
+
+        <!--        description of custom send message-->
+        <EditText
+            android:background="@drawable/border"
+            android:padding="2dp"
+            android:id="@+id/description_receiver"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:textSize="15sp"
+            android:layout_marginVertical="@dimen/padding_divider"
+            android:autofillHints="none"
+            android:ems="10"
+            android:gravity="start|top"
+            android:hint="@string/description_form"
+            android:inputType="textMultiLine"
+            android:textColorHint="?attr/hintTextColor" />
+
+        <!--        broker of custom send message for mqtt-->
+        <EditText
+            android:id="@+id/broker_receiver"
+            android:textSize="15sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/padding_divider"
+            android:autofillHints="none"
+            android:hint="@string/broker_form"
+            android:inputType="text"
+            android:textColorHint="?attr/hintTextColor" />
+
+        <!--        topic of custom send message for mqtt-->
+        <EditText
+            android:id="@+id/topic_receiver"
+            android:textSize="15sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/padding_divider"
+            android:autofillHints="none"
+            android:hint="@string/topic_form"
+            android:inputType="text"
+            android:textColorHint="?attr/hintTextColor" />
+
+        <Space
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"/>
+
+        <!--    create btn-->
+        <Button
+            android:id="@+id/save_receiver_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/create_label_btn"
+            android:textColor="?attr/background"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <!--        delete btn-->
+        <Button
+            android:id="@+id/delete_receive_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/delete_btn"
+            app:backgroundTint="@color/red"
+            android:textColor="?attr/background"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <Space
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"/>
+
+    </LinearLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
