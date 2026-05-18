@@ -9,8 +9,8 @@ import com.mqitty.model.ReceiverModel;
 
 public class ReceiveManager {
 
-    public static void addReceiveModelToLayout(ViewGroup container, ReceiverModel model) {
-        if (container == null || model == null) return;
+    public static View addReceiveModelToLayout(ViewGroup container, ReceiverModel model) {
+        if (container == null || model == null) return null;
 
         LayoutInflater inflater = LayoutInflater.from(container.getContext());
         // Inflate the model layout
@@ -38,5 +38,7 @@ public class ReceiveManager {
         } else {
             container.addView(receiveModelView);
         }
+
+        return receiveModelView;
     }
 }

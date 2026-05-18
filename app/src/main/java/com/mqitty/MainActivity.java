@@ -3,6 +3,7 @@ package com.mqitty;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -85,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             });
         }
-
+        
         //add custom receiver
         View addReceiveBtn = findViewById(R.id.add_receive_btn);
         if (addReceiveBtn != null) {
@@ -104,7 +105,12 @@ public class MainActivity extends AppCompatActivity {
             container.removeViews(0, container.getChildCount() - 1);
             // The panel was just inflated, so we add all stored models
             for (SendModel model : sendModels) {
-                SendManager.addSendModelToLayout(container, model);
+                View view = SendManager.addSendModelToLayout(container, model);
+                if (view != null) {
+                    view.setOnClickListener(v -> {
+                        Toast.makeText(MainActivity.this, "Send: " + model.getName(), Toast.LENGTH_SHORT).show();
+                    });
+                }
             }
         }
     }
@@ -117,7 +123,12 @@ public class MainActivity extends AppCompatActivity {
             container.removeViews(0, container.getChildCount() - 1);
             // The panel was just inflated, so we add all stored models
             for (ReceiverModel model : receiverModels) {
-                ReceiveManager.addReceiveModelToLayout(container, model);
+                View view = ReceiveManager.addReceiveModelToLayout(container, model);
+                if (view != null) {
+                    view.setOnClickListener(v -> {
+                        Toast.makeText(MainActivity.this, "Receive: " + model.getName(), Toast.LENGTH_SHORT).show();
+                    });
+                }
             }
         }
     }

@@ -1,74 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/activity_receive_root"
-    android:orientation="vertical"
-    android:padding="4dp">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-
-<!--    <LinearLayout-->
-<!--        android:background="@drawable/border_round"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="70dp"-->
-<!--        android:orientation="horizontal">-->
-
-<!--        <LinearLayout-->
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_weight="1"-->
-<!--            android:layout_height="match_parent"-->
-<!--            android:orientation="vertical">-->
-
-<!--            <TextView-->
-<!--                style="@style/TEXT"-->
-<!--                android:layout_marginHorizontal="10dp"-->
-<!--                android:layout_marginTop="10dp"-->
-<!--                android:id="@+id/textView"-->
-<!--                android:textSize="26sp"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_weight="1"-->
-<!--                android:text="Chat1" />-->
-
-<!--            <TextView-->
-<!--                style="@style/TEXT"-->
-<!--                android:textSize="13sp"-->
-<!--                android:text="descrizione prova 1"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_weight="2"-->
-<!--                android:layout_marginHorizontal="10dp"/>-->
-<!--        </LinearLayout>-->
-
-<!--        <ImageView-->
-<!--            style="@style/PLAY_ICON"-->
-<!--            android:background="@drawable/border_round"-->
-<!--            android:padding="3dp"-->
-<!--            android:layout_width="46dp"-->
-<!--            android:layout_height="46dp"-->
-<!--            android:layout_marginStart="@dimen/padding_2dp"-->
-<!--            android:layout_marginVertical="12dp"-->
-<!--            android:layout_marginEnd="15dp"/>-->
-
-<!--    </LinearLayout>-->
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/add_container"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp">
+        android:layout_height="wrap_content"
+        android:id="@+id/activity_receive_root"
+        android:orientation="vertical"
+        android:padding="4dp">
 
-        <ImageView
-            android:id="@+id/add_receive_btn"
-            android:layout_width="@dimen/add_icon_size"
-            android:layout_height="@dimen/add_icon_size"
-            style="@style/ADD_ICON"
-            android:contentDescription="@string/add_label"
-            app:layout_constraintTop_toTopOf="@id/add_container"
-            app:layout_constraintBottom_toBottomOf="@id/add_container"
-            app:layout_constraintRight_toRightOf="@id/add_container"
-            app:layout_constraintLeft_toLeftOf="@id/add_container"/>
+        <!--    add receive button container -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/add_container"
+            android:layout_width="match_parent"
+            android:layout_height="50dp">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <!--        add button -->
+            <ImageView
+                android:id="@+id/add_receive_btn"
+                android:layout_width="@dimen/add_icon_size"
+                android:layout_height="@dimen/add_icon_size"
+                style="@style/ADD_ICON"
+                android:contentDescription="@string/add_label"
+                app:layout_constraintTop_toTopOf="@id/add_container"
+                app:layout_constraintBottom_toBottomOf="@id/add_container"
+                app:layout_constraintRight_toRightOf="@id/add_container"
+                app:layout_constraintLeft_toLeftOf="@id/add_container"/>
 
-</LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
+
+</ScrollView>

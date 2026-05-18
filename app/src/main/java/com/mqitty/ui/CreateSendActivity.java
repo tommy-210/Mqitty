@@ -48,6 +48,12 @@ public class CreateSendActivity extends AppCompatActivity {
         });
 
         create_btn.setOnClickListener(v -> {
+
+            if(!checkInputOnSubmit()) {
+                Toast.makeText(CreateSendActivity.this, "Input not valid", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             dataBaseHelper = DataBaseHelper.getInstance(this);
 
             //create send message model
@@ -67,5 +73,19 @@ public class CreateSendActivity extends AppCompatActivity {
     private void returnToMainActivity() {
         Intent intent = new Intent(CreateSendActivity.this, MainActivity.class);
         startActivity(intent);
+    }
+
+    private boolean checkInputOnSubmit() {
+//        check name and description for gui
+        if(name.getText().toString().isBlank() || description.getText().toString().isBlank()) {
+            return false;
+        }
+//        check input for mqtt
+        if(broker.getText().toString().isBlank() || topic.getText().toString().isBlank()) {
+            return false;
+        }
+
+//        check message
+        return !message.getText().toString().isBlank();
     }
 }

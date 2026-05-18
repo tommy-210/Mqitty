@@ -9,8 +9,8 @@ import com.mqitty.model.SendModel;
 
 public class SendManager {
 
-    public static void addSendModelToLayout(ViewGroup container, SendModel model) {
-        if (container == null || model == null) return;
+    public static View addSendModelToLayout(ViewGroup container, SendModel model) {
+        if (container == null || model == null) return null;
 
         LayoutInflater inflater = LayoutInflater.from(container.getContext());
         // Inflate the model layout
@@ -38,5 +38,7 @@ public class SendManager {
         } else {
             container.addView(sendModelView);
         }
+
+        return sendModelView;
     }
 }

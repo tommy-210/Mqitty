@@ -1,5 +1,6 @@
 package com.mqitty.database;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -32,6 +33,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         final static String COLUMN_TOPIC = "RECEIVER_TOPIC";
     }
 
+    final static int DATABASE_VERSION = 1;
     private static DataBaseHelper instance;
 
     public static synchronized DataBaseHelper getInstance(Context context) {
@@ -42,7 +44,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
 
     private DataBaseHelper(@Nullable Context context) {
-        super(context, "mqitty.db", null, 1);
+        super(context, "mqitty.db", null, DATABASE_VERSION);
     }
 
     @Override
@@ -61,7 +63,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+        db.execSQL("DROP TABLE IF EXISTS " + SendDB.TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + ReceiverDB.TABLE);
+        onCreate(db);
     }
 
     public boolean addOneSend(SendModel sendModel) {
@@ -87,7 +91,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         contentValues.put(ReceiverDB.COLUMN_BROKER, receiverModel.getBroker());
         contentValues.put(ReceiverDB.COLUMN_TOPIC, receiverModel.getTopic());
 
-        long insert = db.insert(SendDB.TABLE, null, contentValues);
+        long insert = db.insert(ReceiverDB.TABLE, null, contentValues);
         return insert != -1;
     }
 
@@ -149,6 +153,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         String queryString = "DELETE FROM " + SendDB.TABLE + " WHERE " + SendDB.COLUMN_ID + " = " + sendModel.getId();
 
+        @SuppressLint("Recycle")
         Cursor cursor = db.rawQuery(queryString, null);
         return cursor.moveToFirst();
     }
@@ -158,6 +163,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         String queryString = "DELETE FROM " + ReceiverDB.TABLE + " WHERE " + ReceiverDB.COLUMN_ID + " = " + receiverModel.getId();
 
+        @SuppressLint("Recycle")
         Cursor cursor = db.rawQuery(queryString, null);
         return cursor.moveToFirst();
     }

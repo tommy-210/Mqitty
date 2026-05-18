@@ -17,4 +17,7 @@
     <string name="topic_form">Topic...</string>
     <string name="message_form">Message...</string>
     <string name="custom_receiver_label">Create your custom receiver.</string>
+    <string name="modify_send_title">Modify your custom send\nmessage</string>
+    <string name="save_btn">SAVE</string>
+    <string name="delete_btn">DELETE</string>
 </resources>
