@@ -1,6 +1,8 @@
 package com.mqitty.model;
 
-public class ReceiverModel {
+import java.io.Serializable;
+
+public class ReceiverModel implements Serializable {
 
     private int id;
     private String name;

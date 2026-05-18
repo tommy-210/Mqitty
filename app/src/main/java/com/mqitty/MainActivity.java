@@ -12,6 +12,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import com.mqitty.database.DataBaseHelper;
 import com.mqitty.manager.ReceiveManager;
+import com.mqitty.manager.ReceiveModify;
 import com.mqitty.manager.SendModify;
 import com.mqitty.model.ReceiverModel;
 import com.mqitty.model.SendModel;
@@ -104,13 +105,11 @@ public class MainActivity extends AppCompatActivity {
             container.removeViews(0, container.getChildCount() - 1);
             // The panel was just inflated, so we add all stored models
             for (SendModel model : sendModels) {
+                // Add every element to container
                 View view = SendManager.addSendModelToLayout(container, model);
                 if (view != null) {
-                    view.setOnClickListener(v -> {
-                        Toast.makeText(MainActivity.this, "Send: " + model.getName(), Toast.LENGTH_SHORT).show();
-                        changeActivity(SendModify.class);
-                        new SendModify(model);
-                    });
+                    // Add click listener for each element, to open modify panel
+                    addListenerOnSends(view, model);
                 }
             }
         }
@@ -126,15 +125,30 @@ public class MainActivity extends AppCompatActivity {
             for (ReceiverModel model : receiverModels) {
                 View view = ReceiveManager.addReceiveModelToLayout(container, model);
                 if (view != null) {
-                    view.setOnClickListener(v -> {
-                        Toast.makeText(MainActivity.this, "Receive: " + model.getName(), Toast.LENGTH_SHORT).show();
-                    });
+                    addListenerOnReceivers(view, model);
                 }
             }
         }
     }
 
-    public void changeActivity(Class toClass) {
+    private void addListenerOnSends(View view, SendModel sendModel) {
+        view.setOnClickListener(v -> {
+            Toast.makeText(MainActivity.this, "Send: " + sendModel.getName(), Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(MainActivity.this, SendModify.class);
+            intent.putExtra("id", sendModel.getId());
+            startActivity(intent);
+        });
+    }
+    private void addListenerOnReceivers(View view, ReceiverModel receiverModel) {
+        view.setOnClickListener(v -> {
+            Toast.makeText(MainActivity.this, "Receive: " + receiverModel.getName(), Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(MainActivity.this, ReceiveModify.class);
+            intent.putExtra("id", receiverModel.getId());
+            startActivity(intent);
+        });
+    }
+
+    private void changeActivity(Class toClass) {
         Intent intent = new Intent(MainActivity.this, toClass);
         startActivity(intent);
     }

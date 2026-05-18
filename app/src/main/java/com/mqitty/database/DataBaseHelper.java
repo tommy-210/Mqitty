@@ -148,23 +148,77 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return returnList;
     }
 
+    public SendModel getSendById(int id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String queryString = "SELECT * FROM " + SendDB.TABLE + " WHERE " + SendDB.COLUMN_ID + " = " + id;
+        Cursor cursor = db.rawQuery(queryString, null);
+        SendModel sendModel = null;
+        if (cursor.moveToFirst()) {
+            String NAME = cursor.getString(1);
+            String DESC = cursor.getString(2);
+            String BROKER = cursor.getString(3);
+            String TOPIC = cursor.getString(4);
+            String MSG = cursor.getString(5);
+            sendModel = new SendModel(cursor.getInt(0), NAME, DESC, BROKER, TOPIC, MSG);
+        }
+        cursor.close();
+        db.close();
+        return sendModel;
+    }
+
+    public ReceiverModel getReceiverById(int id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String queryString = "SELECT * FROM " + ReceiverDB.TABLE + " WHERE " + ReceiverDB.COLUMN_ID + " = " + id;
+        Cursor cursor = db.rawQuery(queryString, null);
+        ReceiverModel receiverModel = null;
+        if (cursor.moveToFirst()) {
+            String NAME = cursor.getString(1);
+            String DESC = cursor.getString(2);
+            String BROKER = cursor.getString(3);
+            String TOPIC = cursor.getString(4);
+            receiverModel = new ReceiverModel(cursor.getInt(0), NAME, DESC, BROKER, TOPIC);
+        }
+        cursor.close();
+        db.close();
+        return receiverModel;
+    }
+
+    public boolean updateOneSend(SendModel sendModel) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(SendDB.COLUMN_NAME, sendModel.getName());
+        contentValues.put(SendDB.COLUMN_DESC, sendModel.getDescription());
+        contentValues.put(SendDB.COLUMN_BROKER, sendModel.getBroker());
+        contentValues.put(SendDB.COLUMN_TOPIC, sendModel.getTopic());
+        contentValues.put(SendDB.COLUMN_MSG, sendModel.getMessage());
+
+        int result = db.update(SendDB.TABLE, contentValues, SendDB.COLUMN_ID + " = ?", new String[]{String.valueOf(sendModel.getId())});
+        return result > 0;
+    }
+
+    public boolean updateOneReceiver(ReceiverModel receiverModel) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(ReceiverDB.COLUMN_NAME, receiverModel.getName());
+        contentValues.put(ReceiverDB.COLUMN_DESC, receiverModel.getDescription());
+        contentValues.put(ReceiverDB.COLUMN_BROKER, receiverModel.getBroker());
+        contentValues.put(ReceiverDB.COLUMN_TOPIC, receiverModel.getTopic());
+
+        int result = db.update(ReceiverDB.TABLE, contentValues, ReceiverDB.COLUMN_ID + " = ?", new String[]{String.valueOf(receiverModel.getId())});
+        return result > 0;
+    }
+
     public boolean deleteOneSend(SendModel sendModel) {
         SQLiteDatabase db = this.getWritableDatabase();
-
-        String queryString = "DELETE FROM " + SendDB.TABLE + " WHERE " + SendDB.COLUMN_ID + " = " + sendModel.getId();
-
-        @SuppressLint("Recycle")
-        Cursor cursor = db.rawQuery(queryString, null);
-        return cursor.moveToFirst();
+        int result = db.delete(SendDB.TABLE, SendDB.COLUMN_ID + " = ?", new String[]{String.valueOf(sendModel.getId())});
+        return result > 0;
     }
 
     public boolean deleteOneReceiver(ReceiverModel receiverModel) {
         SQLiteDatabase db = this.getWritableDatabase();
-
-        String queryString = "DELETE FROM " + ReceiverDB.TABLE + " WHERE " + ReceiverDB.COLUMN_ID + " = " + receiverModel.getId();
-
-        @SuppressLint("Recycle")
-        Cursor cursor = db.rawQuery(queryString, null);
-        return cursor.moveToFirst();
+        int result = db.delete(ReceiverDB.TABLE, ReceiverDB.COLUMN_ID + " = ?", new String[]{String.valueOf(receiverModel.getId())});
+        return result > 0;
     }
 }
