@@ -21,4 +21,6 @@
     <string name="save_btn">SAVE</string>
     <string name="delete_btn">DELETE</string>
     <string name="modify_label">Modify your receiver.</string>
+    <string name="description">Description</string>
+    <string name="receive">Receive</string>
 </resources>

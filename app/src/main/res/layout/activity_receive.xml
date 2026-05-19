@@ -9,7 +9,8 @@
         android:layout_height="wrap_content"
         android:id="@+id/activity_receive_root"
         android:orientation="vertical"
-        android:padding="4dp">
+        android:padding="6dp"
+        android:dividerPadding="4dp">
 
         <!--    add receive button container -->
         <androidx.constraintlayout.widget.ConstraintLayout

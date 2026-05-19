@@ -23,7 +23,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    ImageView send_btn, receive_btn, settings_btn, send_msg_btn, play_receive_msg_btn, stop_receive_msg_btn;
+    ImageView send_btn, receive_btn, settings_btn;
     SearchView searchView;
     ViewGroup sendPanelContainer, receivePanelContainer;
     DataBaseHelper dataBaseHelper;
@@ -177,32 +177,31 @@ public class MainActivity extends AppCompatActivity {
             changeActivityWithExtra(SendModify.class, "id", sendModel.getId());
         });
 //        send message btn for mqtt
-        send_msg_btn = findViewById(R.id.send_msg_btn);
+        ImageView send_msg_btn = view.findViewById(R.id.send_msg_btn);
         send_msg_btn.setOnClickListener(v -> {
             Toast.makeText(MainActivity.this, "Send Msg:" + sendModel.getMessage(), Toast.LENGTH_SHORT).show();
         });
     }
+
     private void addListenerOnReceivers(View view, ReceiverModel receiverModel) {
         view.setOnClickListener(v -> {
             Toast.makeText(MainActivity.this, "Receive: " + receiverModel.getName(), Toast.LENGTH_SHORT).show();
             changeActivityWithExtra(ReceiveModify.class, "id", receiverModel.getId());
         });
 //        receive message btn for mqtt
-        play_receive_msg_btn = findViewById(R.id.play_receive_msg_btn);
+        ImageView play_receive_msg_btn = view.findViewById(R.id.play_receive_msg_btn);
+        ImageView stop_receive_msg_btn = view.findViewById(R.id.stop_receive_msg_btn);
+
         play_receive_msg_btn.setOnClickListener(v -> {
             Toast.makeText(MainActivity.this, "Start receive messages\nFrom: " + receiverModel.getTopic(), Toast.LENGTH_SHORT).show();
-            changeIconReceive(true);
+            play_receive_msg_btn.setVisibility(View.GONE);
+            stop_receive_msg_btn.setVisibility(View.VISIBLE);
         });
-        stop_receive_msg_btn = findViewById(R.id.stop_receive_msg_btn);
         stop_receive_msg_btn.setOnClickListener(v -> {
             Toast.makeText(MainActivity.this, "Stop receive messages\nFrom: " + receiverModel.getTopic(), Toast.LENGTH_SHORT).show();
-            changeIconReceive(false);
+            play_receive_msg_btn.setVisibility(View.VISIBLE);
+            stop_receive_msg_btn.setVisibility(View.GONE);
         });
-    }
-
-    private void changeIconReceive(boolean isPlaying) {
-        play_receive_msg_btn.setVisibility(isPlaying ? View.GONE : View.VISIBLE);
-        stop_receive_msg_btn.setVisibility(isPlaying ? View.VISIBLE : View.GONE);
     }
 
     private void changeActivity(Class toClass) {
