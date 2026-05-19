@@ -1,6 +1,5 @@
 package com.mqitty.database;
 
-import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -93,6 +92,65 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         long insert = db.insert(ReceiverDB.TABLE, null, contentValues);
         return insert != -1;
+    }
+
+    public List<SendModel> getFilteredSend(String query) {
+        List<SendModel> returnList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String queryString = "SELECT * FROM " + SendDB.TABLE + " WHERE " +
+                SendDB.COLUMN_NAME + " LIKE ? OR " +
+                SendDB.COLUMN_DESC + " LIKE ?";
+
+        String[] searchArgs = new String[]{"%" + query + "%", "%" + query + "%"};
+        Cursor cursor = db.rawQuery(queryString, searchArgs);
+
+        if (cursor.moveToFirst()) {
+            do {
+                int ID = cursor.getInt(0);
+                String NAME = cursor.getString(1);
+                String DESC = cursor.getString(2);
+                String BROKER = cursor.getString(3);
+                String TOPIC = cursor.getString(4);
+                String MSG = cursor.getString(5);
+
+                SendModel sendModel = new SendModel(ID, NAME, DESC, BROKER, TOPIC, MSG);
+                returnList.add(sendModel);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+        return returnList;
+    }
+
+    public List<ReceiverModel> getFilteredReceive(String query) {
+        List<ReceiverModel> returnList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String queryString = "SELECT * FROM " + ReceiverDB.TABLE + " WHERE " +
+                ReceiverDB.COLUMN_NAME + " LIKE ? OR " +
+                ReceiverDB.COLUMN_DESC + " LIKE ?";
+
+        String[] searchArgs = new String[]{"%" + query + "%", "%" + query + "%"};
+        Cursor cursor = db.rawQuery(queryString, searchArgs);
+
+        if (cursor.moveToFirst()) {
+            do {
+                int ID = cursor.getInt(0);
+                String NAME = cursor.getString(1);
+                String DESC = cursor.getString(2);
+                String BROKER = cursor.getString(3);
+                String TOPIC = cursor.getString(4);
+
+                ReceiverModel receiverModel = new ReceiverModel(ID, NAME, DESC, BROKER, TOPIC);
+                returnList.add(receiverModel);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+        return returnList;
     }
 
     public List<SendModel> getEveryoneSend() {

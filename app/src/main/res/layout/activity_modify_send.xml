@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/modify_send_root"
     android:fitsSystemWindows="true"
-    tools:context=".manager.SendModify"
+    tools:context=".ui.SendModify"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <!--    header section-->

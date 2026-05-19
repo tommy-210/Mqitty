@@ -33,11 +33,11 @@
 
 <!--        modify send activity-->
         <activity
-            android:name=".manager.SendModify"/>
+            android:name=".ui.SendModify"/>
 
 <!--        modify receive activity-->
         <activity
-            android:name=".manager.ReceiveModify"/>
+            android:name=".ui.ReceiveModify"/>
     </application>
 
 </manifest>

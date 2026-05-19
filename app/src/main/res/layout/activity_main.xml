@@ -60,41 +60,14 @@
         app:layout_constraintTop_toBottomOf="@id/header_section">
 
         <!--        search text input-->
-        <LinearLayout
-            android:id="@+id/search_section"
+        <SearchView
+            android:id="@+id/search_view"
             android:layout_width="0dp"
             android:layout_height="@dimen/search_filter_input_height"
             android:layout_weight="1"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="10dp"
             android:background="@drawable/border_round"
-            android:orientation="horizontal"
-            android:padding="@dimen/padding_2dp"
-            app:flow_verticalAlign="center">
-
-            <!--            search icon-->
-            <ImageView
-                android:id="@+id/search_icon"
-                android:layout_width="@dimen/icon_size"
-                android:layout_height="match_parent"
-                android:padding="@dimen/padding_4dp"
-                android:contentDescription="@string/search_label"
-                style="@style/SEARCH_ICON"/>
-
-            <!--            text input for search-->
-            <EditText
-                android:id="@+id/search_edittext"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:autofillHints="none"
-                android:hint="@string/search_hint"
-                android:inputType="text"
-                android:textColorHint="?attr/hintTextColor"
-                android:autoHandwritingEnabled="false"
-                android:textSize="@dimen/text_size_search"
-                android:translationY="@dimen/translateY_search_text" />
-
-        </LinearLayout>
+            android:layout_marginEnd="4dp"
+            android:layout_marginStart="15dp"/>
 
         <!--        filter icon-->
         <ImageView

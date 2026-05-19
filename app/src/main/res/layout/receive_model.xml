@@ -34,8 +34,23 @@
             android:layout_marginHorizontal="10dp"/>
     </LinearLayout>
 
+<!--    play receive-->
     <ImageView
+        android:id="@+id/play_receive_msg_btn"
         style="@style/PLAY_ICON"
+        android:background="@drawable/border_round"
+        android:padding="3dp"
+        android:layout_width="46dp"
+        android:layout_height="46dp"
+        android:layout_marginStart="@dimen/padding_2dp"
+        android:layout_marginVertical="12dp"
+        android:layout_marginEnd="15dp"/>
+
+<!--    stop receive-->
+    <ImageView
+        android:visibility="gone"
+        android:id="@+id/stop_receive_msg_btn"
+        style="@style/PAUSE_ICON"
         android:background="@drawable/border_round"
         android:padding="3dp"
         android:layout_width="46dp"

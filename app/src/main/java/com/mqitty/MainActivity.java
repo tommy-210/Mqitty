@@ -3,17 +3,17 @@ package com.mqitty;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.SearchView;
 import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import com.mqitty.database.DataBaseHelper;
 import com.mqitty.manager.ReceiveManager;
-import com.mqitty.manager.ReceiveModify;
-import com.mqitty.manager.SendModify;
+import com.mqitty.ui.ReceiveModify;
+import com.mqitty.ui.SendModify;
 import com.mqitty.model.ReceiverModel;
 import com.mqitty.model.SendModel;
 import com.mqitty.ui.CreateReceiveActivity;
@@ -23,7 +23,8 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    ImageView send_btn, receive_btn, settings_btn;
+    ImageView send_btn, receive_btn, settings_btn, send_msg_btn, play_receive_msg_btn, stop_receive_msg_btn;
+    SearchView searchView;
     ViewGroup sendPanelContainer, receivePanelContainer;
     DataBaseHelper dataBaseHelper;
 
@@ -46,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
         send_btn = findViewById(R.id.send_btn);
         receive_btn = findViewById(R.id.receive_btn);
         settings_btn = findViewById(R.id.settings_btn);
+        searchView = findViewById(R.id.search_view);
         //main container
         sendPanelContainer = findViewById(R.id.send_panel_container);
         receivePanelContainer = findViewById(R.id.receive_panel_container);
@@ -54,21 +56,49 @@ public class MainActivity extends AppCompatActivity {
         LayoutInflater.from(this).inflate(R.layout.activity_send, sendPanelContainer, true);
         LayoutInflater.from(this).inflate(R.layout.activity_receive, receivePanelContainer, true);
 
-        refreshSendPanelData();
-        refreshReceivePanelData();
+        refreshSendPanelData(null);
+        refreshReceivePanelData(null);
     }
 
     private void componentListener() {
+//        send panel button
         send_btn.setOnClickListener(v -> {
             showPanel(sendPanelContainer);
-            refreshSendPanelData();
+            refreshSendPanelData(null);
         });
+//        receive panel button
         receive_btn.setOnClickListener(v -> {
             showPanel(receivePanelContainer);
-            refreshReceivePanelData();
+            refreshReceivePanelData(null);
         });
+//        settings panel button
         settings_btn.setOnClickListener(v -> {
             Toast.makeText(MainActivity.this, "settings", Toast.LENGTH_SHORT).show();
+        });
+//        search view summit filter query
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextChange(String newText) {return false;}
+
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Toast.makeText(MainActivity.this, "Filter: " + query, Toast.LENGTH_SHORT).show();
+                if(sendPanelContainer.getVisibility() == View.VISIBLE){
+                    refreshSendPanelData(query);
+                }else {
+                    refreshReceivePanelData(query);
+                }
+                return false;
+            }
+        });
+//        close search view and reload all elemets
+        searchView.setOnCloseListener(() -> {
+            if(sendPanelContainer.getVisibility() == View.VISIBLE) {
+                refreshSendPanelData(null);
+            }else {
+                refreshReceivePanelData(null);
+            }
+            return false;
         });
     }
 
@@ -97,8 +127,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void refreshSendPanelData() {
-        List<SendModel> sendModels = dataBaseHelper.getEveryoneSend();
+    private void refreshSendPanelData(String filterQuery) {
+        List<SendModel> sendModels;
+        if(filterQuery != null) {
+            sendModels = dataBaseHelper.getFilteredSend(filterQuery);
+        }else {
+            sendModels = dataBaseHelper.getEveryoneSend();
+        }
         View sendRoot = findViewById(R.id.activity_send_root);
         if (sendRoot instanceof ViewGroup) {
             ViewGroup container = (ViewGroup) sendRoot;
@@ -115,8 +150,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void refreshReceivePanelData() {
-        List<ReceiverModel> receiverModels = dataBaseHelper.getEveryoneReceiver();
+    private void refreshReceivePanelData(String filterQuery) {
+        List<ReceiverModel> receiverModels;
+        if(filterQuery != null){
+            receiverModels = dataBaseHelper.getFilteredReceive(filterQuery);
+        }else {
+            receiverModels = dataBaseHelper.getEveryoneReceiver();
+        }
         View sendRoot = findViewById(R.id.activity_receive_root);
         if (sendRoot instanceof ViewGroup) {
             ViewGroup container = (ViewGroup) sendRoot;
@@ -134,22 +174,45 @@ public class MainActivity extends AppCompatActivity {
     private void addListenerOnSends(View view, SendModel sendModel) {
         view.setOnClickListener(v -> {
             Toast.makeText(MainActivity.this, "Send: " + sendModel.getName(), Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(MainActivity.this, SendModify.class);
-            intent.putExtra("id", sendModel.getId());
-            startActivity(intent);
+            changeActivityWithExtra(SendModify.class, "id", sendModel.getId());
+        });
+//        send message btn for mqtt
+        send_msg_btn = findViewById(R.id.send_msg_btn);
+        send_msg_btn.setOnClickListener(v -> {
+            Toast.makeText(MainActivity.this, "Send Msg:" + sendModel.getMessage(), Toast.LENGTH_SHORT).show();
         });
     }
     private void addListenerOnReceivers(View view, ReceiverModel receiverModel) {
         view.setOnClickListener(v -> {
             Toast.makeText(MainActivity.this, "Receive: " + receiverModel.getName(), Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(MainActivity.this, ReceiveModify.class);
-            intent.putExtra("id", receiverModel.getId());
-            startActivity(intent);
+            changeActivityWithExtra(ReceiveModify.class, "id", receiverModel.getId());
         });
+//        receive message btn for mqtt
+        play_receive_msg_btn = findViewById(R.id.play_receive_msg_btn);
+        play_receive_msg_btn.setOnClickListener(v -> {
+            Toast.makeText(MainActivity.this, "Start receive messages\nFrom: " + receiverModel.getTopic(), Toast.LENGTH_SHORT).show();
+            changeIconReceive(true);
+        });
+        stop_receive_msg_btn = findViewById(R.id.stop_receive_msg_btn);
+        stop_receive_msg_btn.setOnClickListener(v -> {
+            Toast.makeText(MainActivity.this, "Stop receive messages\nFrom: " + receiverModel.getTopic(), Toast.LENGTH_SHORT).show();
+            changeIconReceive(false);
+        });
+    }
+
+    private void changeIconReceive(boolean isPlaying) {
+        play_receive_msg_btn.setVisibility(isPlaying ? View.GONE : View.VISIBLE);
+        stop_receive_msg_btn.setVisibility(isPlaying ? View.VISIBLE : View.GONE);
     }
 
     private void changeActivity(Class toClass) {
         Intent intent = new Intent(MainActivity.this, toClass);
+        startActivity(intent);
+    }
+
+    private void changeActivityWithExtra(Class toClass, String name, int content) {
+        Intent intent = new Intent(MainActivity.this, toClass);
+        intent.putExtra(name, content);
         startActivity(intent);
     }
 }

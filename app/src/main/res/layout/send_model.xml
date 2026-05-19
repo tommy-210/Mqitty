@@ -35,6 +35,7 @@
     </LinearLayout>
 
     <ImageView
+        android:id="@+id/send_msg_btn"
         style="@style/SEND_ICON"
         android:background="@drawable/border_round"
         android:padding="3dp"
