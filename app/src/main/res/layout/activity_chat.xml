@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_chat_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+<!--    return section-->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/return_section"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/return_section_height"
+        android:background="?attr/colorBackgroundFloating">
+
+<!--        return icon-->
+        <ImageView
+            android:layout_width="@dimen/return_icon_width"
+            android:layout_height="@dimen/return_icon_height"
+            style="@style/RETURN_ICON"
+            android:layout_marginStart="@dimen/margin_20dp"
+            android:contentDescription="@string/return_label"
+            app:layout_constraintTop_toTopOf="@id/return_section"
+            app:layout_constraintBottom_toBottomOf="@id/return_section"
+            app:layout_constraintLeft_toLeftOf="@id/return_section"/>
+        
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+<!--    all messages container (scrollable)-->
+    <ScrollView
+        android:id="@+id/scroll_chat_msg_container"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:id="@+id/chat_msg_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/padding_4dp">
+
+
+        </LinearLayout>
+
+    </ScrollView>
+
+<!--    send message to chat section-->
+    <LinearLayout
+        android:background="@drawable/border_round"
+        android:layout_margin="6dp"
+        android:id="@+id/send_msg_chat_section"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:paddingHorizontal="10dp"
+        android:orientation="horizontal">
+
+<!--        text input-->
+        <EditText
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:autofillHints="none"
+            android:inputType="text"
+            android:layout_marginEnd="4dp"/>
+
+<!--        send icon-->
+        <ImageView
+            style="@style/SEND_ICON"
+            android:layout_width="@dimen/icon_size"
+            android:layout_height="@dimen/icon_size"
+            android:layout_marginVertical="5dp"/>
+
+    </LinearLayout>
+
+</LinearLayout>

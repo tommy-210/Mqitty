@@ -172,9 +172,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void addListenerOnSends(View view, SendModel sendModel) {
-        view.setOnClickListener(v -> {
+        view.setOnLongClickListener(v -> {
             Toast.makeText(MainActivity.this, "Send: " + sendModel.getName(), Toast.LENGTH_SHORT).show();
             changeActivityWithExtra(SendModify.class, "id", sendModel.getId());
+            return false;
         });
 //        send message btn for mqtt
         ImageView send_msg_btn = view.findViewById(R.id.send_msg_btn);
@@ -184,10 +185,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void addListenerOnReceivers(View view, ReceiverModel receiverModel) {
-        view.setOnClickListener(v -> {
+//        open modify panel
+        view.setOnLongClickListener(v -> {
             Toast.makeText(MainActivity.this, "Receive: " + receiverModel.getName(), Toast.LENGTH_SHORT).show();
             changeActivityWithExtra(ReceiveModify.class, "id", receiverModel.getId());
+            return false;
         });
+//        open chat with specific topic
+        view.setOnClickListener(v ->  {
+            Toast.makeText(MainActivity.this, "Open chat: " + receiverModel.getName(), Toast.LENGTH_SHORT).show();
+
+        });
+
 //        receive message btn for mqtt
         ImageView play_receive_msg_btn = view.findViewById(R.id.play_receive_msg_btn);
         ImageView stop_receive_msg_btn = view.findViewById(R.id.stop_receive_msg_btn);

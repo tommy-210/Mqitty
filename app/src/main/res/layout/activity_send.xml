@@ -9,8 +9,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/activity_send_root"
         android:orientation="vertical"
-        android:padding="6dp"
-        android:dividerPadding="4dp">
+        android:padding="6dp">
 
     <!--    add send button container -->
         <androidx.constraintlayout.widget.ConstraintLayout

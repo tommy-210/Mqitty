@@ -12,7 +12,7 @@
     <!--    header section-->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="@dimen/return_section_height"
         android:id="@+id/return_section"
         android:background="?attr/colorBackgroundFloating"
         app:layout_constraintTop_toTopOf="@id/modify_receiver_root"
@@ -22,8 +22,8 @@
         <!--        return icon-->
         <ImageView
             android:id="@+id/return_btn"
-            android:layout_width="44dp"
-            android:layout_height="38dp"
+            android:layout_width="@dimen/return_icon_width"
+            android:layout_height="@dimen/return_icon_height"
             style="@style/RETURN_ICON"
             android:contentDescription="@string/return_label"
             app:layout_constraintTop_toTopOf="@id/return_section"
