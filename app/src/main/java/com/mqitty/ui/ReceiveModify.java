@@ -6,11 +6,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
-
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.mqitty.MainActivity;
 import com.mqitty.R;
 import com.mqitty.database.DataBaseHelper;
@@ -92,6 +90,10 @@ public class ReceiveModify  extends AppCompatActivity {
             boolean success = dataBaseHelper.deleteOneReceiver(receiverModel);
             if(success) {
                 Toast.makeText(ReceiveModify.this, "Delete: " + receiverModel.getName(), Toast.LENGTH_SHORT).show();
+
+//                delete chat table
+                dataBaseHelper.removeChaTable(receiverModel.getId());
+
                 returnToMain();
             }else {
                 Toast.makeText(ReceiveModify.this, "Error", Toast.LENGTH_SHORT).show();

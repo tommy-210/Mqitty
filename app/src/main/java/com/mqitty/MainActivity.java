@@ -12,6 +12,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import com.mqitty.database.DataBaseHelper;
 import com.mqitty.manager.ReceiveManager;
+import com.mqitty.ui.ChatActivity;
 import com.mqitty.ui.ReceiveModify;
 import com.mqitty.ui.SendModify;
 import com.mqitty.model.ReceiverModel;
@@ -194,7 +195,7 @@ public class MainActivity extends AppCompatActivity {
 //        open chat with specific topic
         view.setOnClickListener(v ->  {
             Toast.makeText(MainActivity.this, "Open chat: " + receiverModel.getName(), Toast.LENGTH_SHORT).show();
-
+            changeActivityWithExtra(ChatActivity.class, "id", receiverModel.getId());
         });
 
 //        receive message btn for mqtt

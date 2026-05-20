@@ -62,9 +62,14 @@ public class CreateReceiveActivity extends AppCompatActivity {
             ReceiverModel receiverModel = new ReceiverModel(-1, name.getText().toString(), description.getText().toString(),
                     broker.getText().toString(), topic.getText().toString());
 
-            boolean success = dataBaseHelper.addOneReceiver(receiverModel);
-            if(success) {
+            long id = dataBaseHelper.addOneReceiver(receiverModel);
+            if(id != -1) {
+                receiverModel.setId((int) id);
                 Toast.makeText(CreateReceiveActivity.this, receiverModel.toString(), Toast.LENGTH_SHORT).show();
+
+//               create a chat table in database for messages
+                dataBaseHelper.createChatTable(receiverModel.getId());
+
                 returnToMainActivity();
             }else {
                 Toast.makeText(CreateReceiveActivity.this, "Error", Toast.LENGTH_SHORT).show();

@@ -60,8 +60,9 @@ public class CreateSendActivity extends AppCompatActivity {
             SendModel sendModel = new SendModel(-1, name.getText().toString(), description.getText().toString(), broker.getText().toString(),
                                                 topic.getText().toString(), message.getText().toString());
             
-            boolean success = dataBaseHelper.addOneSend(sendModel);
-            if (success) {
+            long id = dataBaseHelper.addOneSend(sendModel);
+            if (id != -1) {
+                sendModel.setId((int) id);
                 Toast.makeText(CreateSendActivity.this, "Success!", Toast.LENGTH_SHORT).show();
                 returnToMainActivity();
             } else {

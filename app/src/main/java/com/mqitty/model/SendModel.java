@@ -16,8 +16,6 @@ public class SendModel implements Serializable {
         this.message = message;
     }
 
-    public SendModel() {}
-
     @Override
     public String toString() {
         return "SendModel{" +

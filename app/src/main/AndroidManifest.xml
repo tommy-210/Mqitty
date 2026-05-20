@@ -32,12 +32,13 @@
         <activity android:name=".ui.CreateReceiveActivity"/>
 
 <!--        modify send activity-->
-        <activity
-            android:name=".ui.SendModify"/>
+        <activity android:name=".ui.SendModify"/>
 
 <!--        modify receive activity-->
-        <activity
-            android:name=".ui.ReceiveModify"/>
+        <activity android:name=".ui.ReceiveModify"/>
+
+<!--        chat receive activity-->
+        <activity android:name=".ui.ChatActivity"/>
     </application>
 
 </manifest>

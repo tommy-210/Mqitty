@@ -5,11 +5,7 @@ import java.io.Serializable;
 public class ReceiverModel implements Serializable {
 
     private int id;
-    private String name;
-
-    private String description;
-    private String broker;
-    private String topic;
+    private String name, description, broker, topic;
 
     public ReceiverModel(int id, String name, String description, String broker, String topic) {
         this.id = id;
@@ -18,8 +14,6 @@ public class ReceiverModel implements Serializable {
         this.broker = broker;
         this.topic = topic;
     }
-
-    public ReceiverModel() {}
 
     @Override
     public String toString() {
