@@ -17,10 +17,14 @@ import com.mqitty.R;
 import com.mqitty.database.DataBaseHelper;
 import com.mqitty.model.MessageModel;
 import com.mqitty.model.ReceiverModel;
+import com.mqitty.mqtt.Mqtt;
+import com.mqitty.mqtt.MqttManager;
+import org.eclipse.paho.client.mqttv3.IMqttActionListener;
+import org.eclipse.paho.client.mqttv3.IMqttToken;
 
 import java.util.List;
 
-public class ChatActivity extends AppCompatActivity {
+public class ChatActivity extends AppCompatActivity implements Mqtt.MqttMessageListener {
 
     ImageView return_btn, send_msg_btn;
     EditText text_input_msg;
@@ -28,6 +32,7 @@ public class ChatActivity extends AppCompatActivity {
     ScrollView scroll_chat_msg_container;
     ReceiverModel receiverModel;
     DataBaseHelper dataBaseHelper;
+    Mqtt mqtt;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -48,8 +53,39 @@ public class ChatActivity extends AppCompatActivity {
 
         dataBaseHelper.createChatTable(receiverModel.getId());
 
+        mqtt = MqttManager.getInstance().getMqtt(ChatActivity.this, receiverModel.getBroker());
+        mqtt.addMessageListener(this);
+        mqtt.connect(new IMqttActionListener() {
+            @Override
+            public void onSuccess(IMqttToken asyncActionToken) {
+                mqtt.subscribe(receiverModel.getTopic(), 1);
+            }
+
+            @Override
+            public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+
+            }
+        });
+
         initComponents();
         reloadAllMessages();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mqtt != null) {
+            mqtt.removeMessageListener(this);
+        }
+    }
+
+    @Override
+    public void onMessageArrived(String topic, String message) {
+        if (topic.equals(receiverModel.getTopic())) {
+            MessageModel newMessage = new MessageModel(-1, message, false, System.currentTimeMillis());
+            dataBaseHelper.addOneMessage(receiverModel.getId(), newMessage);
+            runOnUiThread(() -> addOneMessage(newMessage));
+        }
     }
 
     private void reloadAllMessages() {
@@ -70,7 +106,12 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void addOneMessage(MessageModel messageModel) {
-        View view = getLayoutInflater().inflate(R.layout.message_send_model, chat_msg_container, false);
+        View view;
+        if (messageModel.isSend()) {
+            view = getLayoutInflater().inflate(R.layout.message_send_model, chat_msg_container, false);
+        } else {
+            view = getLayoutInflater().inflate(R.layout.message_receive_model, chat_msg_container, false);
+        }
 
         TextView msgText = view.findViewById(R.id.msg_text);
         msgText.setText(messageModel.getMessage());
@@ -98,7 +139,11 @@ public class ChatActivity extends AppCompatActivity {
             }
 //            add one message to chat
             MessageModel newMessage = new MessageModel(-1, msgText, true, System.currentTimeMillis());
-            if (dataBaseHelper.addOneMessage(receiverModel.getId(), newMessage)) {
+
+            boolean mqttSuccess = mqtt.publish(receiverModel.getTopic(), msgText);
+            boolean databaseSuccess = dataBaseHelper.addOneMessage(receiverModel.getId(), newMessage);
+
+            if(mqttSuccess && databaseSuccess) {
                 text_input_msg.setText("");
                 addOneMessage(newMessage);
                 Toast.makeText(ChatActivity.this, "Message send:\n" + newMessage.getMessage(), Toast.LENGTH_SHORT).show();

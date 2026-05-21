@@ -1,5 +1,9 @@
 package com.mqitty.model;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class MessageModel {
 
     private int id;
@@ -23,6 +27,11 @@ public class MessageModel {
                 ", isSend=" + isSend +
                 ", timestamp=" + timestamp +
                 '}';
+    }
+
+    public String getFormattedTimestamp() {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault());
+        return sdf.format(new Date(timestamp));
     }
 
     //    getters and setters

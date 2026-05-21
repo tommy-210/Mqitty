@@ -20,6 +20,10 @@ import com.mqitty.model.SendModel;
 import com.mqitty.ui.CreateReceiveActivity;
 import com.mqitty.ui.CreateSendActivity;
 import com.mqitty.manager.SendManager;
+import com.mqitty.mqtt.Mqtt;
+import com.mqitty.mqtt.MqttManager;
+import org.eclipse.paho.client.mqttv3.IMqttActionListener;
+import org.eclipse.paho.client.mqttv3.IMqttToken;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -181,7 +185,18 @@ public class MainActivity extends AppCompatActivity {
 //        send message btn for mqtt
         ImageView send_msg_btn = view.findViewById(R.id.send_msg_btn);
         send_msg_btn.setOnClickListener(v -> {
-            Toast.makeText(MainActivity.this, "Send Msg:" + sendModel.getMessage(), Toast.LENGTH_SHORT).show();
+            Mqtt mqtt = MqttManager.getInstance().getMqtt(MainActivity.this, sendModel.getBroker());
+            mqtt.connect(new IMqttActionListener() {
+                @Override
+                public void onSuccess(IMqttToken asyncActionToken) {
+                    mqtt.publish(sendModel.getTopic(), sendModel.getMessage());
+                }
+
+                @Override
+                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                    Toast.makeText(MainActivity.this, "Connection failed", Toast.LENGTH_SHORT).show();
+                }
+            });
         });
     }
 
@@ -192,6 +207,9 @@ public class MainActivity extends AppCompatActivity {
             changeActivityWithExtra(ReceiveModify.class, "id", receiverModel.getId());
             return false;
         });
+        
+        Mqtt mqtt = MqttManager.getInstance().getMqtt(MainActivity.this, receiverModel.getBroker());
+        
 //        open chat with specific topic
         view.setOnClickListener(v ->  {
             Toast.makeText(MainActivity.this, "Open chat: " + receiverModel.getName(), Toast.LENGTH_SHORT).show();
@@ -203,14 +221,24 @@ public class MainActivity extends AppCompatActivity {
         ImageView stop_receive_msg_btn = view.findViewById(R.id.stop_receive_msg_btn);
 
         play_receive_msg_btn.setOnClickListener(v -> {
-            Toast.makeText(MainActivity.this, "Start receive messages\nFrom: " + receiverModel.getTopic(), Toast.LENGTH_SHORT).show();
             play_receive_msg_btn.setVisibility(View.GONE);
             stop_receive_msg_btn.setVisibility(View.VISIBLE);
+            mqtt.connect(new IMqttActionListener() {
+                @Override
+                public void onSuccess(IMqttToken asyncActionToken) {
+                    Toast.makeText(MainActivity.this, "Connection success", Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                    Toast.makeText(MainActivity.this, "Connection failed", Toast.LENGTH_SHORT).show();
+                }
+            });
         });
         stop_receive_msg_btn.setOnClickListener(v -> {
-            Toast.makeText(MainActivity.this, "Stop receive messages\nFrom: " + receiverModel.getTopic(), Toast.LENGTH_SHORT).show();
             play_receive_msg_btn.setVisibility(View.VISIBLE);
             stop_receive_msg_btn.setVisibility(View.GONE);
+            mqtt.disconnect();
         });
     }
 
