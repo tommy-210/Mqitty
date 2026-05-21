@@ -143,6 +143,13 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return returnList;
     }
 
+    public void deleteAllMessageFromChat(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "DELETE FROM " + getChatTable(id);
+
+        db.execSQL(query);
+    }
+
     public long addOneSend(SendModel sendModel) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -352,5 +359,19 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         int result = db.delete(ReceiverDB.TABLE, ReceiverDB.COLUMN_ID + " = ?", new String[]{String.valueOf(receiverModel.getId())});
         return result > 0;
+    }
+
+    public void deleteAllFromSend() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "DELETE FROM " + SendDB.TABLE;
+
+        db.execSQL(query);
+    }
+
+    public void deleteAllFromReceiver() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "DELETE FROM " + ReceiverDB.TABLE;
+
+        db.execSQL(query);
     }
 }

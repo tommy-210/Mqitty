@@ -15,9 +15,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Mqitty">
 
-        <service android:name="org.eclipse.paho.android.service.MqttService" />
-
-<!--        main activity-->
         <activity
             android:name=".MainActivity"
             android:exported="true">

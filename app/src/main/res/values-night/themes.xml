@@ -66,5 +66,9 @@
     <style name="RETURN_ICON">
         <item name="android:src">@drawable/arrow_back_white</item>
     </style>
+    <!--    three dots-->
+    <style name="THREE_DOTS_ICON">
+        <item name="android:src">@drawable/three_dots_white</item>
+    </style>
 
 </resources>

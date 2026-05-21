@@ -67,6 +67,10 @@
     <style name="RETURN_ICON">
         <item name="android:src">@drawable/arrow_back_black</item>
     </style>
+<!--    three dots-->
+    <style name="THREE_DOTS_ICON">
+        <item name="android:src">@drawable/three_dots_black</item>
+    </style>
 
     <style name="Theme.Mqitty" parent="Base.Theme.Mqitty" />
 </resources>

@@ -8,11 +8,11 @@
     android:layout_margin="4dp">
 
     <Space
-        android:layout_width="150dp"
+        android:layout_width="@dimen/space_width"
         android:layout_height="match_parent"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:background="@drawable/receive_msg_model"
+        android:background="@drawable/send_msg_model"
         android:paddingHorizontal="6dp"
         android:layout_width="0dp"
         android:layout_weight="1"
@@ -23,8 +23,8 @@
             android:id="@+id/msg_text"
             android:padding="3dp"
             android:text="Prova messaggio\nskfjslfj"
-            android:textColor="?attr/colorBackgroundFloating"
-            android:textSize="14sp"
+            android:textColor="?attr/color"
+            android:textSize="@dimen/message_text_size"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_constraintTop_toTopOf="parent"

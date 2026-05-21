@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_chat_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:fitsSystemWindows="true"
     tools:context=".ui.ChatActivity">
 
-<!--    return section-->
+    <!-- return section -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/return_section"
         android:layout_width="match_parent"
         android:layout_height="@dimen/return_section_height"
-        android:background="?attr/colorBackgroundFloating">
+        android:background="?attr/colorBackgroundFloating"
+        app:layout_constraintTop_toTopOf="parent">
 
-<!--        return icon-->
+        <!-- return icon -->
         <ImageView
             android:id="@+id/return_btn"
             android:layout_width="@dimen/return_icon_width"
@@ -24,18 +24,30 @@
             style="@style/RETURN_ICON"
             android:layout_marginStart="@dimen/margin_20dp"
             android:contentDescription="@string/return_label"
-            app:layout_constraintTop_toTopOf="@id/return_section"
-            app:layout_constraintBottom_toBottomOf="@id/return_section"
-            app:layout_constraintLeft_toLeftOf="@id/return_section"/>
-        
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"/>
+
+        <ImageView
+            android:id="@+id/more_option_btn"
+            android:layout_width="@dimen/icon_size"
+            android:layout_height="@dimen/icon_size"
+            style="@style/THREE_DOTS_ICON"
+            android:layout_marginEnd="@dimen/margin_20dp"
+            android:contentDescription="@string/more_option"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"/>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-<!--    all messages container (scrollable)-->
+    <!-- all messages container (scrollable) -->
     <ScrollView
         android:id="@+id/scroll_chat_msg_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        app:layout_constraintTop_toBottomOf="@id/return_section"
+        app:layout_constraintBottom_toTopOf="@id/send_msg_chat_section">
 
         <LinearLayout
             android:id="@+id/chat_msg_container"
@@ -44,23 +56,23 @@
             android:orientation="vertical"
             android:padding="@dimen/padding_4dp">
 
-
         </LinearLayout>
 
     </ScrollView>
 
-<!--    send message to chat section-->
+    <!-- send message to chat section -->
     <LinearLayout
-        android:background="@drawable/border_round"
-        android:layout_marginVertical="12dp"
-        android:layout_marginHorizontal="8dp"
         android:id="@+id/send_msg_chat_section"
         android:layout_width="match_parent"
         android:layout_height="40dp"
+        android:layout_marginVertical="12dp"
+        android:layout_marginHorizontal="8dp"
+        android:background="@drawable/border_round"
         android:paddingHorizontal="10dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent">
 
-<!--        text input-->
+        <!-- text input -->
         <EditText
             android:id="@+id/chat_input_msg"
             android:layout_width="0dp"
@@ -68,16 +80,64 @@
             android:layout_height="match_parent"
             android:autofillHints="none"
             android:inputType="text"
-            android:layout_marginEnd="4dp"/>
+            android:layout_marginEnd="4dp"
+            tools:ignore="LabelFor" />
 
-<!--        send icon-->
+        <!-- send icon -->
         <ImageView
             android:id="@+id/chat_send_msg_btn"
             style="@style/SEND_ICON"
             android:layout_width="@dimen/icon_size"
             android:layout_height="@dimen/icon_size"
-            android:layout_marginVertical="5dp"/>
+            android:layout_marginVertical="5dp"
+            android:contentDescription="@string/send_label" />
 
     </LinearLayout>
 
-</LinearLayout>
+    <!-- more option popup -->
+    <FrameLayout
+        android:id="@+id/more_option_popup"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:background="@drawable/border_round"
+        android:backgroundTint="?attr/backgroundColor"
+        android:elevation="8dp"
+        android:padding="8dp"
+        app:layout_constraintTop_toBottomOf="@id/return_section"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginEnd="@dimen/margin_20dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/clear_session_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/color"
+                android:text="Clear all chat"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:gravity="start|center_vertical"/>
+
+<!--            <Button-->
+<!--                android:id="@+id/popup_option_2"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="Option 2"-->
+<!--                style="@style/Widget.Material3.Button.TextButton"-->
+<!--                android:gravity="start|center_vertical"/>-->
+
+            <CheckBox
+                android:id="@+id/start_stop_session"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/color"
+                android:text="Session on"
+                android:paddingStart="8dp"/>
+        </LinearLayout>
+    </FrameLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

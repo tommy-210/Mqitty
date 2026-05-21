@@ -1,14 +1,18 @@
 package com.mqitty;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import com.mqitty.database.DataBaseHelper;
 import com.mqitty.manager.ReceiveManager;
@@ -28,9 +32,11 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    ImageView send_btn, receive_btn, settings_btn;
+    ImageView send_btn, receive_btn, settings_btn, filter_btn;
     SearchView searchView;
     ViewGroup sendPanelContainer, receivePanelContainer;
+    FrameLayout filter_popup;
+    Button clear_panel_btn;
     DataBaseHelper dataBaseHelper;
 
     @Override
@@ -56,6 +62,9 @@ public class MainActivity extends AppCompatActivity {
         //main container
         sendPanelContainer = findViewById(R.id.send_panel_container);
         receivePanelContainer = findViewById(R.id.receive_panel_container);
+        filter_popup = findViewById(R.id.filter_popup_section);
+        clear_panel_btn = findViewById(R.id.clear_panel_btn);
+        filter_btn = findViewById(R.id.filter_btn);
 
         // Pre-inflate layouts into containers
         LayoutInflater.from(this).inflate(R.layout.activity_send, sendPanelContainer, true);
@@ -105,6 +114,38 @@ public class MainActivity extends AppCompatActivity {
             }
             return false;
         });
+        filter_btn.setOnClickListener(v -> {
+            if(filter_popup.getVisibility() == View.GONE) {
+                filter_popup.setVisibility(View.VISIBLE);
+            }else {
+                filter_popup.setVisibility(View.GONE);
+            }
+        });
+        clear_panel_btn.setOnClickListener(v -> {
+            String panel = sendPanelContainer.getVisibility() == View.VISIBLE ? "Send" : "Receiver";
+            showConfirmDeleteElementsDialog(panel);
+            if(panel.equals("Send")) {
+                refreshSendPanelData(null);
+            }else {
+                refreshReceivePanelData(null);
+            }
+        });
+    }
+
+    private void showConfirmDeleteElementsDialog(String panel) throws Resources.NotFoundException {
+        new AlertDialog.Builder(this)
+                .setTitle("Confirm deletion")
+                .setMessage("Do you really want to delete all elements of " + panel + " panel?")
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
+                    Toast.makeText(MainActivity.this, "Yes", Toast.LENGTH_SHORT).show();
+                    if(panel.equals("Send")) {
+                        dataBaseHelper.deleteAllFromSend();
+                    }else {
+                        dataBaseHelper.deleteAllFromReceiver();
+                    }
+                })
+                .setNegativeButton(android.R.string.no, null).show();
     }
 
     private void showPanel(ViewGroup panelToShow) {
@@ -190,6 +231,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
                     mqtt.publish(sendModel.getTopic(), sendModel.getMessage());
+                    Toast.makeText(MainActivity.this, "Send: " + sendModel.getMessage(), Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
@@ -203,7 +245,6 @@ public class MainActivity extends AppCompatActivity {
     private void addListenerOnReceivers(View view, ReceiverModel receiverModel) {
 //        open modify panel
         view.setOnLongClickListener(v -> {
-            Toast.makeText(MainActivity.this, "Receive: " + receiverModel.getName(), Toast.LENGTH_SHORT).show();
             changeActivityWithExtra(ReceiveModify.class, "id", receiverModel.getId());
             return false;
         });
@@ -212,7 +253,6 @@ public class MainActivity extends AppCompatActivity {
         
 //        open chat with specific topic
         view.setOnClickListener(v ->  {
-            Toast.makeText(MainActivity.this, "Open chat: " + receiverModel.getName(), Toast.LENGTH_SHORT).show();
             changeActivityWithExtra(ChatActivity.class, "id", receiverModel.getId());
         });
 
