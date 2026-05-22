@@ -14,7 +14,7 @@
         android:id="@+id/return_section"
         android:layout_width="match_parent"
         android:layout_height="@dimen/return_section_height"
-        android:background="?attr/colorSecondary"
+        android:background="?attr/app_backgroundColor"
         app:layout_constraintTop_toTopOf="parent">
 
         <!-- return icon -->
@@ -98,7 +98,7 @@
     <!-- more option popup -->
     <FrameLayout
         android:id="@+id/more_option_popup"
-        android:layout_width="200dp"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:visibility="gone"
         android:background="@drawable/border_round"
@@ -123,13 +123,11 @@
                 style="@style/Widget.Material3.Button.TextButton"
                 android:gravity="start|center_vertical"/>
 
-<!--            <Button-->
-<!--                android:id="@+id/popup_option_2"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:text="Option 2"-->
-<!--                style="@style/Widget.Material3.Button.TextButton"-->
-<!--                android:gravity="start|center_vertical"/>-->
+            <SearchView
+                android:id="@+id/search_view"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/search_filter_input_height"
+                android:background="@drawable/border_round"/>
 
             <CheckBox
                 android:id="@+id/start_stop_session"

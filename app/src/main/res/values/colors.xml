@@ -1,50 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<!--    basic color-->
+    <!-- Basic Colors -->
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
-    
-<!--    color graduation from white to black -->
-    <color name="bright_snow">#F8F9FA</color>
-    <color name="platinium">#E9ECEF</color>
-    <color name="alabaster_gray">#DEE2E6</color>
-    <color name="pale_slate">#C5C9CE</color>
-    <color name="pale_slate_gray">#91939B</color>
-    <color name="iron_gray">#495057</color>
-    <color name="gun_metal">#343A40</color>
-    <color name="shadow_gray">#212529</color>
-    <color name="shadow_black">#121212</color>
 
-    <color name="primary_highlight">#3A30E8</color>
+    <!-- Dark Mode Palette (Blue-based) -->
+    <color name="background_dark">#0B0B2C</color>
+    <color name="second_background_dark">#121238</color> <!-- Header/Title -->
+    <color name="third_background_dark">#17174E</color> <!-- Subheader/Search -->
+    <color name="elevated_background_dark">#1E1E62</color> <!-- Popup -->
+    <color name="primary_text_dark">#F4F7FF</color>
+    <color name="secondary_text_dark">#B8C0FF</color>
+    <color name="highlight_dark">#3A30E8</color>
+
+    <!-- Light Mode Palette (Blue-based) -->
+    <color name="background_light">#F0F4FF</color>
+    <color name="second_background_light">#E0E7FF</color> <!-- Header/Title -->
+    <color name="third_background_light">#D1DBFF</color> <!-- Subheader/Search -->
+    <color name="elevated_background_light">#FFFFFF</color> <!-- Popup -->
+    <color name="primary_text_light">#0B0B2C</color>
+    <color name="secondary_text_light">#52577E</color>
+    <color name="highlight_light">#3A30E8</color>
+
+    <!-- Brand & Accent Colors -->
+<!--    <color name="primary_highlight">#3A30E8</color>-->
     <color name="secondary_highlight">#6B63FF</color>
-    <color name="interactive_hover">#857DFF</color>
-    <color name="active_state">#2C2C88</color>
+<!--    <color name="interactive_hover">#857DFF</color>-->
+<!--    <color name="active_state">#2C2C88</color>-->
 
-<!--    text-->
-    <color name="primary_text">#F4F7FF</color>
-    <color name="secondary_text">#B8C0FF</color>
+<!--    &lt;!&ndash; Semantic Text Colors (Legacy/Common) &ndash;&gt;-->
+<!--    <color name="primary_text">#F4F7FF</color>-->
+<!--    <color name="secondary_text">#B8C0FF</color>-->
     <color name="muted_text">#7D84B2</color>
     <color name="disabled_text">#52577E</color>
 
-<!--    background-->
-<!--    dark-->
-    <color name="background">#0B0B2C</color>
-    <color name="input_background">#111136</color>
-    <color name="second_background">#121238</color>
-    <color name="subheader_background">#17174E</color>
-    <color name="elevated_background">#1E1E62</color>
-<!--    light-->
-    <color name="background_light">#A1A1F6</color>
-    <color name="second_background_light">#837BFF</color>
-    <color name="subheader_background_light">#9D97FD</color>
-    <color name="elevated_background_light">#B8B8FF</color>
+    <!-- Backgrounds (Legacy/Common) -->
+<!--    <color name="background">#0B0B2C</color>-->
+<!--    <color name="input_background">#111136</color>-->
+<!--    <color name="second_background">#121238</color>-->
+<!--    <color name="subheader_background">#17174E</color>-->
+<!--    <color name="elevated_background">#1E1E62</color>-->
 
+    <!-- Other Colors -->
     <color name="violet">#9B30D0</color>
-
-<!--    <color name="green_light">#3EB606</color>-->
-<!--    <color name="green">#377E03</color>-->
-<!--    <color name="green_dark">#204B01</color>-->
-
-    <color name="vibrant_red">#EE2A3B</color>
     <color name="red">#B81113</color>
 </resources>

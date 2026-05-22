@@ -24,4 +24,5 @@
     <string name="description">Description</string>
     <string name="receive">Receive</string>
     <string name="more_option">More option</string>
+    <string name="active_panel">Active panel</string>
 </resources>

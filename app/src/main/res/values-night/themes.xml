@@ -2,17 +2,17 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.Mqitty" parent="Theme.Material3.DayNight.NoActionBar">
 <!--        dark theme-->
-        <item name="app_color">@color/primary_text</item>
-        <item name="app_background">@color/second_background</item>
-        <item name="app_backgroundColor">@color/subheader_background</item>
-        <item name="app_colorBackgroundFloating">@color/elevated_background</item>
-        <item name="app_hintTextColor">@color/secondary_text</item>
+        <item name="app_color">@color/primary_text_dark</item>
+        <item name="app_background">@color/background_dark</item>
+        <item name="app_backgroundColor">@color/third_background_dark</item>
+        <item name="app_colorBackgroundFloating">@color/elevated_background_dark</item>
+        <item name="app_hintTextColor">@color/secondary_text_dark</item>
 
-        <item name="colorPrimary">@color/primary_highlight</item>
-        <item name="colorOnPrimary">@color/primary_text</item>
+        <item name="colorPrimary">@color/highlight_dark</item>
+        <item name="colorOnPrimary">@color/primary_text_dark</item>
 
         <item name="colorSecondary">@color/secondary_highlight</item>
-        <item name="colorOnSecondary">@color/secondary_text</item>
+        <item name="colorOnSecondary">@color/secondary_text_dark</item>
 
         <item name="android:statusBarColor">?attr/app_colorPrimaryVariant</item>
     </style>

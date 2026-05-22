@@ -130,6 +130,17 @@ public class Mqtt {
         return URL_PROTOCOL + broker + URL_PORT;
     }
 
+    public void unsubscribe(String topic) {
+        try {
+            if (mqttClient != null && mqttClient.isConnected()) {
+                mqttClient.unsubscribe(topic);
+                Log.d("MQTT", "Unsubscribed from topic: " + topic);
+            }
+        } catch (MqttException e) {
+            Log.e("MQTT", "Unsubscribe error", e);
+        }
+    }
+
     public void disconnect() {
         try {
             if (mqttClient != null && mqttClient.isConnected()) {

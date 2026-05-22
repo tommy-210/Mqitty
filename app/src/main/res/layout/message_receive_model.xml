@@ -10,8 +10,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:background="@drawable/receive_msg_model"
         android:paddingHorizontal="6dp"
-        android:layout_width="0dp"
-        android:layout_weight="1"
+        android:layout_width="wrap_content"
+        android:minWidth="50dp"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
@@ -41,6 +41,12 @@
 <!--            app:layout_constraintRight_toRightOf="parent"/>-->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <Space
+        android:minWidth="@dimen/space_width"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="match_parent"/>
 
     <Space
         android:layout_width="@dimen/space_width"

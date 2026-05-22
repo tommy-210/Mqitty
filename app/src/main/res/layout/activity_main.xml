@@ -152,9 +152,11 @@
 
 <!--        send-->
         <ImageView
+            android:background="@drawable/border_round"
             android:id="@+id/send_btn"
-            android:layout_width="@dimen/icon_size"
-            android:layout_height="@dimen/icon_size"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:padding="3dp"
             android:textAlignment="center"
             android:contentDescription="@string/send_label"
             style="@style/SEND_ICON"
@@ -166,8 +168,9 @@
 <!--        receive-->
         <ImageView
             android:id="@+id/receive_btn"
-            android:layout_width="@dimen/icon_size"
-            android:layout_height="@dimen/icon_size"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:padding="3dp"
             android:textAlignment="center"
             android:contentDescription="@string/receive_label"
             style="@style/RECEIVE_ICON"
@@ -179,8 +182,9 @@
 <!--        settings-->
         <ImageView
             android:id="@+id/settings_btn"
-            android:layout_width="@dimen/icon_size"
-            android:layout_height="@dimen/icon_size"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:padding="3dp"
             android:contentDescription="@string/settings_label"
             app:layout_constraintBottom_toBottomOf="@id/navbar_section"
             app:layout_constraintLeft_toRightOf="@id/receive_btn"

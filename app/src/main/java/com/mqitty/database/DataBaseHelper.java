@@ -143,6 +143,33 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return returnList;
     }
 
+    public List<MessageModel> getFilteredMessages(int id, String query) {
+        List<MessageModel> returnList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String queryString = "SELECT * FROM " + getChatTable(id) + " WHERE " +
+                ChatsDB.COLUMN_MSG + " LIKE ?";
+
+        String[] searchArgs = new String[]{"%" + query + "%"};
+        Cursor cursor = db.rawQuery(queryString, searchArgs);
+
+        if (cursor.moveToFirst()) {
+            do {
+                int ID = cursor.getInt(0);
+                String MSG = cursor.getString(1);
+                boolean IS_SEND = cursor.getInt(2) == 1;
+                long TIMESTAMP = cursor.getLong(3);
+
+                MessageModel messageModel = new MessageModel(ID, MSG, IS_SEND, TIMESTAMP);
+                returnList.add(messageModel);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+        return returnList;
+    }
+
     public void deleteAllMessageFromChat(int id) {
         SQLiteDatabase db = this.getWritableDatabase();
         String query = "DELETE FROM " + getChatTable(id);

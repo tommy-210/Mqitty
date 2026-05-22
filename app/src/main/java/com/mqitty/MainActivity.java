@@ -2,6 +2,7 @@ package com.mqitty;
 
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,8 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
+
 import com.mqitty.database.DataBaseHelper;
 import com.mqitty.manager.ReceiveManager;
 import com.mqitty.ui.ChatActivity;
@@ -78,11 +81,15 @@ public class MainActivity extends AppCompatActivity {
 //        send panel button
         send_btn.setOnClickListener(v -> {
             showPanel(sendPanelContainer);
+            send_btn.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.border_round, null));
+            receive_btn.setBackground(null);
             refreshSendPanelData(null);
         });
 //        receive panel button
         receive_btn.setOnClickListener(v -> {
             showPanel(receivePanelContainer);
+            receive_btn.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.border_round, null));
+            send_btn.setBackground(null);
             refreshReceivePanelData(null);
         });
 //        settings panel button
@@ -260,25 +267,39 @@ public class MainActivity extends AppCompatActivity {
         ImageView play_receive_msg_btn = view.findViewById(R.id.play_receive_msg_btn);
         ImageView stop_receive_msg_btn = view.findViewById(R.id.stop_receive_msg_btn);
 
+        if (MqttManager.getInstance().isSubscribed(receiverModel.getBroker(), receiverModel.getTopic())) {
+            play_receive_msg_btn.setVisibility(View.GONE);
+            stop_receive_msg_btn.setVisibility(View.VISIBLE);
+        } else {
+            play_receive_msg_btn.setVisibility(View.VISIBLE);
+            stop_receive_msg_btn.setVisibility(View.GONE);
+        }
+
         play_receive_msg_btn.setOnClickListener(v -> {
             play_receive_msg_btn.setVisibility(View.GONE);
             stop_receive_msg_btn.setVisibility(View.VISIBLE);
+            MqttManager.getInstance().addPersistentSubscription(receiverModel.getBroker(), receiverModel.getTopic(), receiverModel.getId());
             mqtt.connect(new IMqttActionListener() {
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
+                    mqtt.subscribe(receiverModel.getTopic(), 1);
                     Toast.makeText(MainActivity.this, "Connection success", Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
                 public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
                     Toast.makeText(MainActivity.this, "Connection failed", Toast.LENGTH_SHORT).show();
+                    MqttManager.getInstance().removePersistentSubscription(receiverModel.getBroker(), receiverModel.getTopic());
+                    play_receive_msg_btn.setVisibility(View.VISIBLE);
+                    stop_receive_msg_btn.setVisibility(View.GONE);
                 }
             });
         });
         stop_receive_msg_btn.setOnClickListener(v -> {
             play_receive_msg_btn.setVisibility(View.VISIBLE);
             stop_receive_msg_btn.setVisibility(View.GONE);
-            mqtt.disconnect();
+            mqtt.unsubscribe(receiverModel.getTopic());
+            MqttManager.getInstance().removePersistentSubscription(receiverModel.getBroker(), receiverModel.getTopic());
         });
     }
 

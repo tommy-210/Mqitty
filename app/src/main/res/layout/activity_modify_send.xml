@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:id="@+id/return_section"
-        android:background="?attr/app_colorBackgroundFloating"
+        android:background="?attr/app_backgroundColor"
         app:layout_constraintTop_toTopOf="@id/modify_send_root"
         app:layout_constraintRight_toRightOf="@id/modify_send_root"
         app:layout_constraintLeft_toLeftOf="@id/modify_send_root">

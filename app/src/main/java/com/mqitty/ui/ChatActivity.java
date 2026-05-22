@@ -12,6 +12,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
@@ -38,6 +39,7 @@ public class ChatActivity extends AppCompatActivity implements Mqtt.MqttMessageL
     EditText text_input_msg;
     LinearLayout chat_msg_container;
     ScrollView scroll_chat_msg_container;
+    SearchView search_view_btn;
     FrameLayout more_option_popup;
     ReceiverModel receiverModel;
     DataBaseHelper dataBaseHelper;
@@ -69,6 +71,7 @@ public class ChatActivity extends AppCompatActivity implements Mqtt.MqttMessageL
             @Override
             public void onSuccess(IMqttToken asyncActionToken) {
                 mqtt.subscribe(receiverModel.getTopic(), 1);
+                MqttManager.getInstance().addPersistentSubscription(receiverModel.getBroker(), receiverModel.getTopic(), receiverModel.getId());
             }
 
             @Override
@@ -99,14 +102,17 @@ public class ChatActivity extends AppCompatActivity implements Mqtt.MqttMessageL
                 }
             }
             MessageModel newMessage = new MessageModel(-1, message, false, System.currentTimeMillis());
-            dataBaseHelper.addOneMessage(receiverModel.getId(), newMessage);
             runOnUiThread(() -> addOneMessage(newMessage));
         }
     }
 
     private void reloadAllMessages() {
-        chat_msg_container.removeAllViews();
         List<MessageModel> messageList = dataBaseHelper.getEveryoneMessageFromChatById(receiverModel.getId());
+        reloadMessages(messageList);
+    }
+
+    private void reloadMessages(List<MessageModel> messageList) {
+        chat_msg_container.removeAllViews();
         for (MessageModel message : messageList) {
             View view;
             if (message.isSend()) {
@@ -146,6 +152,7 @@ public class ChatActivity extends AppCompatActivity implements Mqtt.MqttMessageL
         more_option_popup = findViewById(R.id.more_option_popup);
         clear_session_btn = findViewById(R.id.clear_session_btn);
         session_on_checkbtn = findViewById(R.id.start_stop_session);
+        search_view_btn = findViewById(R.id.search_view);
 
         return_btn.setOnClickListener(v -> {
 //            return to main activity
@@ -179,6 +186,22 @@ public class ChatActivity extends AppCompatActivity implements Mqtt.MqttMessageL
         clear_session_btn.setOnClickListener(v -> {
             showConfirmDeleteMsgsDialog();
             reloadAllMessages();
+        });
+        search_view_btn.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextChange(String newText) { return false; }
+
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Toast.makeText(ChatActivity.this, "Filter: " + query, Toast.LENGTH_SHORT).show();
+                List<MessageModel> messages = dataBaseHelper.getFilteredMessages(receiverModel.getId(), query);
+                reloadMessages(messages);
+                return false;
+            }
+        });
+        search_view_btn.setOnCloseListener(() -> {
+            reloadAllMessages();
+            return false;
         });
         send_msg_btn.setOnClickListener(v -> {
             String msgText = text_input_msg.getText().toString();
