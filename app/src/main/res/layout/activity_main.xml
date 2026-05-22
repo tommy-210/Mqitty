@@ -138,6 +138,13 @@
             android:layout_height="match_parent"
             android:visibility="gone" />
 
+<!--        settings panel -->
+        <FrameLayout
+            android:id="@+id/settings_panel_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 <!--    navigation bar (send, receive, settings)-->

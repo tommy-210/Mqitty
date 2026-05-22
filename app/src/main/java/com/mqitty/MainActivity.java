@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
 
     ImageView send_btn, receive_btn, settings_btn, filter_btn;
     SearchView searchView;
-    ViewGroup sendPanelContainer, receivePanelContainer;
+    ViewGroup sendPanelContainer, receivePanelContainer, settingsPanelContainer;
     FrameLayout filter_popup;
     Button clear_panel_btn;
     DataBaseHelper dataBaseHelper;
@@ -53,6 +53,9 @@ public class MainActivity extends AppCompatActivity {
         initComponents();
         componentListener();
         
+        // Show send panel by default
+        showPanel(sendPanelContainer);
+        
         // Initial setup for the default included layout
         setupInnerPanelListeners();
     }
@@ -65,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
         //main container
         sendPanelContainer = findViewById(R.id.send_panel_container);
         receivePanelContainer = findViewById(R.id.receive_panel_container);
+        settingsPanelContainer = findViewById(R.id.settings_panel_container);
         filter_popup = findViewById(R.id.filter_popup_section);
         clear_panel_btn = findViewById(R.id.clear_panel_btn);
         filter_btn = findViewById(R.id.filter_btn);
@@ -72,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
         // Pre-inflate layouts into containers
         LayoutInflater.from(this).inflate(R.layout.activity_send, sendPanelContainer, true);
         LayoutInflater.from(this).inflate(R.layout.activity_receive, receivePanelContainer, true);
+        LayoutInflater.from(this).inflate(R.layout.activity_settings, settingsPanelContainer, true);
 
         refreshSendPanelData(null);
         refreshReceivePanelData(null);
@@ -81,20 +86,16 @@ public class MainActivity extends AppCompatActivity {
 //        send panel button
         send_btn.setOnClickListener(v -> {
             showPanel(sendPanelContainer);
-            send_btn.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.border_round, null));
-            receive_btn.setBackground(null);
             refreshSendPanelData(null);
         });
 //        receive panel button
         receive_btn.setOnClickListener(v -> {
             showPanel(receivePanelContainer);
-            receive_btn.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.border_round, null));
-            send_btn.setBackground(null);
             refreshReceivePanelData(null);
         });
 //        settings panel button
         settings_btn.setOnClickListener(v -> {
-            Toast.makeText(MainActivity.this, "settings", Toast.LENGTH_SHORT).show();
+            showPanel(settingsPanelContainer);
         });
 //        search view summit filter query
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -158,8 +159,23 @@ public class MainActivity extends AppCompatActivity {
     private void showPanel(ViewGroup panelToShow) {
         sendPanelContainer.setVisibility(View.GONE);
         receivePanelContainer.setVisibility(View.GONE);
+        settingsPanelContainer.setVisibility(ImageView.GONE);
 
         panelToShow.setVisibility(View.VISIBLE);
+
+        if (panelToShow == sendPanelContainer) {
+            send_btn.setBackgroundResource(R.drawable.border_round);
+            receive_btn.setBackground(null);
+            settings_btn.setBackground(null);
+        }else if (panelToShow == receivePanelContainer) {
+            receive_btn.setBackgroundResource(R.drawable.border_round);
+            send_btn.setBackground(null);
+            settings_btn.setBackground(null);
+        }else if(panelToShow == settingsPanelContainer) {
+            settings_btn.setBackgroundResource(R.drawable.border_round);
+            send_btn.setBackground(null);
+            receive_btn.setBackground(null);
+        }
     }
 
     private void setupInnerPanelListeners() {
