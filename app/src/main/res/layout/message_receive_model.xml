@@ -19,7 +19,7 @@
             android:id="@+id/msg_text"
             android:padding="3dp"
             android:text="Prova messaggio\nskfjslfj"
-            android:textColor="?attr/color"
+            android:textColor="?attr/colorOnPrimary"
             android:textSize="@dimen/message_text_size"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

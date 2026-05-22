@@ -15,24 +15,36 @@
     <color name="shadow_gray">#212529</color>
     <color name="shadow_black">#121212</color>
 
-<!--    different type of theme-->
-    <color name="blue_light">#0DA3CE</color>
-    <color name="blue">#0B559B</color>
-    <color name="blue_dark">#022257</color>
+    <color name="primary_highlight">#3A30E8</color>
+    <color name="secondary_highlight">#6B63FF</color>
+    <color name="interactive_hover">#857DFF</color>
+    <color name="active_state">#2C2C88</color>
 
-    <color name="violet_light">#7b2cbf</color>
-    <color name="violet">#5a189a</color>
-    <color name="violet_dark">#3c096c</color>
+<!--    text-->
+    <color name="primary_text">#F4F7FF</color>
+    <color name="secondary_text">#B8C0FF</color>
+    <color name="muted_text">#7D84B2</color>
+    <color name="disabled_text">#52577E</color>
 
-    <color name="green_light">#3EB606</color>
-    <color name="green">#377E03</color>
-    <color name="green_dark">#204B01</color>
+<!--    background-->
+<!--    dark-->
+    <color name="background">#0B0B2C</color>
+    <color name="input_background">#111136</color>
+    <color name="second_background">#121238</color>
+    <color name="subheader_background">#17174E</color>
+    <color name="elevated_background">#1E1E62</color>
+<!--    light-->
+    <color name="background_light">#A1A1F6</color>
+    <color name="second_background_light">#837BFF</color>
+    <color name="subheader_background_light">#9D97FD</color>
+    <color name="elevated_background_light">#B8B8FF</color>
 
-    <color name="yellow">#CE9A10</color>
+    <color name="violet">#9B30D0</color>
 
-    <color name="orange_light">#F47E19</color>
-    <color name="orange">#C15113</color>
-    <color name="orange_dark">#762B02</color>
+<!--    <color name="green_light">#3EB606</color>-->
+<!--    <color name="green">#377E03</color>-->
+<!--    <color name="green_dark">#204B01</color>-->
 
+    <color name="vibrant_red">#EE2A3B</color>
     <color name="red">#B81113</color>
 </resources>

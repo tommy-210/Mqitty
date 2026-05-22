@@ -2,32 +2,35 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.Mqitty" parent="Theme.Material3.DayNight.NoActionBar">
 <!--        light theme-->
-        <item name="color">@color/black</item>
-        <item name="background">@color/bright_snow</item>
-        <item name="colorBackgroundFloating">@color/alabaster_gray</item>
-        <item name="backgroundColor">@color/pale_slate</item>
-        <item name="hintTextColor">@color/pale_slate_gray</item>
+        <item name="app_color">@color/black</item>
+        <item name="app_background">@color/background_light</item>
+        <item name="app_backgroundColor">@color/subheader_background_light</item>
+        <item name="app_colorBackgroundFloating">@color/elevated_background_light</item>
+        <item name="app_hintTextColor">@color/disabled_text</item>
 
-        <item name="colorPrimary">@color/blue_light</item>
-<!--        <item name="colorPrimaryVariant">@color/blue</item>-->
-        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimary">@color/primary_highlight</item>
+<!--        <item name="colorPrimaryVariant">@color/royal_blue</item>-->
+        <item name="colorOnPrimary">@color/primary_text</item>
 
-        <item name="colorSecondary">@color/blue</item>
+        <item name="colorSecondary">@color/secondary_highlight</item>
 <!--        <item name="colorSecondaryVariant">@color/violet</item>-->
-        <item name="colorOnSecondary">@color/white</item>
+        <item name="colorOnSecondary">@color/secondary_text</item>
 
-        <item name="android:statusBarColor">?attr/colorPrimary</item>
     </style>
 
 <!--    light mode-->
 <!--    screen background-->
     <style name="SCREEN">
-        <item name="backgroundColor">@color/bright_snow</item>
+        <item name="android:background">?attr/app_background</item>
     </style>
-    
+
+    <style name="HEADER_BG">
+        <item name="android:background">@drawable/header_gradient_light</item>
+    </style>
+
 <!--    text color-->
     <style name="TEXT">
-        <item name="android:textColor">@color/black</item>
+        <item name="android:textColor">?attr/app_color</item>
     </style>
 
 <!--    icon navigation bar-->

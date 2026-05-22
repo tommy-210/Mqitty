@@ -6,6 +6,7 @@
     android:id="@+id/modify_send_root"
     android:fitsSystemWindows="true"
     tools:context=".ui.SendModify"
+    style="@style/SCREEN"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <!--    header section-->
@@ -13,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:id="@+id/return_section"
-        android:background="?attr/colorBackgroundFloating"
+        android:background="?attr/app_colorBackgroundFloating"
         app:layout_constraintTop_toTopOf="@id/modify_send_root"
         app:layout_constraintRight_toRightOf="@id/modify_send_root"
         app:layout_constraintLeft_toLeftOf="@id/modify_send_root">
@@ -70,7 +71,7 @@
             android:autofillHints="none"
             android:hint="@string/name_hint"
             android:inputType="text"
-            android:textColorHint="?attr/hintTextColor" />
+            android:textColorHint="?attr/app_hintTextColor" />
 
         <!--        description of custom send message-->
         <EditText
@@ -86,7 +87,7 @@
             android:gravity="start|top"
             android:hint="@string/description_form"
             android:inputType="textMultiLine"
-            android:textColorHint="?attr/hintTextColor" />
+            android:textColorHint="?attr/app_hintTextColor" />
 
         <!--        broker of custom send message for mqtt-->
         <EditText
@@ -98,7 +99,7 @@
             android:autofillHints="none"
             android:hint="@string/broker_form"
             android:inputType="text"
-            android:textColorHint="?attr/hintTextColor" />
+            android:textColorHint="?attr/app_hintTextColor" />
 
         <!--        topic of custom send message for mqtt-->
         <EditText
@@ -110,7 +111,7 @@
             android:autofillHints="none"
             android:hint="@string/topic_form"
             android:inputType="text"
-            android:textColorHint="?attr/hintTextColor" />
+            android:textColorHint="?attr/app_hintTextColor" />
 
         <!--        message of custom send message-->
         <EditText
@@ -126,7 +127,7 @@
             android:gravity="start|top"
             android:hint="@string/message_form"
             android:inputType="textMultiLine"
-            android:textColorHint="?attr/hintTextColor" />
+            android:textColorHint="?attr/app_hintTextColor" />
 
         <Space
             android:layout_weight="1"
@@ -139,7 +140,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/save_btn"
-            android:textColor="?attr/background"
+            android:textColor="?attr/colorOnPrimary"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -150,7 +151,7 @@
             android:layout_height="wrap_content"
             android:text="@string/delete_btn"
             app:backgroundTint="@color/red"
-            android:textColor="?attr/background"
+            android:textColor="?attr/colorOnPrimary"
             android:textSize="20sp"
             android:textStyle="bold" />
 

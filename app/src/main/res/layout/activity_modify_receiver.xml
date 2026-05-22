@@ -6,6 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/modify_receiver_root"
     android:fitsSystemWindows="true"
+    style="@style/SCREEN"
     tools:context=".ui.ReceiveModify">
 
 
@@ -14,7 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/return_section_height"
         android:id="@+id/return_section"
-        android:background="?attr/colorBackgroundFloating"
+        android:background="?attr/app_colorBackgroundFloating"
         app:layout_constraintTop_toTopOf="@id/modify_receiver_root"
         app:layout_constraintRight_toRightOf="@id/modify_receiver_root"
         app:layout_constraintLeft_toLeftOf="@id/modify_receiver_root">
@@ -71,7 +72,7 @@
             android:autofillHints="none"
             android:hint="@string/name_hint"
             android:inputType="text"
-            android:textColorHint="?attr/hintTextColor" />
+            android:textColorHint="?attr/app_hintTextColor" />
 
         <!--        description of custom send message-->
         <EditText
@@ -87,7 +88,7 @@
             android:gravity="start|top"
             android:hint="@string/description_form"
             android:inputType="textMultiLine"
-            android:textColorHint="?attr/hintTextColor" />
+            android:textColorHint="?attr/app_hintTextColor" />
 
         <!--        broker of custom send message for mqtt-->
         <EditText
@@ -99,7 +100,7 @@
             android:autofillHints="none"
             android:hint="@string/broker_form"
             android:inputType="text"
-            android:textColorHint="?attr/hintTextColor" />
+            android:textColorHint="?attr/app_hintTextColor" />
 
         <!--        topic of custom send message for mqtt-->
         <EditText
@@ -111,7 +112,7 @@
             android:autofillHints="none"
             android:hint="@string/topic_form"
             android:inputType="text"
-            android:textColorHint="?attr/hintTextColor" />
+            android:textColorHint="?attr/app_hintTextColor" />
 
         <Space
             android:layout_weight="1"
@@ -124,7 +125,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/save_btn"
-            android:textColor="?attr/background"
+            android:textColor="?attr/colorOnPrimary"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -135,7 +136,7 @@
             android:layout_height="wrap_content"
             android:text="@string/delete_btn"
             app:backgroundTint="@color/red"
-            android:textColor="?attr/background"
+            android:textColor="?attr/colorOnPrimary"
             android:textSize="20sp"
             android:textStyle="bold" />
 

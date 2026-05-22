@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="app_color" format="color" />
+    <attr name="app_background" format="color|reference" />
+    <attr name="app_backgroundColor" format="color|reference" />
+    <attr name="app_colorBackgroundFloating" format="color|reference" />
+    <attr name="app_hintTextColor" format="color" />
+    <attr name="app_colorPrimaryVariant" format="color|reference" />
+</resources>

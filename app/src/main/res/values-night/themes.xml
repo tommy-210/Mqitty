@@ -2,31 +2,33 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.Mqitty" parent="Theme.Material3.DayNight.NoActionBar">
 <!--        dark theme-->
-        <item name="color">@color/white</item>
-        <item name="background">@color/shadow_black</item>
-        <item name="backgroundColor">@color/gun_metal</item>
-        <item name="hintTextColor">@color/pale_slate</item>
+        <item name="app_color">@color/primary_text</item>
+        <item name="app_background">@color/second_background</item>
+        <item name="app_backgroundColor">@color/subheader_background</item>
+        <item name="app_colorBackgroundFloating">@color/elevated_background</item>
+        <item name="app_hintTextColor">@color/secondary_text</item>
 
-        <item name="colorPrimary">@color/blue_light</item>
-        <item name="colorPrimaryVariant">@color/blue</item>
-        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimary">@color/primary_highlight</item>
+        <item name="colorOnPrimary">@color/primary_text</item>
 
-        <item name="colorSecondary">@color/violet_light</item>
-        <item name="colorSecondaryVariant">@color/violet</item>
-        <item name="colorOnSecondary">@color/white</item>
+        <item name="colorSecondary">@color/secondary_highlight</item>
+        <item name="colorOnSecondary">@color/secondary_text</item>
 
-        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <item name="android:statusBarColor">?attr/app_colorPrimaryVariant</item>
     </style>
 
-    <!--    dark mode-->
-    <!--    screen background-->
     <style name="SCREEN">
-        <item name="backgroundColor">@color/shadow_black</item>
+        <item name="android:background">?attr/app_background</item>
     </style>
+
+    <style name="HEADER_BG">
+        <item name="android:background">@drawable/header_gradient_dark</item>
+    </style>
+
 
     <!--    text color-->
     <style name="TEXT">
-        <item name="android:textColor">@color/white</item>
+        <item name="android:textColor">?attr/app_color</item>
     </style>
 
     <!--    icon navigation bar-->
