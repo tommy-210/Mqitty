@@ -66,21 +66,27 @@ public class ChatActivity extends AppCompatActivity implements Mqtt.MqttMessageL
         dataBaseHelper.createChatTable(receiverModel.getId());
 
         mqtt = MqttManager.getInstance().getMqtt(ChatActivity.this, receiverModel.getBroker());
+
+        initComponents();
+
         mqtt.addMessageListener(this);
         mqtt.connect(new IMqttActionListener() {
             @Override
             public void onSuccess(IMqttToken asyncActionToken) {
                 mqtt.subscribe(receiverModel.getTopic(), 1);
                 MqttManager.getInstance().addPersistentSubscription(receiverModel.getBroker(), receiverModel.getTopic(), receiverModel.getId());
+                runOnUiThread(() -> {
+                    session_on_checkbtn.setChecked(true);
+                    Toast.makeText(ChatActivity.this, "Connection success", Toast.LENGTH_SHORT).show();
+                });
             }
 
             @Override
             public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
-                Toast.makeText(ChatActivity.this, "connection failed", Toast.LENGTH_SHORT).show();
+                runOnUiThread(() -> Toast.makeText(ChatActivity.this, "Connection failed", Toast.LENGTH_SHORT).show());
             }
         });
 
-        initComponents();
         reloadAllMessages();
     }
 
@@ -152,11 +158,13 @@ public class ChatActivity extends AppCompatActivity implements Mqtt.MqttMessageL
         more_option_popup = findViewById(R.id.more_option_popup);
         clear_session_btn = findViewById(R.id.clear_session_btn);
         session_on_checkbtn = findViewById(R.id.start_stop_session);
+        session_on_checkbtn.setChecked(MqttManager.getInstance().isSubscribed(receiverModel.getBroker(), receiverModel.getTopic()));
         search_view_btn = findViewById(R.id.search_view);
 
         return_btn.setOnClickListener(v -> {
 //            return to main activity
             Intent intent = new Intent(ChatActivity.this, MainActivity.class);
+            intent.putExtra(MainActivity.EXTRA_PANEL, MainActivity.PANEL_RECEIVE);
             startActivity(intent);
         });
         more_option_btn.setOnClickListener(v -> {
@@ -171,16 +179,25 @@ public class ChatActivity extends AppCompatActivity implements Mqtt.MqttMessageL
                 mqtt.connect(new IMqttActionListener() {
                     @Override
                     public void onSuccess(IMqttToken asyncActionToken) {
-                        Toast.makeText(ChatActivity.this, "Connection success", Toast.LENGTH_SHORT).show();
+                        mqtt.subscribe(receiverModel.getTopic(), 1);
+                        MqttManager.getInstance().addPersistentSubscription(receiverModel.getBroker(), receiverModel.getTopic(), receiverModel.getId());
+                        runOnUiThread(() -> {
+                            session_on_checkbtn.setChecked(true);
+                            Toast.makeText(ChatActivity.this, "Connection success", Toast.LENGTH_SHORT).show();
+                        });
                     }
 
                     @Override
                     public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
-                        Toast.makeText(ChatActivity.this, "Connection failed", Toast.LENGTH_SHORT).show();
+                        runOnUiThread(() -> {
+                            session_on_checkbtn.setChecked(false);
+                            Toast.makeText(ChatActivity.this, "Connection failed", Toast.LENGTH_SHORT).show();
+                        });
                     }
                 });
             }else {
-                mqtt.disconnect();
+                mqtt.unsubscribe(receiverModel.getTopic());
+                MqttManager.getInstance().removePersistentSubscription(receiverModel.getBroker(), receiverModel.getTopic());
             }
         });
         clear_session_btn.setOnClickListener(v -> {

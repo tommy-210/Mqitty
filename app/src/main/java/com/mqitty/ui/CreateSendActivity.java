@@ -73,6 +73,7 @@ public class CreateSendActivity extends AppCompatActivity {
 
     private void returnToMainActivity() {
         Intent intent = new Intent(CreateSendActivity.this, MainActivity.class);
+        intent.putExtra(MainActivity.EXTRA_PANEL, MainActivity.PANEL_SEND);
         startActivity(intent);
     }
 

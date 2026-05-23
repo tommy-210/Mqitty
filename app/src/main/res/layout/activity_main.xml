@@ -129,7 +129,8 @@
         <FrameLayout
             android:id="@+id/send_panel_container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:visibility="gone"/>
 
 <!--        receive panel -->
         <FrameLayout
@@ -159,7 +160,6 @@
 
 <!--        send-->
         <ImageView
-            android:background="@drawable/border_round"
             android:id="@+id/send_btn"
             android:layout_width="36dp"
             android:layout_height="36dp"

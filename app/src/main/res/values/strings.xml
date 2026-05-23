@@ -26,4 +26,15 @@
     <string name="more_option">More option</string>
     <string name="active_panel">Active panel</string>
     <string name="settings">Settings</string>
+    <string name="about_label">Mqutty is a project born from my automation systems professor\'s initiative to contact ENEA to discuss energy efficiency. This led to a project that included the use of the MQTT protocol, so I decided to create my own MQTT client.</string>
+    <string name="github_project_link"><a href='https://github.com/tommy-210/Mqitty'>Github</a></string>
+
+    <string-array name="theme_mode_items">
+        <item>Light</item>
+        <item>Dark</item>
+    </string-array>
+    <string name="panel_id">panel</string>
+    <string name="Send_panel">0</string>
+    <string name="Receive_panel">1</string>
+    <string name="Settings_panel">2</string>
 </resources>

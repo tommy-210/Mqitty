@@ -21,4 +21,6 @@
     <dimen name="return_icon_height">38dp</dimen>
     <dimen name="message_text_size">16sp</dimen>
     <dimen name="space_width">150dp</dimen>
+    <dimen name="panel_title_size">24sp</dimen>
+    <dimen name="settings_item_height">50dp</dimen>
 </resources>

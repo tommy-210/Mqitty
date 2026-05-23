@@ -46,6 +46,7 @@ public class CreateReceiveActivity extends AppCompatActivity {
     private void addListeners() {
         return_btn.setOnClickListener(v -> {
             Intent intent = new Intent(CreateReceiveActivity.this, MainActivity.class);
+            intent.putExtra(MainActivity.EXTRA_PANEL, MainActivity.PANEL_RECEIVE);
             startActivity(intent);
         });
 

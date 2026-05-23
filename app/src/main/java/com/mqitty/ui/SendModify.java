@@ -102,6 +102,7 @@ public class SendModify extends AppCompatActivity {
 
     private void returnToMain() {
         Intent intent = new Intent(SendModify.this, MainActivity.class);
+        intent.putExtra(MainActivity.EXTRA_PANEL, MainActivity.PANEL_SEND);
         startActivity(intent);
     }
 

@@ -103,6 +103,7 @@ public class ReceiveModify  extends AppCompatActivity {
 
     private void returnToMain() {
         Intent intent = new Intent(ReceiveModify.this, MainActivity.class);
+        intent.putExtra(MainActivity.EXTRA_PANEL, MainActivity.PANEL_RECEIVE);
         startActivity(intent);
     }
 

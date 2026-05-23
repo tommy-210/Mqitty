@@ -15,6 +15,13 @@ import java.util.List;
 
 public class DataBaseHelper extends SQLiteOpenHelper {
 
+    class SettingsDB {
+        final static String TABLE = "SETTINGS_TABLE";
+        final static String COLUMN_ID = "ID";
+        final static String COLUMN_LABEL = "SETTINGS_LABEL";
+        final static String COLUMN_VALUE = "SETTINGS_VALUE";
+    }
+
     class SendDB {
         final static String TABLE = "SEND_TABLE";
         final static String COLUMN_ID = "ID";
@@ -73,14 +80,21 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 ReceiverDB.COLUMN_BROKER + " TEXT, " +
                 ReceiverDB.COLUMN_TOPIC + " TEXT)";
 
+        String createSettingsTable = "CREATE TABLE " + SettingsDB.TABLE + " (" +
+                SettingsDB.COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                SettingsDB.COLUMN_LABEL + " TEXT, " +
+                SettingsDB.COLUMN_VALUE + " TEXT)";
+
         db.execSQL(createSendTable);
         db.execSQL(createReceiverTable);
+//        db.execSQL(createSettingsTable);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + SendDB.TABLE);
         db.execSQL("DROP TABLE IF EXISTS " + ReceiverDB.TABLE);
+//        db.execSQL("DROP TABLE IF EXISTS " + SettingsDB.TABLE);
         onCreate(db);
     }
 
@@ -175,6 +189,12 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         String query = "DELETE FROM " + getChatTable(id);
 
         db.execSQL(query);
+    }
+    
+    public void deleteMessageTooOldFromChat(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        long limitTimestamp = System.currentTimeMillis() - (7L * 24 * 60 * 60 * 1000);
+        db.delete(getChatTable(id), ChatsDB.COLUMN_TIMESTAMP + " < ?", new String[]{String.valueOf(limitTimestamp)});
     }
 
     public long addOneSend(SendModel sendModel) {

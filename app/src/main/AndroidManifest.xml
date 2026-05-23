@@ -39,9 +39,6 @@
 
 <!--        chat receive activity-->
         <activity android:name=".ui.ChatActivity"/>
-
-<!--        settings activity-->
-        <activity android:name=".ui.SettingsActivity"/>
     </application>
 
 </manifest>
