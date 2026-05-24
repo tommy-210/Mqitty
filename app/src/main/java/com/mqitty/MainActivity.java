@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
 
     private final android.os.Handler settingsHandler = new android.os.Handler(android.os.Looper.getMainLooper());
     private Runnable settingsRunnable;
+    private static boolean isCleanupDone = false;
 
     public static final String EXTRA_PANEL = "panel";
     public static final int PANEL_SEND = 0;
@@ -395,6 +396,16 @@ public class MainActivity extends AppCompatActivity {
         }else {
             receiverModels = dataBaseHelper.getEveryoneReceiver();
         }
+
+        if (!isCleanupDone) {
+            String limitStr = dataBaseHelper.getSettingByLabel(DataBaseHelper.SettingsDB.LIMIT_TIME_MSG);
+            long timeLimit = (limitStr != null) ? Long.parseLong(limitStr) : 7;
+            for (ReceiverModel model : receiverModels) {
+                dataBaseHelper.deleteMessageTooOldFromChat(model.getId(), timeLimit);
+            }
+            isCleanupDone = true;
+        }
+
         View receiveRoot = findViewById(R.id.activity_receive_root);
         if (receiveRoot instanceof ViewGroup) {
             ViewGroup container = (ViewGroup) receiveRoot;

@@ -200,9 +200,13 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         db.execSQL(query);
     }
     
-    public void deleteMessageTooOldFromChat(int id) {
+    public void deleteMessageTooOldFromChat(int id, long timeLimit) {
         SQLiteDatabase db = this.getWritableDatabase();
-        long limitTimestamp = System.currentTimeMillis() - (7L * 24 * 60 * 60 * 1000);
+        if(timeLimit == -1) {
+            String setting = getSettingByLabel(SettingsDB.LIMIT_TIME_MSG);
+            timeLimit = (setting != null) ? Long.parseLong(setting) : 7;
+        }
+        long limitTimestamp = System.currentTimeMillis() - (timeLimit * 24 * 60 * 60 * 1000);
         db.delete(getChatTable(id), ChatsDB.COLUMN_TIMESTAMP + " < ?", new String[]{String.valueOf(limitTimestamp)});
     }
 
