@@ -5,6 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
+        android:padding="@dimen/padding_4dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -22,9 +23,9 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"/>
 
-<!--        theme mode (light | dark)-->
+        <!--        theme mode (light | dark)-->
         <LinearLayout
-            android:layout_marginVertical="@dimen/margin_20dp"
+            android:layout_marginVertical="@dimen/space_divider_settings"
             android:layout_width="match_parent"
             android:layout_height="@dimen/settings_item_height"
             android:orientation="horizontal">
@@ -39,7 +40,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="8dp"
                 android:layout_weight="1"
-                android:text="Theme mode"
+                android:text="@string/theme_mode_label"
                 android:textSize="@dimen/message_text_size" />
 
             <Spinner
@@ -49,7 +50,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginVertical="8dp"
                 android:spinnerMode="dropdown"
-                android:popupBackground="?attr/backgroundColor"/>
+                android:popupBackground="?attr/app_backgroundColor"/>
 
             <Space
                 android:layout_width="@dimen/margin_20dp"
@@ -57,9 +58,44 @@
 
         </LinearLayout>
 
-<!--        time limit to store messages in chat-->
+<!--        select default panel-->
         <LinearLayout
-            android:layout_marginVertical="@dimen/margin_20dp"
+            android:layout_marginVertical="@dimen/space_divider_settings"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/settings_item_height"
+            android:orientation="horizontal">
+
+            <Space
+                android:layout_width="@dimen/margin_20dp"
+                android:layout_height="match_parent"/>
+
+            <TextView
+                style="@style/TEXT"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="8dp"
+                android:layout_weight="1"
+                android:text="@string/default_panel_label"
+                android:textSize="@dimen/message_text_size" />
+
+            <Spinner
+                android:id="@+id/default_panel_dropdown"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:layout_marginVertical="8dp"
+                android:spinnerMode="dropdown"
+                android:popupBackground="?attr/app_backgroundColor"/>
+
+            <Space
+                android:layout_width="@dimen/margin_20dp"
+                android:layout_height="match_parent"/>
+
+        </LinearLayout>
+
+        <!--        time limit to store messages in chat-->
+        <LinearLayout
+            android:layout_marginVertical="@dimen/space_divider_settings"
             android:layout_width="match_parent"
             android:layout_height="@dimen/settings_item_height"
             android:orientation="horizontal">
@@ -72,7 +108,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Time limit to store messages(in days)"
+                android:text="@string/time_limit_msg_label"
                 android:textSize="@dimen/message_text_size"
                 style="@style/TEXT" />
 
@@ -92,9 +128,9 @@
 
         </LinearLayout>
 
-<!--        about section-->
+        <!--        about section-->
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_marginVertical="@dimen/margin_20dp"
+            android:layout_marginVertical="@dimen/space_divider_settings"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -105,7 +141,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                android:text="About"
+                android:text="@string/about_subtitle"
                 android:textSize="20sp"
                 style="@style/TEXT"/>
 
@@ -126,7 +162,7 @@
                 android:id="@+id/github_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/github_project_link"
+                android:text="@string/github_project_label"
                 app:layout_constraintTop_toBottomOf="@id/about_label"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"

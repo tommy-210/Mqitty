@@ -27,14 +27,15 @@
     <string name="active_panel">Active panel</string>
     <string name="settings">Settings</string>
     <string name="about_label">Mqutty is a project born from my automation systems professor\'s initiative to contact ENEA to discuss energy efficiency. This led to a project that included the use of the MQTT protocol, so I decided to create my own MQTT client.</string>
-    <string name="github_project_link"><a href="https://github.com/tommy-210/Mqitty">Github</a></string>
+    <string name="github_project_link">https://github.com/tommy-210/Mqitty</string>
+    <string name="github_project_label">Github</string>
+    <string name="default_panel_label">Default panel</string>
+    <string name="theme_mode_label">Theme mode</string>
+    <string name="time_limit_msg_label">Time limit to store messages(in days)</string>
+    <string name="about_subtitle">About</string>
 
-    <string-array name="theme_mode_items">
-        <item>Light</item>
-        <item>Dark</item>
-    </string-array>
-    <string name="panel_id">panel</string>
-    <string name="Send_panel">0</string>
-    <string name="Receive_panel">1</string>
-    <string name="Settings_panel">2</string>
+<!--    database settings-->
+    <string name="theme_db">THEME_MODE</string>
+    <string name="panel_db">DEFAULT_PANEL</string>
+    <string name="limit_time_db">LIMIT_TIME_MSG</string>
 </resources>

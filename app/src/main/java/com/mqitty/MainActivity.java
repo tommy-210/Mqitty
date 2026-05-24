@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +21,7 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import com.mqitty.database.DataBaseHelper;
 import com.mqitty.manager.ReceiveManager;
 import com.mqitty.ui.ChatActivity;
@@ -34,22 +37,27 @@ import com.mqitty.mqtt.MqttManager;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
     ImageView send_btn, receive_btn, settings_btn, filter_btn;
     SearchView searchView;
-    EditText limit_time_mgs;
-    Spinner theme_mode_dropdown;
+    Spinner theme_mode_dropdown, default_panel_dropdown;
+    EditText limit_time_msg;
     ViewGroup sendPanelContainer, receivePanelContainer, settingsPanelContainer;
     FrameLayout filter_popup;
     Button clear_panel_btn;
     DataBaseHelper dataBaseHelper;
 
+    private final android.os.Handler settingsHandler = new android.os.Handler(android.os.Looper.getMainLooper());
+    private Runnable settingsRunnable;
+
     public static final String EXTRA_PANEL = "panel";
     public static final int PANEL_SEND = 0;
     public static final int PANEL_RECEIVE = 1;
     public static final int PANEL_SETTINGS = 2;
+    String default_panel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,11 +66,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         dataBaseHelper = DataBaseHelper.getInstance(this);
+        default_panel = dataBaseHelper.getSettingByLabel(DataBaseHelper.SettingsDB.DEFAULT_PANEL);
 
         initComponents();
         componentListener();
         
-        handleIntent(getIntent());
+        handleIntent(getIntent(), default_panel);
 
         // Initial setup for the default included layout
         setupInnerPanelListeners();
@@ -72,24 +81,26 @@ public class MainActivity extends AppCompatActivity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
-        handleIntent(intent);
+        handleIntent(intent, default_panel);
     }
 
-    private void handleIntent(Intent intent) {
-        int panel = intent.getIntExtra(EXTRA_PANEL, PANEL_SEND);
+    private void handleIntent(Intent intent, String default_panel) {
+        if (default_panel == null) {
+            default_panel = String.valueOf(PANEL_SEND);
+        }
+        int panel = intent.getIntExtra(EXTRA_PANEL, Integer.parseInt(default_panel));
         // Show panel
         switch (panel) {
+            case PANEL_SEND:
+                showPanel(sendPanelContainer);
+                refreshSendPanelData(null);
+                break;
             case PANEL_RECEIVE:
                 showPanel(receivePanelContainer);
                 refreshReceivePanelData(null);
                 break;
             case PANEL_SETTINGS:
                 showPanel(settingsPanelContainer);
-                break;
-            case PANEL_SEND:
-            default:
-                showPanel(sendPanelContainer);
-                refreshSendPanelData(null);
                 break;
         }
     }
@@ -105,28 +116,55 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initComponents() {
+//        navbar
         send_btn = findViewById(R.id.send_btn);
         receive_btn = findViewById(R.id.receive_btn);
         settings_btn = findViewById(R.id.settings_btn);
+//        subheader
         searchView = findViewById(R.id.search_view);
+        filter_popup = findViewById(R.id.filter_popup_section);
+        clear_panel_btn = findViewById(R.id.clear_panel_btn);
+        filter_btn = findViewById(R.id.filter_btn);
         //main container
         sendPanelContainer = findViewById(R.id.send_panel_container);
         receivePanelContainer = findViewById(R.id.receive_panel_container);
         settingsPanelContainer = findViewById(R.id.settings_panel_container);
-        filter_popup = findViewById(R.id.filter_popup_section);
-        clear_panel_btn = findViewById(R.id.clear_panel_btn);
-        filter_btn = findViewById(R.id.filter_btn);
 
         // Pre-inflate layouts into containers
         LayoutInflater.from(this).inflate(R.layout.activity_send, sendPanelContainer, true);
         LayoutInflater.from(this).inflate(R.layout.activity_receive, receivePanelContainer, true);
         LayoutInflater.from(this).inflate(R.layout.activity_settings, settingsPanelContainer, true);
 
-        theme_mode_dropdown = findViewById(R.id.theme_mode_dropdown);
-        limit_time_mgs = findViewById(R.id.limit_time_msg_input);
+        initSettings();
+    }
 
-//        refreshSendPanelData(null);
-//        refreshReceivePanelData(null);
+    private void initSettings() {
+        theme_mode_dropdown = findViewById(R.id.theme_mode_dropdown);
+        default_panel_dropdown = findViewById(R.id.default_panel_dropdown);
+        limit_time_msg = findViewById(R.id.limit_time_msg_input);
+    }
+
+    private void loadSettings() {
+        Map<String, String> settings = dataBaseHelper.getAllSettings();
+        if (settings.isEmpty()) return;
+
+        String theme = settings.get(DataBaseHelper.SettingsDB.THEME);
+        if (theme != null) {
+            applyTheme(theme);
+            if (theme.equals("system")) theme_mode_dropdown.setSelection(0);
+            else if (theme.equals("Light")) theme_mode_dropdown.setSelection(1);
+            else if (theme.equals("Dark")) theme_mode_dropdown.setSelection(2);
+        }
+
+        String panel = settings.get(DataBaseHelper.SettingsDB.DEFAULT_PANEL);
+        if (panel != null) {
+            default_panel_dropdown.setSelection(Integer.parseInt(panel));
+        }
+
+        String limit = settings.get(DataBaseHelper.SettingsDB.LIMIT_TIME_MSG);
+        if (limit != null) {
+            limit_time_msg.setText(limit);
+        }
     }
 
     private void componentListener() {
@@ -185,23 +223,64 @@ public class MainActivity extends AppCompatActivity {
                 refreshReceivePanelData(null);
             }
         });
+
+        addListenerOnSettings();
+        loadSettings();
     }
 
+
     private void addListenerOnSettings() {
-        String[] items = {"Light", "Dark"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, items);
-        theme_mode_dropdown.setAdapter(adapter);
+        String[] items_theme = {"system", "Light", "Dark"};
+        String[] items_panel = {"Send", "Receiver", "Settings"};
+
+//        theme dropdown popup
+        ArrayAdapter<String> adapter_theme = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, items_theme);
+        theme_mode_dropdown.setAdapter(adapter_theme);
         theme_mode_dropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String value = items[position];
-                Toast.makeText(MainActivity.this, "Theme: " + value, Toast.LENGTH_SHORT).show();
+                String selectedTheme = items_theme[position];
+                dataBaseHelper.updateSetting(DataBaseHelper.SettingsDB.THEME, selectedTheme);
+                applyTheme(selectedTheme);
+//                Toast.makeText(MainActivity.this, "Theme: " + selectedTheme, Toast.LENGTH_SHORT).show();
             }
-
             @Override
             public void onNothingSelected(AdapterView<?> parent) {}
         });
 
+//        default panel dropdown popup
+        ArrayAdapter<String> adapter_panel = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, items_panel);
+        default_panel_dropdown.setAdapter(adapter_panel);
+        default_panel_dropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                Toast.makeText(MainActivity.this, "Panel: " + items_panel[position], Toast.LENGTH_SHORT).show();
+                dataBaseHelper.updateSetting(DataBaseHelper.SettingsDB.DEFAULT_PANEL, String.valueOf(position));
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+
+//        limit time to store messages in chat
+        limit_time_msg.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (settingsRunnable != null) {
+                    settingsHandler.removeCallbacks(settingsRunnable);
+                }
+                settingsRunnable = () -> {
+                    dataBaseHelper.updateSetting(DataBaseHelper.SettingsDB.LIMIT_TIME_MSG, s.toString());
+                    Toast.makeText(MainActivity.this, "Setting saved", Toast.LENGTH_SHORT).show();
+                };
+                settingsHandler.postDelayed(settingsRunnable, 1000); // 1-second delay
+            }
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+        });
+
+//        button for project repository
         Button githubBtn = findViewById(R.id.github_btn);
         if (githubBtn != null) {
             githubBtn.setOnClickListener(v -> {
@@ -407,5 +486,20 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(MainActivity.this, toClass);
         intent.putExtra(name, content);
         startActivity(intent);
+    }
+
+    private void applyTheme(String theme) {
+        switch (theme) {
+            case "Light":
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                break;
+            case "Dark":
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                break;
+            case "system":
+            default:
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+                break;
+        }
     }
 }

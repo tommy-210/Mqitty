@@ -7,19 +7,26 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import androidx.annotation.Nullable;
 
+import com.mqitty.MainActivity;
 import com.mqitty.model.MessageModel;
 import com.mqitty.model.ReceiverModel;
 import com.mqitty.model.SendModel;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DataBaseHelper extends SQLiteOpenHelper {
 
-    class SettingsDB {
-        final static String TABLE = "SETTINGS_TABLE";
-        final static String COLUMN_ID = "ID";
-        final static String COLUMN_LABEL = "SETTINGS_LABEL";
-        final static String COLUMN_VALUE = "SETTINGS_VALUE";
+    public static class SettingsDB {
+        public final static String TABLE = "SETTINGS_TABLE";
+        public final static String COLUMN_ID = "ID";
+        public final static String COLUMN_LABEL = "SETTINGS_LABEL";
+        public final static String COLUMN_VALUE = "SETTINGS_VALUE";
+
+        public final static String THEME = "THEME_MODE";
+        public final static String DEFAULT_PANEL = "DEFAULT_PANEL";
+        public final static String LIMIT_TIME_MSG = "LIMIT_TIME_MSG";
     }
 
     class SendDB {
@@ -49,7 +56,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         final static String COLUMN_TIMESTAMP = "CHAT_TIMESTAMP";
     }
 
-    final static int DATABASE_VERSION = 1;
+    final static int DATABASE_VERSION = 2;
     private static DataBaseHelper instance;
 
     public static synchronized DataBaseHelper getInstance(Context context) {
@@ -87,14 +94,16 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         db.execSQL(createSendTable);
         db.execSQL(createReceiverTable);
-//        db.execSQL(createSettingsTable);
+        db.execSQL(createSettingsTable);
+
+        initializeSettings(db);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + SendDB.TABLE);
         db.execSQL("DROP TABLE IF EXISTS " + ReceiverDB.TABLE);
-//        db.execSQL("DROP TABLE IF EXISTS " + SettingsDB.TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + SettingsDB.TABLE);
         onCreate(db);
     }
 
@@ -420,5 +429,78 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         String query = "DELETE FROM " + ReceiverDB.TABLE;
 
         db.execSQL(query);
+    }
+
+    public void initializeSettings() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        initializeSettings(db);
+    }
+
+    private void initializeSettings(SQLiteDatabase db) {
+        String countQuery = "SELECT COUNT(*) FROM " + SettingsDB.TABLE;
+        Cursor cursor = db.rawQuery(countQuery, null);
+        int count = 0;
+        if (cursor.moveToFirst()) {
+            count = cursor.getInt(0);
+        }
+        cursor.close();
+
+        if (count == 0) {
+            insertSetting(db, SettingsDB.THEME, "Light");
+            insertSetting(db, SettingsDB.DEFAULT_PANEL, String.valueOf(MainActivity.PANEL_SEND));
+            insertSetting(db, SettingsDB.LIMIT_TIME_MSG, "7");
+        }
+    }
+
+    private void insertSetting(SQLiteDatabase db, String label, String value) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(SettingsDB.COLUMN_LABEL, label);
+        contentValues.put(SettingsDB.COLUMN_VALUE, value);
+        db.insert(SettingsDB.TABLE, null, contentValues);
+    }
+
+    public boolean updateSetting(String label, String value) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(SettingsDB.COLUMN_VALUE, value);
+        int result = db.update(SettingsDB.TABLE, contentValues, SettingsDB.COLUMN_LABEL + " = ?", new String[]{label});
+        return result > 0;
+    }
+
+    public void updateAllSettings(String theme, String panel, String limit) {
+        updateSetting(SettingsDB.THEME, theme);
+        updateSetting(SettingsDB.DEFAULT_PANEL, panel);
+        updateSetting(SettingsDB.LIMIT_TIME_MSG, limit);
+    }
+
+    public String getSettingByLabel(String label) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT " + SettingsDB.COLUMN_VALUE + " FROM " + SettingsDB.TABLE + " WHERE " + SettingsDB.COLUMN_LABEL + " = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{label});
+        String value = null;
+        if (cursor.moveToFirst()) {
+            value = cursor.getString(0);
+        }
+        cursor.close();
+        db.close();
+        return value;
+    }
+
+    public Map<String, String> getAllSettings() {
+        Map<String, String> settingsMap = new HashMap<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT * FROM " + SettingsDB.TABLE;
+        Cursor cursor = db.rawQuery(query, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                String label = cursor.getString(1);
+                String value = cursor.getString(2);
+                settingsMap.put(label, value);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return settingsMap;
     }
 }
