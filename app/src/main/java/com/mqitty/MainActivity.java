@@ -71,6 +71,11 @@ public class MainActivity extends AppCompatActivity {
         initComponents();
         componentListener();
         
+        if (savedInstanceState != null) {
+            int panel = savedInstanceState.getInt(EXTRA_PANEL, -1);
+            if (panel != -1) getIntent().putExtra(EXTRA_PANEL, panel);
+        }
+
         handleIntent(getIntent(), default_panel);
 
         // Initial setup for the default included layout
@@ -84,11 +89,21 @@ public class MainActivity extends AppCompatActivity {
         handleIntent(intent, default_panel);
     }
 
-    private void handleIntent(Intent intent, String default_panel) {
-        if (default_panel == null) {
-            default_panel = String.valueOf(PANEL_SEND);
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        int currentPanel = PANEL_SEND;
+        if (receivePanelContainer.getVisibility() == View.VISIBLE) currentPanel = PANEL_RECEIVE;
+        else if (settingsPanelContainer.getVisibility() == View.VISIBLE) currentPanel = PANEL_SETTINGS;
+        outState.putInt(EXTRA_PANEL, currentPanel);
+    }
+
+    private void handleIntent(Intent intent, String defaultPanel) {
+        String dp = defaultPanel;
+        if (dp == null) {
+            dp = String.valueOf(PANEL_SEND);
         }
-        int panel = intent.getIntExtra(EXTRA_PANEL, Integer.parseInt(default_panel));
+        int panel = intent.getIntExtra(EXTRA_PANEL, Integer.parseInt(dp));
         // Show panel
         switch (panel) {
             case PANEL_SEND:
@@ -240,9 +255,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String selectedTheme = items_theme[position];
+
+                // Update the current intent to keep the Settings panel active after recreation
+                getIntent().putExtra(EXTRA_PANEL, PANEL_SETTINGS);
+
                 dataBaseHelper.updateSetting(DataBaseHelper.SettingsDB.THEME, selectedTheme);
                 applyTheme(selectedTheme);
-//                Toast.makeText(MainActivity.this, "Theme: " + selectedTheme, Toast.LENGTH_SHORT).show();
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {}
@@ -254,7 +272,6 @@ public class MainActivity extends AppCompatActivity {
         default_panel_dropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                Toast.makeText(MainActivity.this, "Panel: " + items_panel[position], Toast.LENGTH_SHORT).show();
                 dataBaseHelper.updateSetting(DataBaseHelper.SettingsDB.DEFAULT_PANEL, String.valueOf(position));
             }
             @Override
@@ -270,9 +287,8 @@ public class MainActivity extends AppCompatActivity {
                 }
                 settingsRunnable = () -> {
                     dataBaseHelper.updateSetting(DataBaseHelper.SettingsDB.LIMIT_TIME_MSG, s.toString());
-                    Toast.makeText(MainActivity.this, "Setting saved", Toast.LENGTH_SHORT).show();
                 };
-                settingsHandler.postDelayed(settingsRunnable, 1000); // 1-second delay
+                settingsHandler.postDelayed(settingsRunnable, 2000); // 1-second delay
             }
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
