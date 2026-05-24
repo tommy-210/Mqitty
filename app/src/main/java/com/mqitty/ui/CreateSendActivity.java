@@ -74,7 +74,9 @@ public class CreateSendActivity extends AppCompatActivity {
     private void returnToMainActivity() {
         Intent intent = new Intent(CreateSendActivity.this, MainActivity.class);
         intent.putExtra(MainActivity.EXTRA_PANEL, MainActivity.PANEL_SEND);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
+        finish();
     }
 
     private boolean checkInputOnSubmit() {

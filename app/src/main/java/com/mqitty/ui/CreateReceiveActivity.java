@@ -47,7 +47,9 @@ public class CreateReceiveActivity extends AppCompatActivity {
         return_btn.setOnClickListener(v -> {
             Intent intent = new Intent(CreateReceiveActivity.this, MainActivity.class);
             intent.putExtra(MainActivity.EXTRA_PANEL, MainActivity.PANEL_RECEIVE);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
+            finish();
         });
 
         create_btn.setOnClickListener(v -> {
@@ -80,7 +82,10 @@ public class CreateReceiveActivity extends AppCompatActivity {
 
     private void returnToMainActivity() {
         Intent intent = new Intent(CreateReceiveActivity.this, MainActivity.class);
+        intent.putExtra(MainActivity.EXTRA_PANEL, MainActivity.PANEL_RECEIVE);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
+        finish();
     }
 
     private boolean checkInputOnSubmit() {

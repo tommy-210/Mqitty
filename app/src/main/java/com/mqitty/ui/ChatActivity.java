@@ -1,6 +1,5 @@
 package com.mqitty.ui;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -163,9 +162,11 @@ public class ChatActivity extends AppCompatActivity implements Mqtt.MqttMessageL
 
         return_btn.setOnClickListener(v -> {
 //            return to main activity
-            Intent intent = new Intent(ChatActivity.this, MainActivity.class);
+            Intent intent = new Intent(this, MainActivity.class);
             intent.putExtra(MainActivity.EXTRA_PANEL, MainActivity.PANEL_RECEIVE);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
+            finish();
         });
         more_option_btn.setOnClickListener(v -> {
             if (more_option_popup.getVisibility() == View.VISIBLE) {

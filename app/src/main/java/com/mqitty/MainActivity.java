@@ -59,15 +59,29 @@ public class MainActivity extends AppCompatActivity {
 
         dataBaseHelper = DataBaseHelper.getInstance(this);
 
-        int panel = getIntent().getIntExtra(EXTRA_PANEL, PANEL_SEND);
-
         initComponents();
         componentListener();
         
+        handleIntent(getIntent());
+
+        // Initial setup for the default included layout
+        setupInnerPanelListeners();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        handleIntent(intent);
+    }
+
+    private void handleIntent(Intent intent) {
+        int panel = intent.getIntExtra(EXTRA_PANEL, PANEL_SEND);
         // Show panel
         switch (panel) {
             case PANEL_RECEIVE:
                 showPanel(receivePanelContainer);
+                refreshReceivePanelData(null);
                 break;
             case PANEL_SETTINGS:
                 showPanel(settingsPanelContainer);
@@ -75,11 +89,9 @@ public class MainActivity extends AppCompatActivity {
             case PANEL_SEND:
             default:
                 showPanel(sendPanelContainer);
+                refreshSendPanelData(null);
                 break;
         }
-
-        // Initial setup for the default included layout
-        setupInnerPanelListeners();
     }
 
     @Override
@@ -113,8 +125,8 @@ public class MainActivity extends AppCompatActivity {
         theme_mode_dropdown = findViewById(R.id.theme_mode_dropdown);
         limit_time_mgs = findViewById(R.id.limit_time_msg_input);
 
-        refreshSendPanelData(null);
-        refreshReceivePanelData(null);
+//        refreshSendPanelData(null);
+//        refreshReceivePanelData(null);
     }
 
     private void componentListener() {
@@ -173,8 +185,6 @@ public class MainActivity extends AppCompatActivity {
                 refreshReceivePanelData(null);
             }
         });
-
-        addListenerOnSettings();
     }
 
     private void addListenerOnSettings() {
@@ -267,7 +277,10 @@ public class MainActivity extends AppCompatActivity {
         View sendRoot = findViewById(R.id.activity_send_root);
         if (sendRoot instanceof ViewGroup) {
             ViewGroup container = (ViewGroup) sendRoot;
-            container.removeViews(0, container.getChildCount() - 1);
+            int childCount = container.getChildCount();
+            if (childCount > 0) {
+                container.removeViews(0, childCount - 1);
+            }
             // The panel was just inflated, so we add all stored models
             for (SendModel model : sendModels) {
                 // Add every element to container
