@@ -107,6 +107,20 @@ public class MqttManager implements Mqtt.MqttMessageListener {
         return false;
     }
 
+    public java.util.List<Integer> getReceiverIdsForTopic(String topic) {
+        java.util.List<Integer> ids = new java.util.ArrayList<>();
+        for (Map.Entry<String, Integer> entry : activeSubscriptions.entrySet()) {
+            if (entry.getKey().endsWith("|" + topic)) {
+                ids.add(entry.getValue());
+            }
+        }
+        return ids;
+    }
+
+    public com.mqitty.model.ReceiverModel getReceiverById(int id) {
+        return dataBaseHelper.getReceiverById(id);
+    }
+
     public void addSubscriptionListener(SubscriptionListener listener) {
         if (!subscriptionListeners.contains(listener)) {
             subscriptionListeners.add(listener);
@@ -160,12 +174,14 @@ public class MqttManager implements Mqtt.MqttMessageListener {
             }
         }
         
-        for (Map.Entry<String, Integer> entry : activeSubscriptions.entrySet()) {
-            String key = entry.getKey();
-            if (key.endsWith("|" + topic)) {
-                Integer receiverId = entry.getValue();
-                MessageModel newMessage = new MessageModel(-1, message, wasSentByUs, System.currentTimeMillis());
-                dataBaseHelper.addOneMessage(receiverId, newMessage);
+        if (!wasSentByUs) {
+            for (Map.Entry<String, Integer> entry : activeSubscriptions.entrySet()) {
+                String key = entry.getKey();
+                if (key.endsWith("|" + topic)) {
+                    Integer receiverId = entry.getValue();
+                    MessageModel newMessage = new MessageModel(-1, message, wasSentByUs, System.currentTimeMillis());
+                    dataBaseHelper.addOneMessage(receiverId, newMessage);
+                }
             }
         }
 

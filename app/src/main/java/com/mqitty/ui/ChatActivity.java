@@ -44,7 +44,6 @@ public class ChatActivity extends AppCompatActivity implements MqttManager.Messa
     ReceiverModel receiverModel;
     DataBaseHelper dataBaseHelper;
     Mqtt mqtt;
-    private final List<String> sentMessagesQueue = new ArrayList<>();
 
     private final MqttManager.SubscriptionListener subscriptionListener = count -> {
         runOnUiThread(() -> {
@@ -107,12 +106,7 @@ public class ChatActivity extends AppCompatActivity implements MqttManager.Messa
     @Override
     public void onMessageArrived(String topic, String message, boolean wasSentByUs) {
         if (topic.equals(receiverModel.getTopic())) {
-            synchronized (sentMessagesQueue) {
-                if (sentMessagesQueue.contains(message)) {
-                    sentMessagesQueue.remove(message);
-                    return;
-                }
-            }
+            if (wasSentByUs) return;
             MessageModel newMessage = new MessageModel(-1, message, wasSentByUs, System.currentTimeMillis());
             runOnUiThread(() -> addOneMessage(newMessage));
         }
@@ -232,9 +226,6 @@ public class ChatActivity extends AppCompatActivity implements MqttManager.Messa
 //            add one message to chat
             MessageModel newMessage = new MessageModel(-1, msgText, true, System.currentTimeMillis());
 
-            synchronized (sentMessagesQueue) {
-                sentMessagesQueue.add(msgText);
-            }
             MqttManager.getInstance().addToSentQueue(msgText);
 
             boolean mqttSuccess = mqtt.publish(receiverModel.getTopic(), msgText);
@@ -245,9 +236,7 @@ public class ChatActivity extends AppCompatActivity implements MqttManager.Messa
                 addOneMessage(newMessage);
                 Toast.makeText(ChatActivity.this, "Message send:\n" + newMessage.getMessage(), Toast.LENGTH_SHORT).show();
             } else {
-                synchronized (sentMessagesQueue) {
-                    sentMessagesQueue.remove(msgText);
-                }
+                MqttManager.getInstance().checkAndRemoveFromSentQueue(msgText);
                 Toast.makeText(ChatActivity.this, "Error sending message", Toast.LENGTH_SHORT).show();
             }
         });

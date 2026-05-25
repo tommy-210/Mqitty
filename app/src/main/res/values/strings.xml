@@ -13,7 +13,7 @@
     <string name="create_label_btn">CREATE</string>
     <string name="name_hint">Name...</string>
     <string name="description_form">Description...</string>
-    <string name="broker_form">Broker...</string>
+    <string name="broker_form">Broker... (like: broker.emqx.io)</string>
     <string name="topic_form">Topic...</string>
     <string name="message_form">Message...</string>
     <string name="custom_receiver_label">Create your custom receiver.</string>
