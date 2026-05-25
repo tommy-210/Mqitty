@@ -1,5 +1,7 @@
 package com.mqitty.ui;
 
+import static com.mqitty.utils.Utils.*;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
@@ -67,7 +69,7 @@ public class ReceiveModify  extends AppCompatActivity {
         return_btn.setOnClickListener(v -> returnToMain());
 
         save.setOnClickListener(v -> {
-            if(!checkInputOnSubmit()) {
+            if(!checkInputFormReceive(name.getText().toString(), description.getText().toString(), broker.getText().toString(), topic.getText().toString())) {
                 Toast.makeText(ReceiveModify.this, "Input not valid", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -102,23 +104,7 @@ public class ReceiveModify  extends AppCompatActivity {
     }
 
     private void returnToMain() {
-        Intent intent = new Intent(ReceiveModify.this, MainActivity.class);
-        intent.putExtra(MainActivity.EXTRA_PANEL, MainActivity.PANEL_RECEIVE);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        startActivity(intent);
+        startActivity(changeActivity(ReceiveModify.this, MainActivity.class, EXTRA_PANEL, PANEL_RECEIVE));
         finish();
-    }
-
-    private boolean checkInputOnSubmit() {
-//        check name and description for gui
-        if(name.getText().toString().isBlank() || description.getText().toString().isBlank()) {
-            return false;
-        }
-//        check input for mqtt
-        if(broker.getText().toString().isBlank() || topic.getText().toString().isBlank()) {
-            return false;
-        }
-
-        return true;
     }
 }

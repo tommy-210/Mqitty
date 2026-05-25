@@ -65,22 +65,26 @@
     <LinearLayout
         android:id="@+id/send_msg_chat_section"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="wrap_content"
+        android:minHeight="40dp"
         android:layout_marginVertical="12dp"
         android:layout_marginHorizontal="8dp"
         android:background="@drawable/border_round"
         android:paddingHorizontal="10dp"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent">
 
-        <!-- text input -->
         <EditText
             android:id="@+id/chat_input_msg"
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:autofillHints="none"
-            android:inputType="text"
+            android:inputType="textMultiLine"
+            android:scrollbars="vertical"
+            android:maxHeight="120dp"
             android:layout_marginEnd="4dp"
             tools:ignore="LabelFor" />
 
@@ -90,7 +94,8 @@
             style="@style/SEND_ICON"
             android:layout_width="@dimen/icon_size"
             android:layout_height="@dimen/icon_size"
-            android:layout_marginVertical="5dp"
+            android:layout_marginBottom="8dp"
+            android:layout_gravity="bottom"
             android:contentDescription="@string/send_label" />
 
     </LinearLayout>

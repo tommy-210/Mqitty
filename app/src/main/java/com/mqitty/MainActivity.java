@@ -19,9 +19,15 @@ import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.content.ContextCompat;
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import com.mqitty.database.DataBaseHelper;
 import com.mqitty.manager.ReceiveManager;
 import com.mqitty.ui.ChatActivity;
@@ -38,6 +44,7 @@ import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
 import java.util.List;
 import java.util.Map;
+import static com.mqitty.utils.Utils.*;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -53,12 +60,15 @@ public class MainActivity extends AppCompatActivity {
     private final android.os.Handler settingsHandler = new android.os.Handler(android.os.Looper.getMainLooper());
     private Runnable settingsRunnable;
     private static boolean isCleanupDone = false;
-
-    public static final String EXTRA_PANEL = "panel";
-    public static final int PANEL_SEND = 0;
-    public static final int PANEL_RECEIVE = 1;
-    public static final int PANEL_SETTINGS = 2;
     String default_panel;
+
+    private final MqttManager.SubscriptionListener subscriptionListener = count -> {
+        runOnUiThread(() -> {
+            if (receivePanelContainer.getVisibility() == View.VISIBLE) {
+                refreshReceivePanelData(null);
+            }
+        });
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,9 +79,12 @@ public class MainActivity extends AppCompatActivity {
         dataBaseHelper = DataBaseHelper.getInstance(this);
         default_panel = dataBaseHelper.getSettingByLabel(DataBaseHelper.SettingsDB.DEFAULT_PANEL);
 
+        checkNotificationPermission();
         initComponents();
         componentListener();
         
+        MqttManager.getInstance().addSubscriptionListener(subscriptionListener);
+
         if (savedInstanceState != null) {
             int panel = savedInstanceState.getInt(EXTRA_PANEL, -1);
             if (panel != -1) getIntent().putExtra(EXTRA_PANEL, panel);
@@ -121,6 +134,22 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void checkNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) !=
+                    PackageManager.PERMISSION_GRANTED) {
+                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
+            }
+        }
+    }
+
+    private final ActivityResultLauncher<String> requestPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (!isGranted) {
+                    Toast.makeText(this, "Notification permission denied. You won't see background status.", Toast.LENGTH_SHORT).show();
+                }
+            });
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -167,9 +196,17 @@ public class MainActivity extends AppCompatActivity {
         String theme = settings.get(DataBaseHelper.SettingsDB.THEME);
         if (theme != null) {
             applyTheme(theme);
-            if (theme.equals("system")) theme_mode_dropdown.setSelection(0);
-            else if (theme.equals("Light")) theme_mode_dropdown.setSelection(1);
-            else if (theme.equals("Dark")) theme_mode_dropdown.setSelection(2);
+            switch (theme) {
+                case SYSTEM_THEME:
+                    theme_mode_dropdown.setSelection(0);
+                    break;
+                case LIGHT_THEME:
+                    theme_mode_dropdown.setSelection(1);
+                    break;
+                case DARK_THEME:
+                    theme_mode_dropdown.setSelection(2);
+                    break;
+            }
         }
 
         String panel = settings.get(DataBaseHelper.SettingsDB.DEFAULT_PANEL);
@@ -246,7 +283,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void addListenerOnSettings() {
-        String[] items_theme = {"system", "Light", "Dark"};
+        String[] items_theme = {SYSTEM_THEME, LIGHT_THEME, DARK_THEME};
         String[] items_panel = {"Send", "Receiver", "Settings"};
 
 //        theme dropdown popup
@@ -350,7 +387,7 @@ public class MainActivity extends AppCompatActivity {
         View addSendBtn = findViewById(R.id.add_send_btn);
         if (addSendBtn != null) {
             addSendBtn.setOnClickListener(v -> {
-                changeActivity(CreateSendActivity.class);
+                startActivity(changeActivity(MainActivity.this, CreateSendActivity.class));
             });
         }
         
@@ -358,7 +395,7 @@ public class MainActivity extends AppCompatActivity {
         View addReceiveBtn = findViewById(R.id.add_receive_btn);
         if (addReceiveBtn != null) {
             addReceiveBtn.setOnClickListener(v -> {
-                changeActivity(CreateReceiveActivity.class);
+                startActivity(changeActivity(MainActivity.this, CreateReceiveActivity.class));
             });
         }
     }
@@ -426,7 +463,7 @@ public class MainActivity extends AppCompatActivity {
     private void addListenerOnSends(View view, SendModel sendModel) {
         view.setOnLongClickListener(v -> {
             Toast.makeText(MainActivity.this, "Send: " + sendModel.getName(), Toast.LENGTH_SHORT).show();
-            changeActivityWithExtra(SendModify.class, "id", sendModel.getId());
+            startActivity(changeActivity(MainActivity.this, SendModify.class, EXTRA_ELEMENT_ID, sendModel.getId()));
             return false;
         });
 //        send message btn for mqtt
@@ -436,6 +473,7 @@ public class MainActivity extends AppCompatActivity {
             mqtt.connect(new IMqttActionListener() {
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
+                    MqttManager.getInstance().addToSentQueue(sendModel.getMessage());
                     mqtt.publish(sendModel.getTopic(), sendModel.getMessage());
                     runOnUiThread(() -> Toast.makeText(MainActivity.this, "Send: " + sendModel.getMessage(), Toast.LENGTH_SHORT).show());
                 }
@@ -451,15 +489,15 @@ public class MainActivity extends AppCompatActivity {
     private void addListenerOnReceivers(View view, ReceiverModel receiverModel) {
 //        open modify panel
         view.setOnLongClickListener(v -> {
-            changeActivityWithExtra(ReceiveModify.class, "id", receiverModel.getId());
+            startActivity(changeActivity(MainActivity.this, ReceiveModify.class, EXTRA_ELEMENT_ID, receiverModel.getId()));
             return false;
         });
-        
+
         Mqtt mqtt = MqttManager.getInstance().getMqtt(MainActivity.this, receiverModel.getBroker());
-        
+
 //        open chat with specific topic
         view.setOnClickListener(v ->  {
-            changeActivityWithExtra(ChatActivity.class, "id", receiverModel.getId());
+            startActivity(changeActivity(MainActivity.this, ChatActivity.class, EXTRA_ELEMENT_ID, receiverModel.getId()));
         });
 
 //        receive message btn for mqtt
@@ -477,12 +515,11 @@ public class MainActivity extends AppCompatActivity {
         play_receive_msg_btn.setOnClickListener(v -> {
             play_receive_msg_btn.setVisibility(View.GONE);
             stop_receive_msg_btn.setVisibility(View.VISIBLE);
-            MqttManager.getInstance().addPersistentSubscription(receiverModel.getBroker(), receiverModel.getTopic(), receiverModel.getId());
+            MqttManager.getInstance().addPersistentSubscription(MainActivity.this, receiverModel.getBroker(), receiverModel.getTopic(), receiverModel.getId());
             mqtt.connect(new IMqttActionListener() {
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
                     mqtt.subscribe(receiverModel.getTopic(), 1);
-                    runOnUiThread(() -> Toast.makeText(MainActivity.this, "Connection success", Toast.LENGTH_SHORT).show());
                 }
 
                 @Override
@@ -504,26 +541,21 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void changeActivity(Class toClass) {
-        Intent intent = new Intent(MainActivity.this, toClass);
-        startActivity(intent);
-    }
-
-    private void changeActivityWithExtra(Class toClass, String name, int content) {
-        Intent intent = new Intent(MainActivity.this, toClass);
-        intent.putExtra(name, content);
-        startActivity(intent);
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        MqttManager.getInstance().removeSubscriptionListener(subscriptionListener);
     }
 
     private void applyTheme(String theme) {
         switch (theme) {
-            case "Light":
+            case LIGHT_THEME:
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
                 break;
-            case "Dark":
+            case DARK_THEME:
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
                 break;
-            case "system":
+            case SYSTEM_THEME:
             default:
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
                 break;

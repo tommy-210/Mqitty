@@ -6,7 +6,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
-
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,7 +13,7 @@ import com.mqitty.MainActivity;
 import com.mqitty.R;
 import com.mqitty.database.DataBaseHelper;
 import com.mqitty.model.ReceiverModel;
-import com.mqitty.model.SendModel;
+import static com.mqitty.utils.Utils.*;
 
 public class CreateReceiveActivity extends AppCompatActivity {
 
@@ -45,16 +44,13 @@ public class CreateReceiveActivity extends AppCompatActivity {
 
     private void addListeners() {
         return_btn.setOnClickListener(v -> {
-            Intent intent = new Intent(CreateReceiveActivity.this, MainActivity.class);
-            intent.putExtra(MainActivity.EXTRA_PANEL, MainActivity.PANEL_RECEIVE);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            startActivity(intent);
+            startActivity(changeActivity(CreateReceiveActivity.this, MainActivity.class, EXTRA_PANEL, PANEL_RECEIVE));
             finish();
         });
 
         create_btn.setOnClickListener(v -> {
 
-            if(!checkInputOnSubmit()) {
+            if(!checkInputFormReceive(name.getText().toString(), description.getText().toString(), broker.getText().toString(), topic.getText().toString())) {
                 Toast.makeText(CreateReceiveActivity.this, "Input not valid", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -73,31 +69,11 @@ public class CreateReceiveActivity extends AppCompatActivity {
 //               create a chat table in database for messages
                 dataBaseHelper.createChatTable(receiverModel.getId());
 
-                returnToMainActivity();
+                startActivity(changeActivity(CreateReceiveActivity.this, MainActivity.class, EXTRA_PANEL, PANEL_RECEIVE));
+                finish();
             }else {
                 Toast.makeText(CreateReceiveActivity.this, "Error", Toast.LENGTH_SHORT).show();
             }
         });
-    }
-
-    private void returnToMainActivity() {
-        Intent intent = new Intent(CreateReceiveActivity.this, MainActivity.class);
-        intent.putExtra(MainActivity.EXTRA_PANEL, MainActivity.PANEL_RECEIVE);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        startActivity(intent);
-        finish();
-    }
-
-    private boolean checkInputOnSubmit() {
-//        check name and description for gui
-        if(name.getText().toString().isBlank() || description.getText().toString().isBlank()) {
-            return false;
-        }
-//        check input for mqtt
-        if(broker.getText().toString().isBlank() || topic.getText().toString().isBlank()) {
-            return false;
-        }
-
-        return true;
     }
 }

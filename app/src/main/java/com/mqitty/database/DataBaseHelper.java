@@ -6,8 +6,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import androidx.annotation.Nullable;
-
-import com.mqitty.MainActivity;
 import com.mqitty.model.MessageModel;
 import com.mqitty.model.ReceiverModel;
 import com.mqitty.model.SendModel;
@@ -15,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import static com.mqitty.utils.Utils.*;
 
 public class DataBaseHelper extends SQLiteOpenHelper {
 
@@ -108,7 +107,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
 
     private String getChatTable(int id) {
-        return ChatsDB.TABLE + String.valueOf(id);
+        return ChatsDB.TABLE.concat(String.valueOf(id));
     }
 
     public void createChatTable(int id) {
@@ -450,8 +449,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         cursor.close();
 
         if (count == 0) {
-            insertSetting(db, SettingsDB.THEME, "Light");
-            insertSetting(db, SettingsDB.DEFAULT_PANEL, String.valueOf(MainActivity.PANEL_SEND));
+            insertSetting(db, SettingsDB.THEME, SYSTEM_THEME);
+            insertSetting(db, SettingsDB.DEFAULT_PANEL, String.valueOf(PANEL_SEND));
             insertSetting(db, SettingsDB.LIMIT_TIME_MSG, "7");
         }
     }

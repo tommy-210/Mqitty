@@ -1,7 +1,7 @@
 # Mqitty
 
 <p align="center">
-  <img src="assetsReadme/Mqitty-icon.png" alt="Mqitty Icon" width="150"/>
+  <img src="./assetsReadme/Mqitty-icon.png" alt="Mqitty Icon" width="150"/>
 </p>
 
 Mqitty is a lightweight, intuitive MQTT client for Android designed to help developers and IoT enthusiasts interact with their MQTT brokers effortlessly. Whether you need to send quick commands or monitor data streams, Mqitty provides a clean interface to manage your MQTT communications.

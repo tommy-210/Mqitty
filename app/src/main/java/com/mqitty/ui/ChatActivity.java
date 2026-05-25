@@ -1,6 +1,7 @@
 package com.mqitty.ui;
 
-import android.content.Intent;
+import static com.mqitty.utils.Utils.*;
+
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.View;
@@ -30,7 +31,7 @@ import org.eclipse.paho.client.mqttv3.IMqttToken;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChatActivity extends AppCompatActivity implements Mqtt.MqttMessageListener {
+public class ChatActivity extends AppCompatActivity implements MqttManager.MessageListener {
 
     ImageView return_btn, send_msg_btn, more_option_btn;
     CheckBox session_on_checkbtn;
@@ -44,6 +45,13 @@ public class ChatActivity extends AppCompatActivity implements Mqtt.MqttMessageL
     DataBaseHelper dataBaseHelper;
     Mqtt mqtt;
     private final List<String> sentMessagesQueue = new ArrayList<>();
+
+    private final MqttManager.SubscriptionListener subscriptionListener = count -> {
+        runOnUiThread(() -> {
+            boolean isSubscribed = MqttManager.getInstance().isSubscribed(receiverModel.getBroker(), receiverModel.getTopic());
+            session_on_checkbtn.setChecked(isSubscribed);
+        });
+    };
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -67,16 +75,16 @@ public class ChatActivity extends AppCompatActivity implements Mqtt.MqttMessageL
         mqtt = MqttManager.getInstance().getMqtt(ChatActivity.this, receiverModel.getBroker());
 
         initComponents();
+        MqttManager.getInstance().addSubscriptionListener(subscriptionListener);
+        MqttManager.getInstance().addMessageListener(this);
 
-        mqtt.addMessageListener(this);
         mqtt.connect(new IMqttActionListener() {
             @Override
             public void onSuccess(IMqttToken asyncActionToken) {
                 mqtt.subscribe(receiverModel.getTopic(), 1);
-                MqttManager.getInstance().addPersistentSubscription(receiverModel.getBroker(), receiverModel.getTopic(), receiverModel.getId());
+                MqttManager.getInstance().addPersistentSubscription(ChatActivity.this, receiverModel.getBroker(), receiverModel.getTopic(), receiverModel.getId());
                 runOnUiThread(() -> {
                     session_on_checkbtn.setChecked(true);
-                    Toast.makeText(ChatActivity.this, "Connection success", Toast.LENGTH_SHORT).show();
                 });
             }
 
@@ -92,13 +100,12 @@ public class ChatActivity extends AppCompatActivity implements Mqtt.MqttMessageL
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mqtt != null) {
-            mqtt.removeMessageListener(this);
-        }
+        MqttManager.getInstance().removeMessageListener(this);
+        MqttManager.getInstance().removeSubscriptionListener(subscriptionListener);
     }
 
     @Override
-    public void onMessageArrived(String topic, String message) {
+    public void onMessageArrived(String topic, String message, boolean wasSentByUs) {
         if (topic.equals(receiverModel.getTopic())) {
             synchronized (sentMessagesQueue) {
                 if (sentMessagesQueue.contains(message)) {
@@ -106,7 +113,7 @@ public class ChatActivity extends AppCompatActivity implements Mqtt.MqttMessageL
                     return;
                 }
             }
-            MessageModel newMessage = new MessageModel(-1, message, false, System.currentTimeMillis());
+            MessageModel newMessage = new MessageModel(-1, message, wasSentByUs, System.currentTimeMillis());
             runOnUiThread(() -> addOneMessage(newMessage));
         }
     }
@@ -162,10 +169,7 @@ public class ChatActivity extends AppCompatActivity implements Mqtt.MqttMessageL
 
         return_btn.setOnClickListener(v -> {
 //            return to main activity
-            Intent intent = new Intent(this, MainActivity.class);
-            intent.putExtra(MainActivity.EXTRA_PANEL, MainActivity.PANEL_RECEIVE);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            startActivity(intent);
+            startActivity(changeActivity(ChatActivity.this, MainActivity.class, EXTRA_PANEL, PANEL_RECEIVE));
             finish();
         });
         more_option_btn.setOnClickListener(v -> {
@@ -181,10 +185,9 @@ public class ChatActivity extends AppCompatActivity implements Mqtt.MqttMessageL
                     @Override
                     public void onSuccess(IMqttToken asyncActionToken) {
                         mqtt.subscribe(receiverModel.getTopic(), 1);
-                        MqttManager.getInstance().addPersistentSubscription(receiverModel.getBroker(), receiverModel.getTopic(), receiverModel.getId());
+                        MqttManager.getInstance().addPersistentSubscription(ChatActivity.this, receiverModel.getBroker(), receiverModel.getTopic(), receiverModel.getId());
                         runOnUiThread(() -> {
                             session_on_checkbtn.setChecked(true);
-                            Toast.makeText(ChatActivity.this, "Connection success", Toast.LENGTH_SHORT).show();
                         });
                     }
 
@@ -232,6 +235,7 @@ public class ChatActivity extends AppCompatActivity implements Mqtt.MqttMessageL
             synchronized (sentMessagesQueue) {
                 sentMessagesQueue.add(msgText);
             }
+            MqttManager.getInstance().addToSentQueue(msgText);
 
             boolean mqttSuccess = mqtt.publish(receiverModel.getTopic(), msgText);
             boolean databaseSuccess = dataBaseHelper.addOneMessage(receiverModel.getId(), newMessage);
