@@ -8,8 +8,10 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.IBinder;
+import android.widget.RemoteViews;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import com.mqitty.MainActivity;
@@ -45,6 +47,7 @@ public class MqttService extends Service {
         if (!wasSentByUs) {
             List<Integer> ids = MqttManager.getInstance().getReceiverIdsForTopic(topic);
             for (int id : ids) {
+                if (id == ChatActivity.currentChatReceiverId) continue;
                 ReceiverModel receiver = MqttManager.getInstance().getReceiverById(id);
                 if (receiver != null) {
                     showIncomingMessageNotification(receiver, message);
@@ -148,19 +151,19 @@ public class MqttService extends Service {
 
         if (count > 1) {
             summaryText = count + " receivers listening";
-            fullText = summaryText + (names.isEmpty() ? "" : "\nFrom: " + String.join(", ", names));
+            fullText = "Active Receivers:\n• " + String.join("\n• ", names);
             actionText = "Stop All";
         } else {
-            String name = names.isEmpty() ? "Receiver" : names.get(0);
-            title = name + " is listening";
-            summaryText = "Mqitty MQTT Service";
-            fullText = title;
+            String name = names.isEmpty() ? "Receiver" : names.get(0).toUpperCase();
+            summaryText = name + " is listening";
+            fullText = name + " is currently active and listening for messages on " + title;
         }
 
         return new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle(title)
                 .setContentText(summaryText)
                 .setSmallIcon(R.mipmap.ic_launcher)
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
                 .setContentIntent(pendingIntent)
                 .setOngoing(true)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
@@ -194,7 +197,21 @@ public class MqttService extends Service {
         messageHistory.put(receiver.getId(), history);
 
         String summaryText = history.size() > 1 ? history.size() + " new messages" : message;
-        String bigText = String.join("\n──────────\n", history);
+
+        RemoteViews smallView = new RemoteViews(getPackageName(), R.layout.notification_small);
+        smallView.setTextViewText(R.id.notification_title, receiver.getName());
+        smallView.setTextViewText(R.id.notification_info, summaryText);
+
+        RemoteViews largeView = new RemoteViews(getPackageName(), R.layout.notification_large);
+        largeView.setTextViewText(R.id.notification_title, receiver.getName());
+        largeView.setTextViewText(R.id.notification_info, summaryText);
+
+        largeView.removeAllViews(R.id.messages_container);
+        for (String msg : history) {
+            RemoteViews messageItem = new RemoteViews(getPackageName(), R.layout.notification_message_item);
+            messageItem.setTextViewText(R.id.message_text, msg);
+            largeView.addView(R.id.messages_container, messageItem);
+        }
 
         Intent chatIntent = changeActivity(this, ChatActivity.class, EXTRA_ELEMENT_ID, receiver.getId());
         chatIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -209,8 +226,6 @@ public class MqttService extends Service {
                 receiver.getId(), deleteIntent, PendingIntent.FLAG_IMMUTABLE);
 
         Notification notification = new NotificationCompat.Builder(this, MESSAGE_CHANNEL_ID)
-                .setContentTitle(receiver.getName())
-                .setContentText(summaryText)
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentIntent(pendingIntent)
                 .setDeleteIntent(deletePendingIntent)
@@ -218,7 +233,8 @@ public class MqttService extends Service {
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setDefaults(NotificationCompat.DEFAULT_ALL)
                 .setGroup(GROUP_KEY)
-                .setStyle(new NotificationCompat.BigTextStyle().bigText(bigText))
+                .setCustomContentView(smallView)
+                .setCustomBigContentView(largeView)
                 .build();
 
         if (manager != null) {

@@ -45,6 +45,8 @@ public class ChatActivity extends AppCompatActivity implements MqttManager.Messa
     DataBaseHelper dataBaseHelper;
     Mqtt mqtt;
 
+    public static int currentChatReceiverId = -1;
+
     private final MqttManager.SubscriptionListener subscriptionListener = count -> {
         runOnUiThread(() -> {
             boolean isSubscribed = MqttManager.getInstance().isSubscribed(receiverModel.getBroker(), receiverModel.getTopic());
@@ -94,6 +96,20 @@ public class ChatActivity extends AppCompatActivity implements MqttManager.Messa
         });
 
         reloadAllMessages();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (receiverModel != null) {
+            currentChatReceiverId = receiverModel.getId();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        currentChatReceiverId = -1;
     }
 
     @Override
