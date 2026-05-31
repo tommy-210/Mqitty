@@ -36,6 +36,10 @@ public class MqttService extends Service {
 
     private final MqttManager.SubscriptionListener listener = count -> {
         if (count == 0) {
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            if (manager != null) {
+                manager.cancel(SUMMARY_ID);
+            }
             stopForeground(true);
             stopSelf();
         } else {
@@ -91,10 +95,15 @@ public class MqttService extends Service {
         if (count > 0) {
             startForeground(NOTIFICATION_ID, showReceiverListeningNotification(count));
             updateGroupSummary();
+            return START_STICKY;
         } else {
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            if (manager != null) {
+                manager.cancel(SUMMARY_ID);
+            }
             stopSelf();
+            return START_NOT_STICKY;
         }
-        return START_STICKY;
     }
 
     private void updateNotification(int count) {
@@ -119,15 +128,22 @@ public class MqttService extends Service {
             contentText += " • " + messageCount + " new message" + (messageCount > 1 ? "s" : "");
         }
 
+        Intent notificationIntent = changeActivity(MqttService.this, MainActivity.class, EXTRA_PANEL, PANEL_RECEIVE);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this,
+                0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
+
         Notification summary = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle("Mqitty")
                 .setContentText(contentText)
                 .setSmallIcon(R.mipmap.ic_launcher)
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
                 .setGroup(GROUP_KEY)
                 .setGroupSummary(true)
                 .setAutoCancel(false)
                 .setOngoing(true)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setOnlyAlertOnce(true)
+                .setContentIntent(pendingIntent)
                 .build();
 
         manager.notify(SUMMARY_ID, summary);
@@ -144,24 +160,21 @@ public class MqttService extends Service {
                 0, stopIntent, PendingIntent.FLAG_IMMUTABLE);
 
         List<String> names = MqttManager.getInstance().getActiveReceiverNames();
-        String summaryText;
-        String fullText;
-        String title = "Mqitty - MQTT Service";
         String actionText = "Stop";
 
-        if (count > 1) {
-            summaryText = count + " receivers listening";
-            fullText = "Active Receivers:\n• " + String.join("\n• ", names);
-            actionText = "Stop All";
-        } else {
-            String name = names.isEmpty() ? "Receiver" : names.get(0).toUpperCase();
-            summaryText = name + " is listening";
-            fullText = name + " is currently active and listening for messages on " + title;
+        String contentText = "";
+        if (!names.isEmpty()) {
+            if(names.size() > 1) {
+                actionText += " All";
+                contentText = count + " receivers listening\nFrom: " + String.join(", ", names);
+            }else {
+                contentText = names.get(0) + " is listening";
+            }
         }
 
         return new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setContentTitle(title)
-                .setContentText(summaryText)
+                .setContentTitle("Mqitty - MQTT Service")
+                .setContentText(contentText)
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
                 .setContentIntent(pendingIntent)
@@ -171,7 +184,7 @@ public class MqttService extends Service {
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setGroup(GROUP_KEY)
                 .addAction(android.R.drawable.ic_menu_close_clear_cancel, actionText, stopPendingIntent)
-                .setStyle(new NotificationCompat.BigTextStyle().bigText(fullText))
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(contentText))
                 .build();
     }
 
@@ -180,19 +193,22 @@ public class MqttService extends Service {
         NotificationManager manager = getSystemService(NotificationManager.class);
 
         boolean isActive = false;
-        if (manager != null) {
-            for (android.service.notification.StatusBarNotification sbn : manager.getActiveNotifications()) {
-                if (sbn.getId() == notificationId) {
-                    isActive = true;
-                    break;
-                }
+        if (manager == null) {
+            return;
+        }
+        for (android.service.notification.StatusBarNotification sbn : manager.getActiveNotifications()) {
+            if (sbn.getId() == notificationId) {
+                isActive = true;
+                break;
             }
         }
 
         List<String> history = messageHistory.getOrDefault(receiver.getId(), new ArrayList<>());
         if (!isActive) {
+            assert history != null;
             history.clear();
         }
+        assert history != null;
         history.add(message);
         messageHistory.put(receiver.getId(), history);
 
@@ -204,7 +220,7 @@ public class MqttService extends Service {
 
         RemoteViews largeView = new RemoteViews(getPackageName(), R.layout.notification_large);
         largeView.setTextViewText(R.id.notification_title, receiver.getName());
-        largeView.setTextViewText(R.id.notification_info, summaryText);
+        largeView.setTextViewText(R.id.notification_info, history.size() > 1 ? summaryText : "one new message");
 
         largeView.removeAllViews(R.id.messages_container);
         for (String msg : history) {
@@ -237,10 +253,8 @@ public class MqttService extends Service {
                 .setCustomBigContentView(largeView)
                 .build();
 
-        if (manager != null) {
-            manager.notify(notificationId, notification);
-            updateGroupSummary();
-        }
+        manager.notify(notificationId, notification);
+        updateGroupSummary();
     }
 
     private void createNotificationChannel() {
@@ -274,5 +288,9 @@ public class MqttService extends Service {
         super.onDestroy();
         MqttManager.getInstance().removeSubscriptionListener(listener);
         MqttManager.getInstance().removeMessageListener(messageListener);
+        NotificationManager manager = getSystemService(NotificationManager.class);
+        if (manager != null) {
+            manager.cancel(SUMMARY_ID);
+        }
     }
 }

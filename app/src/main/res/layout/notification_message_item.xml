@@ -4,5 +4,5 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingVertical="4dp"
-    android:textColor="?attr/app_hintTextColor"
+    android:textColor="@color/ntf_text_primary"
     android:textSize="16sp"/>

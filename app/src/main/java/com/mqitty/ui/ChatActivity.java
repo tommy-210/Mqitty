@@ -235,6 +235,10 @@ public class ChatActivity extends AppCompatActivity implements MqttManager.Messa
             return false;
         });
         send_msg_btn.setOnClickListener(v -> {
+            if (!session_on_checkbtn.isChecked()) {
+                Toast.makeText(ChatActivity.this, "Session is off. Please turn it on to send messages.", Toast.LENGTH_SHORT).show();
+                return;
+            }
             String msgText = text_input_msg.getText().toString();
             if (msgText.isEmpty()) {
                 return;
