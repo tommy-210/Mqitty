@@ -48,6 +48,7 @@ import java.util.List;
 import java.util.Map;
 import com.github.javiersantos.appupdater.AppUpdater;
 import com.github.javiersantos.appupdater.enums.Display;
+import androidx.appcompat.view.ContextThemeWrapper;
 import static com.mqitty.utils.Utils.*;
 
 public class MainActivity extends AppCompatActivity {
@@ -101,20 +102,20 @@ public class MainActivity extends AppCompatActivity {
         setupInnerPanelListeners();
 
         //check if there are any updates from github repository
-        checkUpdates();
+        checkUpdates(false);
     }
 
-    private void checkUpdates() {
-        if(isCheckUpdatesDone) {
+    private void checkUpdates(boolean manual) {
+        if(!manual && isCheckUpdatesDone) {
             return;
         }
         isCheckUpdatesDone = true;
 
-        new AppUpdater(this)
+        new AppUpdater(new ContextThemeWrapper(this, R.style.UpdateDialogTheme))
                 .setUpdateFrom(UpdateFrom.GITHUB)
                 .setGitHubUserAndRepo(GITHUB_USER, GITHUB_REPOSITORY)
                 .setDisplay(Display.DIALOG)
-                .showAppUpdated(false)
+                .showAppUpdated(manual)
                 .setTitleOnUpdateAvailable("Update available")
                 .setContentOnUpdateAvailable("Check out the latest version available of my app!")
                 .setTitleOnUpdateNotAvailable("Update not available")
@@ -375,7 +376,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
 //        check updates btn
-        check_updates_btn.setOnClickListener(v -> checkUpdates());
+        check_updates_btn.setOnClickListener(v -> checkUpdates(true));
 
 //        button for project repository
         Button githubBtn = findViewById(R.id.github_btn);

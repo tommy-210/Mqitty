@@ -73,4 +73,11 @@
         <item name="android:src">@drawable/three_dots_white</item>
     </style>
 
+    <!-- Custom Theme for Update Dialog -->
+    <style name="UpdateDialogTheme" parent="Theme.Material3.DayNight.Dialog.Alert">
+        <item name="android:windowBackground">?attr/app_backgroundColor</item>
+        <item name="android:textColorPrimary">?attr/app_color</item>
+        <item name="android:textColorSecondary">?attr/app_hintTextColor</item>
+        <item name="colorAccent">?attr/colorPrimary</item>
+    </style>
 </resources>
