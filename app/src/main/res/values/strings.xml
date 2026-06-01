@@ -33,9 +33,11 @@
     <string name="theme_mode_label">Theme mode</string>
     <string name="time_limit_msg_label">Time limit to store messages(in days)</string>
     <string name="about_subtitle">About</string>
+    <string name="disable_notification_settings">Enable notification for receiver</string>
 
 <!--    database settings-->
     <string name="theme_db">THEME_MODE</string>
     <string name="panel_db">DEFAULT_PANEL</string>
     <string name="limit_time_db">LIMIT_TIME_MSG</string>
+    <string name="check_updates">Check Updates</string>
 </resources>

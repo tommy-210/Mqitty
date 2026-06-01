@@ -23,9 +23,11 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         public final static String COLUMN_LABEL = "SETTINGS_LABEL";
         public final static String COLUMN_VALUE = "SETTINGS_VALUE";
 
+//        settings
         public final static String THEME = "THEME_MODE";
         public final static String DEFAULT_PANEL = "DEFAULT_PANEL";
         public final static String LIMIT_TIME_MSG = "LIMIT_TIME_MSG";
+        public final static String NOTIFICATION_ENABLE = "NOTIFICATION_ENABLE";
     }
 
     class SendDB {
@@ -55,7 +57,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         final static String COLUMN_TIMESTAMP = "CHAT_TIMESTAMP";
     }
 
-    final static int DATABASE_VERSION = 2;
+    final static int DATABASE_VERSION = 3;
     private static DataBaseHelper instance;
 
     public static synchronized DataBaseHelper getInstance(Context context) {
@@ -89,7 +91,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         String createSettingsTable = "CREATE TABLE " + SettingsDB.TABLE + " (" +
                 SettingsDB.COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 SettingsDB.COLUMN_LABEL + " TEXT, " +
-                SettingsDB.COLUMN_VALUE + " TEXT)";
+                SettingsDB.COLUMN_VALUE + " TEXT, " +
+                SettingsDB.NOTIFICATION_ENABLE + " TEXT)";
 
         db.execSQL(createSendTable);
         db.execSQL(createReceiverTable);
@@ -452,6 +455,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             insertSetting(db, SettingsDB.THEME, SYSTEM_THEME);
             insertSetting(db, SettingsDB.DEFAULT_PANEL, String.valueOf(PANEL_SEND));
             insertSetting(db, SettingsDB.LIMIT_TIME_MSG, "7");
+            insertSetting(db, SettingsDB.NOTIFICATION_ENABLE, NOTIFICATION_ENABLE);
         }
     }
 
@@ -470,10 +474,11 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return result > 0;
     }
 
-    public void updateAllSettings(String theme, String panel, String limit) {
+    public void updateAllSettings(String theme, String panel, String limit, String notification) {
         updateSetting(SettingsDB.THEME, theme);
         updateSetting(SettingsDB.DEFAULT_PANEL, panel);
         updateSetting(SettingsDB.LIMIT_TIME_MSG, limit);
+        updateSetting(SettingsDB.NOTIFICATION_ENABLE, notification);
     }
 
     public String getSettingByLabel(String label) {

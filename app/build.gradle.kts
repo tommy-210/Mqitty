@@ -46,4 +46,6 @@ dependencies {
 
     // MQTT
     implementation("org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5")
+    // App Updater
+    implementation(libs.appupdater)
 }

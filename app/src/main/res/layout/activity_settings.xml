@@ -123,10 +123,58 @@
                 android:textAlignment="center"/>
 
             <Space
-                android:layout_width="40dp"
+                android:layout_width="30dp"
                 android:layout_height="match_parent"/>
 
         </LinearLayout>
+
+<!--        disable notification checkbox-->
+        <LinearLayout
+            android:layout_marginVertical="@dimen/space_divider_settings"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/settings_item_height"
+            android:orientation="horizontal">
+
+            <Space
+                android:layout_width="@dimen/margin_20dp"
+                android:layout_height="match_parent"/>
+
+            <TextView
+                style="@style/TEXT"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="@dimen/message_text_size"
+                android:text="@string/disable_notification_settings"/>
+
+            <CheckBox
+                android:id="@+id/enable_notification_btn"
+                android:layout_width="@dimen/settings_item_height"
+                android:layout_height="match_parent"
+                android:checked="true"
+                android:text=""/>
+
+            <Space
+                android:layout_width="30dp"
+                android:layout_height="match_parent"/>
+
+        </LinearLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/settings_item_height">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/check_updates_btn"
+                android:text="@string/check_updates"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <!--        about section-->
         <androidx.constraintlayout.widget.ConstraintLayout

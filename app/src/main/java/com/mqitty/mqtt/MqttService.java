@@ -16,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import com.mqitty.MainActivity;
 import com.mqitty.R;
+import com.mqitty.database.DataBaseHelper;
 import com.mqitty.model.ReceiverModel;
 import com.mqitty.ui.ChatActivity;
 import java.util.ArrayList;
@@ -24,6 +25,9 @@ import java.util.List;
 import java.util.Map;
 
 public class MqttService extends Service {
+
+    DataBaseHelper db;
+
     private static final String CHANNEL_ID = "MqttServiceChannel";
     private static final String MESSAGE_CHANNEL_ID = "MqttMessageChannel";
     private static final String GROUP_KEY = "com.mqitty.mqtt.NOTIFICATION_GROUP";
@@ -63,6 +67,14 @@ public class MqttService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+
+//        if notification in settings is disable it return
+        db = DataBaseHelper.getInstance(this);
+        boolean isNotificationEnable = Boolean.parseBoolean(db.getSettingByLabel(DataBaseHelper.SettingsDB.NOTIFICATION_ENABLE));
+        if(!isNotificationEnable){
+            return;
+        }
+
         createNotificationChannel();
         MqttManager.getInstance().addSubscriptionListener(listener);
         MqttManager.getInstance().addMessageListener(messageListener);

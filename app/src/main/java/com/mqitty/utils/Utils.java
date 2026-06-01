@@ -4,6 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 
 public class Utils {
+//    app information for updates
+    public static final String GITHUB_USER = "tommy-210";
+    public static final String GITHUB_REPOSITORY = "Mqitty";
 
     private static final String SPACE = " ";
 
@@ -18,6 +21,7 @@ public class Utils {
     public static final String SYSTEM_THEME = "system";
     public static final String LIGHT_THEME = "Light";
     public static final String DARK_THEME = "Dark";
+    public static final String NOTIFICATION_ENABLE = "1";
 
 //    check if input of from is correct
     public static boolean checkInputFormSend(String name, String desc, String broker, String topic, String msg) {

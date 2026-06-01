@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -28,6 +29,7 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import com.github.javiersantos.appupdater.enums.UpdateFrom;
 import com.mqitty.database.DataBaseHelper;
 import com.mqitty.manager.ReceiveManager;
 import com.mqitty.ui.ChatActivity;
@@ -44,6 +46,8 @@ import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
 import java.util.List;
 import java.util.Map;
+import com.github.javiersantos.appupdater.AppUpdater;
+import com.github.javiersantos.appupdater.enums.Display;
 import static com.mqitty.utils.Utils.*;
 
 public class MainActivity extends AppCompatActivity {
@@ -54,12 +58,13 @@ public class MainActivity extends AppCompatActivity {
     EditText limit_time_msg;
     ViewGroup sendPanelContainer, receivePanelContainer, settingsPanelContainer;
     FrameLayout filter_popup;
-    Button clear_panel_btn;
+    Button clear_panel_btn, check_updates_btn;
+    CheckBox notification_enable;
     DataBaseHelper dataBaseHelper;
 
     private final android.os.Handler settingsHandler = new android.os.Handler(android.os.Looper.getMainLooper());
     private Runnable settingsRunnable;
-    private static boolean isCleanupDone = false;
+    private static boolean isCleanupDone = false, isCheckUpdatesDone = false;
     String default_panel;
 
     private final MqttManager.SubscriptionListener subscriptionListener = count -> {
@@ -94,6 +99,23 @@ public class MainActivity extends AppCompatActivity {
 
         // Initial setup for the default included layout
         setupInnerPanelListeners();
+
+        //check if there are any updates from github repository
+        checkUpdates();
+    }
+
+    private void checkUpdates() {
+        if(isCheckUpdatesDone) {
+            return;
+        }
+        isCheckUpdatesDone = true;
+
+        new AppUpdater(this)
+                .setUpdateFrom(UpdateFrom.GITHUB)
+                .setGitHubUserAndRepo(GITHUB_USER, GITHUB_REPOSITORY)
+                .setDisplay(Display.DIALOG)
+                .showAppUpdated(false)
+                .start();
     }
 
     @Override
@@ -187,6 +209,8 @@ public class MainActivity extends AppCompatActivity {
         theme_mode_dropdown = findViewById(R.id.theme_mode_dropdown);
         default_panel_dropdown = findViewById(R.id.default_panel_dropdown);
         limit_time_msg = findViewById(R.id.limit_time_msg_input);
+        notification_enable = findViewById(R.id.enable_notification_btn);
+        check_updates_btn = findViewById(R.id.check_updates_btn);
     }
 
     private void loadSettings() {
@@ -218,6 +242,9 @@ public class MainActivity extends AppCompatActivity {
         if (limit != null) {
             limit_time_msg.setText(limit);
         }
+
+        boolean isEnableNotification = Boolean.parseBoolean(DataBaseHelper.SettingsDB.NOTIFICATION_ENABLE);
+        notification_enable.setChecked(isEnableNotification);
     }
 
     private void componentListener() {
@@ -333,6 +360,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {}
         });
+
+        notification_enable.setOnClickListener(v -> {
+            dataBaseHelper.updateSetting(DataBaseHelper.SettingsDB.NOTIFICATION_ENABLE, String.valueOf(notification_enable.isChecked()));
+        });
+
+//        check updates btn
+        check_updates_btn.setOnClickListener(v -> checkUpdates());
 
 //        button for project repository
         Button githubBtn = findViewById(R.id.github_btn);
