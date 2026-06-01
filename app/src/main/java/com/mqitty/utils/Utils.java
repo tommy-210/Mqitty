@@ -21,7 +21,7 @@ public class Utils {
     public static final String SYSTEM_THEME = "system";
     public static final String LIGHT_THEME = "Light";
     public static final String DARK_THEME = "Dark";
-    public static final String NOTIFICATION_ENABLE = "1";
+    public static final String NOTIFICATION_ENABLE = "true";
 
 //    check if input of from is correct
     public static boolean checkInputFormSend(String name, String desc, String broker, String topic, String msg) {
@@ -40,7 +40,7 @@ public class Utils {
         if(broker.isBlank() || topic.isBlank()) {
             return !broker.contains(SPACE) && !topic.contains(SPACE);
         }
-//        check estetics input
+//        check aesthetics input
         return !name.isBlank() && !desc.isBlank();
     }
 

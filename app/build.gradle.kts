@@ -45,7 +45,7 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
 
     // MQTT
-    implementation("org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5")
+    implementation(libs.org.eclipse.paho.client.mqttv3)
     // App Updater
     implementation(libs.appupdater)
 }

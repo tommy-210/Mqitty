@@ -126,7 +126,7 @@
                 android:textColor="?attr/app_color"
                 android:text="Clear all chat"
                 style="@style/Widget.Material3.Button.TextButton"
-                android:gravity="start|center_vertical"/>
+                android:gravity="center_vertical|start"/>
 
             <SearchView
                 android:id="@+id/search_view"

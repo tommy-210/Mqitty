@@ -115,6 +115,15 @@ public class MainActivity extends AppCompatActivity {
                 .setGitHubUserAndRepo(GITHUB_USER, GITHUB_REPOSITORY)
                 .setDisplay(Display.DIALOG)
                 .showAppUpdated(false)
+                .setTitleOnUpdateAvailable("Update available")
+                .setContentOnUpdateAvailable("Check out the latest version available of my app!")
+                .setTitleOnUpdateNotAvailable("Update not available")
+                .setContentOnUpdateNotAvailable("No update available. Check for updates again later!")
+                .setButtonUpdate("Update now?")
+                .setButtonDismiss("Maybe later")
+                .setButtonDoNotShowAgain("Huh, not interested")
+                .setIcon(R.mipmap.ic_launcher) // Notification icon
+                .setCancelable(false) // Dialog could not be dismissable
                 .start();
     }
 
@@ -243,7 +252,7 @@ public class MainActivity extends AppCompatActivity {
             limit_time_msg.setText(limit);
         }
 
-        boolean isEnableNotification = Boolean.parseBoolean(DataBaseHelper.SettingsDB.NOTIFICATION_ENABLE);
+        boolean isEnableNotification = Boolean.parseBoolean(settings.get(DataBaseHelper.SettingsDB.NOTIFICATION_ENABLE));
         notification_enable.setChecked(isEnableNotification);
     }
 

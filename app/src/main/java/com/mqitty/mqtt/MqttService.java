@@ -67,17 +67,15 @@ public class MqttService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        createNotificationChannel();
 
-//        if notification in settings is disable it return
+        MqttManager.getInstance().addSubscriptionListener(listener);
+
         db = DataBaseHelper.getInstance(this);
         boolean isNotificationEnable = Boolean.parseBoolean(db.getSettingByLabel(DataBaseHelper.SettingsDB.NOTIFICATION_ENABLE));
-        if(!isNotificationEnable){
-            return;
+        if(isNotificationEnable){
+            MqttManager.getInstance().addMessageListener(messageListener);
         }
-
-        createNotificationChannel();
-        MqttManager.getInstance().addSubscriptionListener(listener);
-        MqttManager.getInstance().addMessageListener(messageListener);
     }
 
     @Override

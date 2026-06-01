@@ -57,7 +57,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         final static String COLUMN_TIMESTAMP = "CHAT_TIMESTAMP";
     }
 
-    final static int DATABASE_VERSION = 3;
+    final static int DATABASE_VERSION = 5;
     private static DataBaseHelper instance;
 
     public static synchronized DataBaseHelper getInstance(Context context) {
@@ -91,8 +91,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         String createSettingsTable = "CREATE TABLE " + SettingsDB.TABLE + " (" +
                 SettingsDB.COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 SettingsDB.COLUMN_LABEL + " TEXT, " +
-                SettingsDB.COLUMN_VALUE + " TEXT, " +
-                SettingsDB.NOTIFICATION_ENABLE + " TEXT)";
+                SettingsDB.COLUMN_VALUE + " TEXT)";
 
         db.execSQL(createSendTable);
         db.execSQL(createReceiverTable);
@@ -103,6 +102,14 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        Cursor cursor = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table' AND name LIKE '" + ChatsDB.TABLE + "%'", null);
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                db.execSQL("DROP TABLE IF EXISTS " + cursor.getString(0));
+            }
+            cursor.close();
+        }
+
         db.execSQL("DROP TABLE IF EXISTS " + SendDB.TABLE);
         db.execSQL("DROP TABLE IF EXISTS " + ReceiverDB.TABLE);
         db.execSQL("DROP TABLE IF EXISTS " + SettingsDB.TABLE);
@@ -164,7 +171,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         }
 
         cursor.close();
-        db.close();
         return returnList;
     }
 
@@ -191,7 +197,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         }
 
         cursor.close();
-        db.close();
         return returnList;
     }
 
@@ -263,7 +268,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         }
 
         cursor.close();
-        db.close();
         return returnList;
     }
 
@@ -292,7 +296,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         }
 
         cursor.close();
-        db.close();
         return returnList;
     }
 
@@ -319,7 +322,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         }
 
         cursor.close();
-        db.close();
         return returnList;
     }
 
@@ -345,7 +347,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         }
 
         cursor.close();
-        db.close();
         return returnList;
     }
 
@@ -363,7 +364,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             sendModel = new SendModel(cursor.getInt(0), NAME, DESC, BROKER, TOPIC, MSG);
         }
         cursor.close();
-        db.close();
         return sendModel;
     }
 
@@ -380,7 +380,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             receiverModel = new ReceiverModel(cursor.getInt(0), NAME, DESC, BROKER, TOPIC);
         }
         cursor.close();
-        db.close();
         return receiverModel;
     }
 
@@ -490,7 +489,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             value = cursor.getString(0);
         }
         cursor.close();
-        db.close();
         return value;
     }
 
@@ -508,7 +506,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
         cursor.close();
-        db.close();
         return settingsMap;
     }
 }
