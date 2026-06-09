@@ -6,4 +6,5 @@
     <attr name="app_colorBackgroundFloating" format="color|reference" />
     <attr name="app_hintTextColor" format="color" />
     <attr name="app_colorPrimaryVariant" format="color|reference" />
+    <attr name="app_updateIcon" format="reference" />
 </resources>

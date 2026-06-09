@@ -24,4 +24,5 @@
     <dimen name="panel_title_size">24sp</dimen>
     <dimen name="settings_item_height">50dp</dimen>
     <dimen name="space_divider_settings">15dp</dimen>
+    <dimen name="timestamp_size">10sp</dimen>
 </resources>

@@ -26,6 +26,7 @@
     <color name="secondary_highlight">#6B63FF</color>
     <color name="muted_text">#7D84B2</color>
     <color name="disabled_text">#52577E</color>
+    <color name="timestamp_text">#BDBDBD</color>
 
     <!-- Other Colors -->
     <color name="violet">#9B30D0</color>

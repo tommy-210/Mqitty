@@ -14,6 +14,7 @@
         <item name="colorSecondary">@color/secondary_highlight</item>
         <item name="colorOnSecondary">@color/secondary_text_light</item>
 
+        <item name="app_updateIcon">@drawable/update_black</item>
     </style>
 
 <!--    light mode-->

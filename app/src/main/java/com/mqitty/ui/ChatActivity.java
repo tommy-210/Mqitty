@@ -144,6 +144,8 @@ public class ChatActivity extends AppCompatActivity implements MqttManager.Messa
             }
             TextView msgText = view.findViewById(R.id.msg_text);
             msgText.setText(message.getMessage());
+            TextView msgTime = view.findViewById(R.id.msg_time);
+            msgTime.setText(message.getFormattedTimestamp());
             chat_msg_container.addView(view);
         }
         scroll_chat_msg_container.post(() -> scroll_chat_msg_container.fullScroll(View.FOCUS_DOWN));
@@ -159,6 +161,8 @@ public class ChatActivity extends AppCompatActivity implements MqttManager.Messa
 
         TextView msgText = view.findViewById(R.id.msg_text);
         msgText.setText(messageModel.getMessage());
+        TextView msgTime = view.findViewById(R.id.msg_time);
+        msgTime.setText(messageModel.getFormattedTimestamp());
 
         chat_msg_container.addView(view);
         scroll_chat_msg_container.post(() -> scroll_chat_msg_container.fullScroll(View.FOCUS_DOWN));
