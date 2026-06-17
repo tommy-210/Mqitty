@@ -64,9 +64,8 @@ public class MainActivity extends AppCompatActivity {
     ViewGroup sendPanelContainer, receivePanelContainer, settingsPanelContainer;
     FrameLayout filter_popup;
     Button clear_panel_btn, check_updates_btn;
-    CheckBox notification_enable;
+    CheckBox notification_enable, filter_inverted_btn;
     RadioGroup filter_radioGroup;
-    ToggleButton filter_inverted_btn;
     DataBaseHelper dataBaseHelper;
 
     private final android.os.Handler settingsHandler = new android.os.Handler(android.os.Looper.getMainLooper());
@@ -77,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
     private final MqttManager.SubscriptionListener subscriptionListener = count -> {
         runOnUiThread(() -> {
             if (receivePanelContainer.getVisibility() == View.VISIBLE) {
-                refreshReceivePanelData(null);
+                refreshReceivePanelData(null, filter_inverted_btn.isChecked(), getFilterMode());
             }
         });
     };
@@ -160,11 +159,11 @@ public class MainActivity extends AppCompatActivity {
         switch (panel) {
             case PANEL_SEND:
                 showPanel(sendPanelContainer);
-                refreshSendPanelData(null);
+                refreshSendPanelData(null, filter_inverted_btn.isChecked(), getFilterMode());
                 break;
             case PANEL_RECEIVE:
                 showPanel(receivePanelContainer);
-                refreshReceivePanelData(null);
+                refreshReceivePanelData(null, filter_inverted_btn.isChecked(), getFilterMode());
                 break;
             case PANEL_SETTINGS:
                 showPanel(settingsPanelContainer);
@@ -191,11 +190,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (sendPanelContainer.getVisibility() == View.VISIBLE) {
-            refreshSendPanelData(null);
-        } else if (receivePanelContainer.getVisibility() == View.VISIBLE) {
-            refreshReceivePanelData(null);
-        }
+        refreshPanelData(null, filter_inverted_btn.isChecked(), getFilterMode());
     }
 
     private void initComponents() {
@@ -269,12 +264,12 @@ public class MainActivity extends AppCompatActivity {
 //        send panel button
         send_btn.setOnClickListener(v -> {
             showPanel(sendPanelContainer);
-            refreshSendPanelData(null);
+            refreshSendPanelData(null, filter_inverted_btn.isChecked(), getFilterMode());
         });
 //        receive panel button
         receive_btn.setOnClickListener(v -> {
             showPanel(receivePanelContainer);
-            refreshReceivePanelData(null);
+            refreshReceivePanelData(null, filter_inverted_btn.isChecked(), getFilterMode());
         });
 //        settings panel button
         settings_btn.setOnClickListener(v -> {
@@ -288,21 +283,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 Toast.makeText(MainActivity.this, "Filter: " + query, Toast.LENGTH_SHORT).show();
-                if(sendPanelContainer.getVisibility() == View.VISIBLE){
-                    refreshSendPanelData(query);
-                }else if(receivePanelContainer.getVisibility() == View.VISIBLE) {
-                    refreshReceivePanelData(query);
-                }
+                refreshPanelData(query, filter_inverted_btn.isChecked(), getFilterMode());
                 return false;
             }
         });
 //        close search view and reload all elemets
         searchView.setOnCloseListener(() -> {
-            if(sendPanelContainer.getVisibility() == View.VISIBLE) {
-                refreshSendPanelData(null);
-            }else if(receivePanelContainer.getVisibility() == View.VISIBLE) {
-                refreshReceivePanelData(null);
-            }
+            refreshPanelData(null, filter_inverted_btn.isChecked(), getFilterMode());
             return false;
         });
         filter_btn.setOnClickListener(v -> {
@@ -314,19 +301,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         clear_panel_btn.setOnClickListener(v -> {
-            String panel = getCurrentContainer();
-            showConfirmDeleteElementsDialog(panel);
-            if(panel.equals(VALUE_SEND)) {
-                refreshSendPanelData(null);
-            }else if(panel.equals(VALUE_RECEIVER)){
-                refreshReceivePanelData(null);
-            }
+            showConfirmDeleteElementsDialog(getCurrentContainer());
+            refreshPanelData(null, filter_inverted_btn.isChecked(), getFilterMode());
         });
         filter_radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
-            Toast.makeText(MainActivity.this, "checked: " + checkedId, Toast.LENGTH_SHORT).show();
+            refreshPanelData(null, filter_inverted_btn.isChecked(), getFilterMode());
         });
         filter_inverted_btn.setOnClickListener(v -> {
-            Toast.makeText(MainActivity.this, "invert: " + filter_inverted_btn.isChecked(), Toast.LENGTH_SHORT).show();
+            String query = searchView.getQuery().toString();
+            if (query.isEmpty()) query = null;
+            refreshPanelData(query, filter_inverted_btn.isChecked(), getFilterMode());
         });
 
         addListenerOnSettings();
@@ -459,40 +443,52 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void refreshSendPanelData(String filterQuery) {
+    private void refreshPanelData(String filterQuery, boolean invert, int filterMode) {
+        String panel = getCurrentContainer();
+        if(panel.equals(VALUE_SEND)) {
+            refreshSendPanelData(filterQuery, invert, filterMode);
+        }else if(panel.equals(VALUE_RECEIVER)) {
+            refreshReceivePanelData(filterQuery, invert, filterMode);
+        }else {
+            Toast.makeText(MainActivity.this, "error filter mode id", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void refreshSendPanelData(String filterQuery, boolean invert, int filterMode) {
         List<SendModel> sendModels;
+        //request list of send models from database
         if(filterQuery != null) {
             sendModels = dataBaseHelper.getFilteredSend(filterQuery);
         }else {
             sendModels = dataBaseHelper.getEveryoneSend();
         }
+        //sort list by mode
+        sortSendList(sendModels, filterMode);
+        //initialization of container
         View sendRoot = findViewById(R.id.activity_send_root);
         if (sendRoot instanceof ViewGroup) {
             ViewGroup container = (ViewGroup) sendRoot;
+            //clear container from old elements
             int childCount = container.getChildCount();
-            if (childCount > 0) {
-                container.removeViews(0, childCount - 1);
-            }
-            // The panel was just inflated, so we add all stored models
-            for (SendModel model : sendModels) {
-                // Add every element to container
+            if (childCount > 0) container.removeViews(0, childCount - 1);
+            // Add every element to container, add listeners
+            for (int i = 0; i < sendModels.size(); i++) {
+                SendModel model = invert ? sendModels.get(sendModels.size() - 1 - i) : sendModels.get(i);
                 View view = SendManager.addSendModelToLayout(container, model);
-                if (view != null) {
-                    // Add click listener for each element, to open modify panel
-                    addListenerOnSends(view, model);
-                }
+                if (view != null) addListenerOnSends(view, model);
             }
         }
     }
 
-    private void refreshReceivePanelData(String filterQuery) {
+    private void refreshReceivePanelData(String filterQuery, boolean invert, int filterMode) {
         List<ReceiverModel> receiverModels;
         if(filterQuery != null){
             receiverModels = dataBaseHelper.getFilteredReceive(filterQuery);
         }else {
             receiverModels = dataBaseHelper.getEveryoneReceiver();
         }
-
+        //sort list by mode
+        sortReceiverList(receiverModels, filterMode);
         if (!isCleanupDone) {
             String limitStr = dataBaseHelper.getSettingByLabel(DataBaseHelper.SettingsDB.LIMIT_TIME_MSG);
             long timeLimit = (limitStr != null) ? Long.parseLong(limitStr) : 7;
@@ -506,11 +502,10 @@ public class MainActivity extends AppCompatActivity {
         if (receiveRoot instanceof ViewGroup) {
             ViewGroup container = (ViewGroup) receiveRoot;
             int childCount = container.getChildCount();
-            if (childCount > 0) {
-                container.removeViews(0, childCount - 1);
-            }
+            if (childCount > 0) container.removeViews(0, childCount - 1);
             // The panel was just inflated, so we add all stored models
-            for (ReceiverModel model : receiverModels) {
+            for (int i = 0; i < receiverModels.size(); i++) {
+                ReceiverModel model = invert ? receiverModels.get(receiverModels.size() - 1 - i) : receiverModels.get(i);
                 View view = ReceiveManager.addReceiveModelToLayout(container, model);
                 if (view != null) {
                     addListenerOnReceivers(view, model);
@@ -629,5 +624,12 @@ public class MainActivity extends AppCompatActivity {
             return VALUE_SETTINGS;
         }
         return "Error";
+    }
+
+    private int getFilterMode() {
+        int checkedId = filter_radioGroup.getCheckedRadioButtonId();
+        if (checkedId == R.id.filter_radio_name) return FILTER_NAME;
+        if (checkedId == R.id.filter_radio_broker) return FILTER_BROKER;
+        return FILTER_CUSTOM;
     }
 }

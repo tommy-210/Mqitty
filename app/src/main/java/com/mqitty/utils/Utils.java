@@ -3,6 +3,11 @@ package com.mqitty.utils;
 import android.content.Context;
 import android.content.Intent;
 
+import com.mqitty.model.ReceiverModel;
+import com.mqitty.model.SendModel;
+
+import java.util.List;
+
 public class Utils {
 //    app information for updates
     public static final String GITHUB_USER = "tommy-210";
@@ -29,8 +34,8 @@ public class Utils {
     public static final String NOTIFICATION_ENABLE = "true";
 //    filter mode
     public static final int FILTER_NAME = 0;
-    public static final int FILTER_BROKER = 0;
-    public static final int FILTER_CUSTOM = 0;
+    public static final int FILTER_BROKER = 1;
+    public static final int FILTER_CUSTOM = 2;
 
 //    check if input of from is correct
     public static boolean checkInputFormSend(String name, String desc, String broker, String topic, String msg) {
@@ -62,5 +67,25 @@ public class Utils {
     }
     public static Intent changeActivity(Context fromContext, Class toClass) {
         return new Intent(fromContext, toClass);
+    }
+
+//    sort a list of elements by alphabetic
+    public static void sortSendList(List<SendModel> list, int mode) {
+        if(mode == FILTER_CUSTOM) return;
+
+        if(mode == FILTER_NAME) {
+            list.sort((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
+        }else if(mode == FILTER_BROKER) {
+            list.sort((o1, o2) -> o1.getBroker().compareToIgnoreCase(o2.getBroker()));
+        }
+    }
+    public static void sortReceiverList(List<ReceiverModel> list, int mode) {
+        if(mode == FILTER_CUSTOM) return;
+
+        if(mode == FILTER_NAME) {
+            list.sort((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
+        }else if(mode == FILTER_BROKER) {
+            list.sort((o1, o2) -> o1.getBroker().compareToIgnoreCase(o2.getBroker()));
+        }
     }
 }

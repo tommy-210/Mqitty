@@ -87,7 +87,7 @@
         android:id="@+id/filter_popup_section"
         android:layout_width="250dp"
         android:layout_height="wrap_content"
-        android:visibility="visible"
+        android:visibility="gone"
         android:elevation="8dp"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/search_filter_section"
@@ -116,6 +116,7 @@
                 android:layout_marginTop="8dp">
 
                 <RadioButton
+                    android:id="@+id/filter_radio_name"
                     style="@style/FILTER_RADIO_BUTTON"
                     android:layout_width="0dp"
                     android:layout_weight="1"
@@ -123,6 +124,7 @@
                     android:text="Title" />
 
                 <RadioButton
+                    android:id="@+id/filter_radio_broker"
                     style="@style/FILTER_RADIO_BUTTON"
                     android:layout_width="0dp"
                     android:layout_weight="1"
@@ -130,23 +132,22 @@
                     android:text="Broker" />
 
                 <RadioButton
+                    android:id="@+id/filter_radio_custom"
                     style="@style/FILTER_RADIO_BUTTON"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:text="Custom" />
+                    android:text="Custom"
+                    android:checked="true" />
 
             </RadioGroup>
 
-            <ToggleButton
+            <CheckBox
                 android:id="@+id/filter_inverted_btn"
-                style="@style/FILTER_TOGGLE_BUTTON"
-                android:textOff="Invert"
-                android:textOn="Invert"
+                android:text="Invert"
                 android:textSize="12sp"
-                android:textAllCaps="false"
                 android:layout_width="wrap_content"
-                android:layout_height="28dp"/>
+                android:layout_height="26dp"/>
 
             <Button
                 style="@style/Widget.Material3.Button.TextButton"
