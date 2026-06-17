@@ -17,11 +17,20 @@ public class Utils {
     public static final int PANEL_SEND = 0;
     public static final int PANEL_RECEIVE = 1;
     public static final int PANEL_SETTINGS = 2;
+//    label for panel
+    public static final String VALUE_SEND = "Send";
+    public static final String VALUE_RECEIVER = "Receiver";
+    public static final String VALUE_SETTINGS = "Settings";
 //    theme mode
     public static final String SYSTEM_THEME = "system";
     public static final String LIGHT_THEME = "Light";
     public static final String DARK_THEME = "Dark";
+//    notification
     public static final String NOTIFICATION_ENABLE = "true";
+//    filter mode
+    public static final int FILTER_NAME = 0;
+    public static final int FILTER_BROKER = 0;
+    public static final int FILTER_CUSTOM = 0;
 
 //    check if input of from is correct
     public static boolean checkInputFormSend(String name, String desc, String broker, String topic, String msg) {

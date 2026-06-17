@@ -16,12 +16,14 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RadioGroup;
 import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -29,6 +31,8 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.widget.ToggleButton;
+
 import com.github.javiersantos.appupdater.enums.UpdateFrom;
 import com.mqitty.database.DataBaseHelper;
 import com.mqitty.manager.ReceiveManager;
@@ -61,6 +65,8 @@ public class MainActivity extends AppCompatActivity {
     FrameLayout filter_popup;
     Button clear_panel_btn, check_updates_btn;
     CheckBox notification_enable;
+    RadioGroup filter_radioGroup;
+    ToggleButton filter_inverted_btn;
     DataBaseHelper dataBaseHelper;
 
     private final android.os.Handler settingsHandler = new android.os.Handler(android.os.Looper.getMainLooper());
@@ -101,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
         // Initial setup for the default included layout
         setupInnerPanelListeners();
 
-        //check if there are any updates from github repository
+        //check if there are any updates from GitHub repository
         checkUpdates(false);
     }
 
@@ -202,6 +208,8 @@ public class MainActivity extends AppCompatActivity {
         filter_popup = findViewById(R.id.filter_popup_section);
         clear_panel_btn = findViewById(R.id.clear_panel_btn);
         filter_btn = findViewById(R.id.filter_btn);
+        filter_radioGroup = findViewById(R.id.filter_radioGroup);
+        filter_inverted_btn = findViewById(R.id.filter_inverted_btn);
         //main container
         sendPanelContainer = findViewById(R.id.send_panel_container);
         receivePanelContainer = findViewById(R.id.receive_panel_container);
@@ -282,7 +290,7 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "Filter: " + query, Toast.LENGTH_SHORT).show();
                 if(sendPanelContainer.getVisibility() == View.VISIBLE){
                     refreshSendPanelData(query);
-                }else {
+                }else if(receivePanelContainer.getVisibility() == View.VISIBLE) {
                     refreshReceivePanelData(query);
                 }
                 return false;
@@ -292,26 +300,33 @@ public class MainActivity extends AppCompatActivity {
         searchView.setOnCloseListener(() -> {
             if(sendPanelContainer.getVisibility() == View.VISIBLE) {
                 refreshSendPanelData(null);
-            }else {
+            }else if(receivePanelContainer.getVisibility() == View.VISIBLE) {
                 refreshReceivePanelData(null);
             }
             return false;
         });
         filter_btn.setOnClickListener(v -> {
-            if(filter_popup.getVisibility() == View.GONE) {
-                filter_popup.setVisibility(View.VISIBLE);
+//            change visibility for filter_popup if user is not in settings
+            if(settingsPanelContainer.getVisibility() == View.GONE) {
+                filter_popup.setVisibility(filter_popup.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
             }else {
                 filter_popup.setVisibility(View.GONE);
             }
         });
         clear_panel_btn.setOnClickListener(v -> {
-            String panel = sendPanelContainer.getVisibility() == View.VISIBLE ? "Send" : "Receiver";
+            String panel = getCurrentContainer();
             showConfirmDeleteElementsDialog(panel);
-            if(panel.equals("Send")) {
+            if(panel.equals(VALUE_SEND)) {
                 refreshSendPanelData(null);
-            }else {
+            }else if(panel.equals(VALUE_RECEIVER)){
                 refreshReceivePanelData(null);
             }
+        });
+        filter_radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            Toast.makeText(MainActivity.this, "checked: " + checkedId, Toast.LENGTH_SHORT).show();
+        });
+        filter_inverted_btn.setOnClickListener(v -> {
+            Toast.makeText(MainActivity.this, "invert: " + filter_inverted_btn.isChecked(), Toast.LENGTH_SHORT).show();
         });
 
         addListenerOnSettings();
@@ -321,7 +336,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void addListenerOnSettings() {
         String[] items_theme = {SYSTEM_THEME, LIGHT_THEME, DARK_THEME};
-        String[] items_panel = {"Send", "Receiver", "Settings"};
+        String[] items_panel = {VALUE_SEND, VALUE_RECEIVER, VALUE_SETTINGS};
 
 //        theme dropdown popup
         ArrayAdapter<String> adapter_theme = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, items_theme);
@@ -363,7 +378,7 @@ public class MainActivity extends AppCompatActivity {
                 settingsRunnable = () -> {
                     dataBaseHelper.updateSetting(DataBaseHelper.SettingsDB.LIMIT_TIME_MSG, s.toString());
                 };
-                settingsHandler.postDelayed(settingsRunnable, 2000); // 1-second delay
+                settingsHandler.postDelayed(settingsRunnable, 1500); // 1.5-second delay
             }
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -395,9 +410,9 @@ public class MainActivity extends AppCompatActivity {
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
                     Toast.makeText(MainActivity.this, "Yes", Toast.LENGTH_SHORT).show();
-                    if(panel.equals("Send")) {
+                    if(panel.equals(VALUE_SEND)) {
                         dataBaseHelper.deleteAllFromSend();
-                    }else {
+                    }else if(panel.equals(VALUE_RECEIVER)) {
                         dataBaseHelper.deleteAllFromReceiver();
                     }
                 })
@@ -506,7 +521,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void addListenerOnSends(View view, SendModel sendModel) {
         view.setOnLongClickListener(v -> {
-            Toast.makeText(MainActivity.this, "Send: " + sendModel.getName(), Toast.LENGTH_SHORT).show();
             startActivity(changeActivity(MainActivity.this, SendModify.class, EXTRA_ELEMENT_ID, sendModel.getId()));
             return false;
         });
@@ -519,7 +533,7 @@ public class MainActivity extends AppCompatActivity {
                 public void onSuccess(IMqttToken asyncActionToken) {
                     MqttManager.getInstance().addToSentQueue(sendModel.getMessage());
                     mqtt.publish(sendModel.getTopic(), sendModel.getMessage());
-                    runOnUiThread(() -> Toast.makeText(MainActivity.this, "Send: " + sendModel.getMessage(), Toast.LENGTH_SHORT).show());
+                    runOnUiThread(() -> Toast.makeText(MainActivity.this, VALUE_SEND + ": " + sendModel.getMessage(), Toast.LENGTH_SHORT).show());
                 }
 
                 @Override
@@ -604,5 +618,16 @@ public class MainActivity extends AppCompatActivity {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
                 break;
         }
+    }
+
+    private String getCurrentContainer() {
+        if(sendPanelContainer.getVisibility() == View.VISIBLE) {
+            return VALUE_SEND;
+        } else if (receivePanelContainer.getVisibility() == View.VISIBLE) {
+            return VALUE_RECEIVER;
+        } else if (settingsPanelContainer.getVisibility() == View.VISIBLE) {
+            return VALUE_SETTINGS;
+        }
+        return "Error";
     }
 }

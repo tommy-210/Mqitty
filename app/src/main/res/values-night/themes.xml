@@ -75,6 +75,25 @@
         <item name="android:src">@drawable/three_dots_white</item>
     </style>
 
+    <style name="FILTER_RADIO_BUTTON" parent="Widget.Material3.CompoundButton.RadioButton">
+        <item name="android:button">@null</item>
+        <item name="android:background">@drawable/filter_radio_button_bg</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_marginHorizontal">8dp</item>
+        <item name="android:textColor">?attr/app_color</item>
+    </style>
+
+    <style name="FILTER_TOGGLE_BUTTON">
+        <item name="android:background">?attr/selectableItemBackground</item>
+        <item name="android:drawableStart">@drawable/filter_toggle_indicator</item>
+        <item name="android:drawablePadding">8dp</item>
+        <item name="android:gravity">center_vertical|start</item>
+        <item name="android:textColor">?attr/app_color</item>
+        <item name="android:paddingHorizontal">4dp</item>
+    </style>
+
+    <style name="Theme.Mqitty" parent="Base.Theme.Mqitty" />
+
     <!-- Custom Theme for Update Dialog -->
     <style name="UpdateDialogTheme" parent="Theme.Material3.DayNight.Dialog.Alert">
         <item name="android:windowBackground">?attr/app_backgroundColor</item>
