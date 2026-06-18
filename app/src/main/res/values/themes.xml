@@ -74,9 +74,9 @@
         <item name="android:src">@drawable/three_dots_black</item>
     </style>
 
-    <style name="FILTER_RADIO_BUTTON" parent="Widget.Material3.CompoundButton.RadioButton">
+    <style name="RADIO_BUTTON" parent="Widget.Material3.CompoundButton.RadioButton">
         <item name="android:button">@null</item>
-        <item name="android:background">@drawable/filter_radio_button_bg</item>
+        <item name="android:background">@drawable/radio_button_bg</item>
         <item name="android:gravity">center</item>
         <item name="android:layout_marginHorizontal">8dp</item>
         <item name="android:textColor">?attr/app_color</item>
@@ -99,5 +99,6 @@
         <item name="android:textColorPrimary">?attr/app_color</item>
         <item name="android:textColorSecondary">?attr/app_hintTextColor</item>
         <item name="colorAccent">?attr/colorPrimary</item>
+        <item name="borderRound">@dimen/border_radius_10dp</item>
     </style>
 </resources>

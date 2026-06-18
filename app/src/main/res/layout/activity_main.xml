@@ -117,7 +117,7 @@
 
                 <RadioButton
                     android:id="@+id/filter_radio_name"
-                    style="@style/FILTER_RADIO_BUTTON"
+                    style="@style/RADIO_BUTTON"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
@@ -125,7 +125,7 @@
 
                 <RadioButton
                     android:id="@+id/filter_radio_broker"
-                    style="@style/FILTER_RADIO_BUTTON"
+                    style="@style/RADIO_BUTTON"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
@@ -133,7 +133,7 @@
 
                 <RadioButton
                     android:id="@+id/filter_radio_custom"
-                    style="@style/FILTER_RADIO_BUTTON"
+                    style="@style/RADIO_BUTTON"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"

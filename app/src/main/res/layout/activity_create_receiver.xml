@@ -114,6 +114,79 @@
             android:inputType="text"
             android:textColorHint="?attr/app_hintTextColor" />
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Enable notification:"
+            android:layout_marginVertical="@dimen/padding_divider"/>
+
+        <RadioGroup
+            android:id="@+id/radioGroup_notification_receiver"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:orientation="horizontal">
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"/>
+
+            <RadioButton
+                android:id="@+id/radioBtn_none_receiver"
+                style="@style/RADIO_BUTTON"
+                android:padding="4dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="None"/>
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"/>
+
+            <RadioButton
+                android:id="@+id/radioBtn_all_receiver"
+                style="@style/RADIO_BUTTON"
+                android:padding="4dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="All"/>
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"/>
+
+            <RadioButton
+                android:id="@+id/radioBtn_custom_receiver"
+                style="@style/RADIO_BUTTON"
+                android:padding="4dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Custom"/>
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"/>
+
+        </RadioGroup>
+
+        <TextView
+            android:layout_marginVertical="@dimen/padding_divider"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Keyword for custom notification: \n(ONLY IF YOU HAVE SELECTED 'CUSTOM')"/>
+
+        <EditText
+            android:id="@+id/keyword_notification_receiver"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:textSize="15sp"
+            android:textColorHint="?attr/app_hintTextColor"
+            android:text="Keyword to filter"/>
+
         <Space
             android:layout_weight="1"
             android:layout_width="match_parent"
