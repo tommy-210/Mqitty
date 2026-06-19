@@ -407,7 +407,7 @@ public class MainActivity extends AppCompatActivity {
                     }else if(panel.equals(VALUE_RECEIVER)) {
                         dataBaseHelper.deleteAllFromReceiver();
                     }
-                    refreshPanelData(null, false, FILTER_CUSTOM);
+                    refreshPanelData(null, filter_inverted_btn.isChecked(), getFilterMode());
                 })
                 .setNegativeButton(android.R.string.no, null).show();
     }

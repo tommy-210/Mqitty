@@ -47,7 +47,7 @@ public class CreateReceiveActivity extends AppCompatActivity {
         keywordCustomNotification = findViewById(R.id.keyword_notification_receiver);
 
 //        set keyword edit text disable and active it only if user selected custom in radio btn
-        keywordCustomNotification.setActivated(false);
+        keywordCustomNotification.setFocusable(false);
     }
 
     private void addListeners() {
@@ -57,12 +57,19 @@ public class CreateReceiveActivity extends AppCompatActivity {
         });
 
 //        activate or not keyword edit text only if custom radio button is selected
-        notificationType.setOnCheckedChangeListener((group, checkedId) -> keywordCustomNotification.setActivated(checkedId == CUSTOM_NOTIFICATION));
+        notificationType.setOnCheckedChangeListener((group, checkedId) -> {
+            keywordCustomNotification.setFocusable(checkedId == CUSTOM_NOTIFICATION);
+            Toast.makeText(CreateReceiveActivity.this, "notif: " + checkedId, Toast.LENGTH_SHORT).show();
+        });
 
         create_btn.setOnClickListener(v -> {
+            int checkedId = notificationType.getCheckedRadioButtonId();
+            int type = 1;
+            if (checkedId == R.id.radioBtn_all_receiver) type = 2;
+            else if (checkedId == R.id.radioBtn_custom_receiver) type = CUSTOM_NOTIFICATION;
 
             if(!checkInputFormReceive(name.getText().toString(), description.getText().toString(), broker.getText().toString(),
-                    topic.getText().toString(), notificationType.getCheckedRadioButtonId(), keywordCustomNotification.getText().toString())) {
+                    topic.getText().toString(), type, keywordCustomNotification.getText().toString())) {
                 Toast.makeText(CreateReceiveActivity.this, "Input not valid", Toast.LENGTH_SHORT).show();
                 return;
             }

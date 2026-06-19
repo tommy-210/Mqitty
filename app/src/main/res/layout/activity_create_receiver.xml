@@ -125,7 +125,7 @@
         <RadioGroup
             android:id="@+id/radioGroup_notification_receiver"
             android:layout_width="match_parent"
-            android:layout_height="30dp"
+            android:layout_height="26dp"
             android:orientation="horizontal">
 
             <Space
@@ -137,7 +137,7 @@
             <RadioButton
                 android:id="@+id/radioBtn_none_receiver"
                 style="@style/RADIO_BUTTON"
-                android:padding="4dp"
+                android:paddingHorizontal="6dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="None"/>
@@ -151,7 +151,7 @@
             <RadioButton
                 android:id="@+id/radioBtn_all_receiver"
                 style="@style/RADIO_BUTTON"
-                android:padding="4dp"
+                android:paddingHorizontal="6dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="All"/>
@@ -165,7 +165,7 @@
             <RadioButton
                 android:id="@+id/radioBtn_custom_receiver"
                 style="@style/RADIO_BUTTON"
-                android:padding="4dp"
+                android:paddingHorizontal="6dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Custom"/>
@@ -191,8 +191,8 @@
             android:inputType="text"
             android:textSize="14sp"
             android:textColorHint="?attr/app_hintTextColor"
-            android:text="Keyword to filter"
-            android:layout_marginTop="@dimen/padding_divider"/>
+            android:hint="Keyword to filter"
+            android:autofillHints="none"/>
 
         <Space
             android:layout_weight="1"

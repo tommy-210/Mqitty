@@ -57,12 +57,25 @@ public class MqttService extends Service {
             for (int id : ids) {
                 if (id == ChatActivity.currentChatReceiverId) continue;
                 ReceiverModel receiver = MqttManager.getInstance().getReceiverById(id);
-                if (receiver != null) {
+                if (receiver != null && checkNotificationType(receiver, message)) {
                     showIncomingMessageNotification(receiver, message);
                 }
             }
         }
     };
+
+    private boolean checkNotificationType(ReceiverModel receiver, String message) {
+        int type = receiver.getNotificationType();
+        if (type == 1) {
+            return false;
+        } else if (type == 2) {
+            return true;
+        } else if (type == CUSTOM_NOTIFICATION) {
+            String keyword = receiver.getKeywordCustomNotification();
+            return keyword != null && !keyword.isEmpty() && message.contains(keyword);
+        }
+        return true;
+    }
 
     @Override
     public void onCreate() {
@@ -72,8 +85,8 @@ public class MqttService extends Service {
         MqttManager.getInstance().addSubscriptionListener(listener);
 
         db = DataBaseHelper.getInstance(this);
-        boolean isNotificationEnable = Boolean.parseBoolean(db.getSettingByLabel(DataBaseHelper.SettingsDB.NOTIFICATION_ENABLE));
-        if(isNotificationEnable){
+        boolean isNotificationEnableInGeneralSettings = Boolean.parseBoolean(db.getSettingByLabel(DataBaseHelper.SettingsDB.NOTIFICATION_ENABLE));
+        if(isNotificationEnableInGeneralSettings){
             MqttManager.getInstance().addMessageListener(messageListener);
         }
     }

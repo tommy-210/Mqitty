@@ -100,7 +100,5 @@
         <item name="android:textColorPrimary">?attr/app_color</item>
         <item name="android:textColorSecondary">?attr/app_hintTextColor</item>
         <item name="colorAccent">?attr/colorPrimary</item>
-        <item name="borderRound">@dimen/border_radius_10dp</item>
-        <item name="buttonBarButtonStyle">@style/Widget.AppCompat.Button</item>
     </style>
 </resources>
