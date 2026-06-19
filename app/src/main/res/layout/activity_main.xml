@@ -164,8 +164,8 @@
     </FrameLayout>
 
 <!--    ___________________________|main content|______________________________-->
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/panel_container"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintVertical_weight="1"
@@ -174,28 +174,35 @@
         app:layout_constraintLeft_toLeftOf="@id/root_main"
         app:layout_constraintRight_toRightOf="@id/root_main">
 
-<!--        send panel -->
-        <FrameLayout
-            android:id="@+id/send_panel_container"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/panel_container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone"/>
+            android:layout_height="match_parent">
 
-<!--        receive panel -->
-        <FrameLayout
-            android:id="@+id/receive_panel_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone" />
+    <!--        send panel -->
+            <FrameLayout
+                android:id="@+id/send_panel_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"/>
 
-<!--        settings panel -->
-        <FrameLayout
-            android:id="@+id/settings_panel_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone" />
+    <!--        receive panel -->
+            <FrameLayout
+                android:id="@+id/receive_panel_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    <!--        settings panel -->
+            <FrameLayout
+                android:id="@+id/settings_panel_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 <!--    navigation bar (send, receive, settings)-->
     <androidx.constraintlayout.widget.ConstraintLayout

@@ -4,15 +4,17 @@ import java.io.Serializable;
 
 public class ReceiverModel implements Serializable {
 
-    private int id;
-    private String name, description, broker, topic;
+    private int id, notificationType;
+    private String name, description, broker, topic, keywordCustomNotification;
 
-    public ReceiverModel(int id, String name, String description, String broker, String topic) {
+    public ReceiverModel(int id, String name, String description, String broker, String topic, int notificationType, String keywordCustomNotification) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.broker = broker;
         this.topic = topic;
+        this.notificationType = notificationType;
+        this.keywordCustomNotification = keywordCustomNotification;
     }
 
     @Override
@@ -23,6 +25,8 @@ public class ReceiverModel implements Serializable {
                 ", description='" + description + '\'' +
                 ", broker='" + broker + '\'' +
                 ", topic='" + topic + '\'' +
+                ", notificationType='" + notificationType + '\'' +
+                ", keywordCustomNotification='" + keywordCustomNotification + '\'' +
                 '}';
     }
 
@@ -65,5 +69,21 @@ public class ReceiverModel implements Serializable {
 
     public void setTopic(String topic) {
         this.topic = topic;
+    }
+
+    public int getNotificationType() {
+        return notificationType;
+    }
+
+    public void setNotificationType(int notificationType) {
+        this.notificationType = notificationType;
+    }
+
+    public String getKeywordCustomNotification() {
+        return keywordCustomNotification;
+    }
+
+    public void setKeywordCustomNotification(String keywordCustomNotification) {
+        this.keywordCustomNotification = keywordCustomNotification;
     }
 }

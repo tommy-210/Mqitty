@@ -114,6 +114,86 @@
             android:inputType="text"
             android:textColorHint="?attr/app_hintTextColor" />
 
+        <!--        notification section-->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Enable notification:"
+            android:layout_marginVertical="@dimen/padding_divider"/>
+
+        <!--        choose if enable notification or not or a custom notification based on keyword-->
+        <RadioGroup
+            android:id="@+id/radioGroup_notification_receiver"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:orientation="horizontal">
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"/>
+
+            <!--            no notification radio btn-->
+            <RadioButton
+                android:id="@+id/radioBtn_none_receiver"
+                style="@style/RADIO_BUTTON"
+                android:padding="4dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="None"/>
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"/>
+
+            <!--            enable notification radio btn-->
+            <RadioButton
+                android:id="@+id/radioBtn_all_receiver"
+                style="@style/RADIO_BUTTON"
+                android:padding="4dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="All"/>
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"/>
+
+            <!--            set a custom notificaiton-->
+            <RadioButton
+                android:id="@+id/radioBtn_custom_receiver"
+                style="@style/RADIO_BUTTON"
+                android:padding="4dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Custom"/>
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"/>
+
+        </RadioGroup>
+
+        <TextView
+            android:layout_marginTop="@dimen/padding_divider"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/keyword_custom_notification"/>
+
+        <!--        if you have selected custom radio btn, you must insert a keyword to filter-->
+        <EditText
+            android:id="@+id/keyword_notification_receiver"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:textSize="14sp"
+            android:textColorHint="?attr/app_hintTextColor"
+            android:text="Keyword to filter"
+            android:layout_marginTop="@dimen/padding_divider"/>
+
         <Space
             android:layout_weight="1"
             android:layout_width="match_parent"

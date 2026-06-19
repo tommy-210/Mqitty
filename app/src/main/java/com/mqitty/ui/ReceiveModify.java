@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
@@ -18,7 +19,8 @@ import com.mqitty.model.ReceiverModel;
 
 public class ReceiveModify  extends AppCompatActivity {
 
-    EditText name, description, broker, topic;
+    EditText name, description, broker, topic, keywordCustomNotification;
+    RadioGroup notificationType;
     Button save, delete;
     ImageView return_btn;
     ReceiverModel receiverModel;
@@ -52,6 +54,8 @@ public class ReceiveModify  extends AppCompatActivity {
         description = findViewById(R.id.description_receiver);
         broker = findViewById(R.id.broker_receiver);
         topic = findViewById(R.id.topic_receiver);
+        notificationType = findViewById(R.id.radioGroup_notification_receiver);
+        keywordCustomNotification = findViewById(R.id.keyword_notification_receiver);
 
         save = findViewById(R.id.save_receiver_btn);
         delete = findViewById(R.id.delete_receive_btn);
@@ -63,21 +67,29 @@ public class ReceiveModify  extends AppCompatActivity {
         description.setText(receiverModel.getDescription());
         broker.setText(receiverModel.getBroker());
         topic.setText(receiverModel.getTopic());
+        notificationType.check(receiverModel.getNotificationType());
+        keywordCustomNotification.setText(receiverModel.getKeywordCustomNotification());
     }
 
     private void addListeners() {
         return_btn.setOnClickListener(v -> returnToMain());
 
+//        activate or not keyword edit text only if custom radio button is selected
+        notificationType.setOnCheckedChangeListener((group, checkedId) -> keywordCustomNotification.setActivated(checkedId == CUSTOM_NOTIFICATION));
+
         save.setOnClickListener(v -> {
-            if(!checkInputFormReceive(name.getText().toString(), description.getText().toString(), broker.getText().toString(), topic.getText().toString())) {
+            if(!checkInputFormReceive(name.getText().toString(), description.getText().toString(), broker.getText().toString(),
+                    topic.getText().toString(), notificationType.getCheckedRadioButtonId(), keywordCustomNotification.getText().toString())) {
                 Toast.makeText(ReceiveModify.this, "Input not valid", Toast.LENGTH_SHORT).show();
                 return;
             }
-            
+
             receiverModel.setName(name.getText().toString());
             receiverModel.setDescription(description.getText().toString());
             receiverModel.setBroker(broker.getText().toString());
             receiverModel.setTopic(topic.getText().toString());
+            receiverModel.setNotificationType(notificationType.getCheckedRadioButtonId());
+            receiverModel.setKeywordCustomNotification(keywordCustomNotification.getText().toString());
 
             boolean success = dataBaseHelper.updateOneReceiver(receiverModel);
             if(success) {

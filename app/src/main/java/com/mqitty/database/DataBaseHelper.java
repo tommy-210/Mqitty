@@ -47,6 +47,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         final static String COLUMN_DESC = "RECEIVER_DESC";
         final static String COLUMN_BROKER = "RECEIVER_BROKER";
         final static String COLUMN_TOPIC = "RECEIVER_TOPIC";
+        final static String COLUMN_NOTIFICATION_TYPE = "RECEIVER_NOTIFICATION_TYPE";
+        final static String COLUMN_KEYWORD_CUSTOM_NOTIFICATION = "RECEIVER_KEYWORD_CUSTOM_NOTIFICATION";
     }
 
     class ChatsDB {
@@ -57,7 +59,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         final static String COLUMN_TIMESTAMP = "CHAT_TIMESTAMP";
     }
 
-    final static int DATABASE_VERSION = 5;
+    final static int DATABASE_VERSION = 6;
     private static DataBaseHelper instance;
 
     public static synchronized DataBaseHelper getInstance(Context context) {
@@ -86,7 +88,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 ReceiverDB.COLUMN_NAME + " TEXT, " +
                 ReceiverDB.COLUMN_DESC + " TEXT, " +
                 ReceiverDB.COLUMN_BROKER + " TEXT, " +
-                ReceiverDB.COLUMN_TOPIC + " TEXT)";
+                ReceiverDB.COLUMN_TOPIC + " TEXT, " +
+                ReceiverDB.COLUMN_NOTIFICATION_TYPE + " INTEGER, " +
+                ReceiverDB.COLUMN_KEYWORD_CUSTOM_NOTIFICATION + " TEXT)";
 
         String createSettingsTable = "CREATE TABLE " + SettingsDB.TABLE + " (" +
                 SettingsDB.COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -238,6 +242,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         contentValues.put(ReceiverDB.COLUMN_DESC, receiverModel.getDescription());
         contentValues.put(ReceiverDB.COLUMN_BROKER, receiverModel.getBroker());
         contentValues.put(ReceiverDB.COLUMN_TOPIC, receiverModel.getTopic());
+        contentValues.put(ReceiverDB.COLUMN_NOTIFICATION_TYPE, receiverModel.getNotificationType());
+        contentValues.put(ReceiverDB.COLUMN_KEYWORD_CUSTOM_NOTIFICATION, receiverModel.getKeywordCustomNotification());
 
         return db.insert(ReceiverDB.TABLE, null, contentValues);
     }
@@ -289,8 +295,10 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 String DESC = cursor.getString(2);
                 String BROKER = cursor.getString(3);
                 String TOPIC = cursor.getString(4);
+                int NOTIFICATION_TYPE = cursor.getInt(5);
+                String KEYWORD_CUSTOM_NOTIFICATION = cursor.getString(6);
 
-                ReceiverModel receiverModel = new ReceiverModel(ID, NAME, DESC, BROKER, TOPIC);
+                ReceiverModel receiverModel = new ReceiverModel(ID, NAME, DESC, BROKER, TOPIC, NOTIFICATION_TYPE, KEYWORD_CUSTOM_NOTIFICATION);
                 returnList.add(receiverModel);
             } while (cursor.moveToNext());
         }
@@ -340,8 +348,10 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 String DESC = cursor.getString(2);
                 String BROKER = cursor.getString(3);
                 String TOPIC = cursor.getString(4);
+                int NOTIFICATION_TYPE = cursor.getInt(5);
+                String KEYWORD_CUSTOM_NOTIFICATION = cursor.getString(6);
 
-                ReceiverModel receiverModel = new ReceiverModel(ID, NAME, DESC, BROKER, TOPIC);
+                ReceiverModel receiverModel = new ReceiverModel(ID, NAME, DESC, BROKER, TOPIC, NOTIFICATION_TYPE, KEYWORD_CUSTOM_NOTIFICATION);
                 returnList.add(receiverModel);
             }while(cursor.moveToNext());
         }
@@ -377,7 +387,10 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             String DESC = cursor.getString(2);
             String BROKER = cursor.getString(3);
             String TOPIC = cursor.getString(4);
-            receiverModel = new ReceiverModel(cursor.getInt(0), NAME, DESC, BROKER, TOPIC);
+            int NOTIFICATION_TYPE = cursor.getInt(5);
+            String KEYWORD_CUSTOM_NOTIFICATION = cursor.getString(6);
+
+            receiverModel = new ReceiverModel(cursor.getInt(0), NAME, DESC, BROKER, TOPIC, NOTIFICATION_TYPE, KEYWORD_CUSTOM_NOTIFICATION);
         }
         cursor.close();
         return receiverModel;
@@ -405,6 +418,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         contentValues.put(ReceiverDB.COLUMN_DESC, receiverModel.getDescription());
         contentValues.put(ReceiverDB.COLUMN_BROKER, receiverModel.getBroker());
         contentValues.put(ReceiverDB.COLUMN_TOPIC, receiverModel.getTopic());
+        contentValues.put(ReceiverDB.COLUMN_NOTIFICATION_TYPE, receiverModel.getNotificationType());
+        contentValues.put(ReceiverDB.COLUMN_KEYWORD_CUSTOM_NOTIFICATION, receiverModel.getKeywordCustomNotification());
 
         int result = db.update(ReceiverDB.TABLE, contentValues, ReceiverDB.COLUMN_ID + " = ?", new String[]{String.valueOf(receiverModel.getId())});
         return result > 0;

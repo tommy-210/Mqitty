@@ -40,4 +40,5 @@
     <string name="panel_db">DEFAULT_PANEL</string>
     <string name="limit_time_db">LIMIT_TIME_MSG</string>
     <string name="check_updates">Check Updates</string>
+    <string name="keyword_custom_notification">Keyword for custom notification: \n(ONLY FOR CUSTOM)</string>
 </resources>

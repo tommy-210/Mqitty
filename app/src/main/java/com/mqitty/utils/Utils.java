@@ -36,6 +36,8 @@ public class Utils {
     public static final int FILTER_NAME = 0;
     public static final int FILTER_BROKER = 1;
     public static final int FILTER_CUSTOM = 2;
+//    notification type
+    public static final int CUSTOM_NOTIFICATION = 3;
 
 //    check if input of from is correct
     public static boolean checkInputFormSend(String name, String desc, String broker, String topic, String msg) {
@@ -49,10 +51,16 @@ public class Utils {
         return !name.isBlank() && !desc.isBlank() && !msg.isBlank();
     }
 
-    public static boolean checkInputFormReceive(String name, String desc, String broker, String topic) {
+    public static boolean checkInputFormReceive(String name, String desc, String broker, String topic, int notificationType, String keywordCustomNotification) {
 //        check technical input
         if(broker.isBlank() || topic.isBlank()) {
             return !broker.contains(SPACE) && !topic.contains(SPACE);
+        }
+//        check notification section
+        if(notificationType == -1) {
+            return false;
+        }else if(notificationType == CUSTOM_NOTIFICATION) {
+            return keywordCustomNotification.isBlank();
         }
 //        check aesthetics input
         return !name.isBlank() && !desc.isBlank();

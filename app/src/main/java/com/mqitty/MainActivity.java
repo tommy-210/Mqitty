@@ -32,6 +32,7 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.widget.ToggleButton;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.github.javiersantos.appupdater.enums.UpdateFrom;
 import com.mqitty.database.DataBaseHelper;
@@ -66,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
     Button clear_panel_btn, check_updates_btn;
     CheckBox notification_enable, filter_inverted_btn;
     RadioGroup filter_radioGroup;
+    SwipeRefreshLayout swipeRefreshLayout;
     DataBaseHelper dataBaseHelper;
 
     private final android.os.Handler settingsHandler = new android.os.Handler(android.os.Looper.getMainLooper());
@@ -209,6 +211,7 @@ public class MainActivity extends AppCompatActivity {
         sendPanelContainer = findViewById(R.id.send_panel_container);
         receivePanelContainer = findViewById(R.id.receive_panel_container);
         settingsPanelContainer = findViewById(R.id.settings_panel_container);
+        swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
 
         // Pre-inflate layouts into containers
         LayoutInflater.from(this).inflate(R.layout.activity_send, sendPanelContainer, true);
@@ -282,7 +285,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Toast.makeText(MainActivity.this, "Filter: " + query, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(MainActivity.this, "Filter: " + query, Toast.LENGTH_SHORT).show();
                 refreshPanelData(query, filter_inverted_btn.isChecked(), getFilterMode());
                 return false;
             }
@@ -311,6 +314,11 @@ public class MainActivity extends AppCompatActivity {
             String query = searchView.getQuery().toString();
             if (query.isEmpty()) query = null;
             refreshPanelData(query, filter_inverted_btn.isChecked(), getFilterMode());
+        });
+
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            refreshPanelData(null, filter_inverted_btn.isChecked(), getFilterMode());
+            swipeRefreshLayout.setRefreshing(false);
         });
 
         addListenerOnSettings();
@@ -399,6 +407,7 @@ public class MainActivity extends AppCompatActivity {
                     }else if(panel.equals(VALUE_RECEIVER)) {
                         dataBaseHelper.deleteAllFromReceiver();
                     }
+                    refreshPanelData(null, false, FILTER_CUSTOM);
                 })
                 .setNegativeButton(android.R.string.no, null).show();
     }
@@ -409,6 +418,7 @@ public class MainActivity extends AppCompatActivity {
         settingsPanelContainer.setVisibility(View.GONE);
 
         panelToShow.setVisibility(View.VISIBLE);
+        swipeRefreshLayout.setEnabled(panelToShow != settingsPanelContainer);
 
         if (panelToShow == sendPanelContainer) {
             send_btn.setBackgroundResource(R.drawable.border_round);
