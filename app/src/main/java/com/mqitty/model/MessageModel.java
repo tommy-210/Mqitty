@@ -30,7 +30,7 @@ public class MessageModel {
     }
 
     public String getFormattedTimestamp() {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault());
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
         return sdf.format(new Date(timestamp));
     }
 

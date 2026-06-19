@@ -37,6 +37,8 @@ public class Utils {
     public static final int FILTER_BROKER = 1;
     public static final int FILTER_CUSTOM = 2;
 //    notification type
+    public static final int NO_NOTIFICATION = 1;
+    public static final int ALL_NOTIFICATION = 2;
     public static final int CUSTOM_NOTIFICATION = 3;
 
 //    check if input of from is correct
@@ -46,7 +48,6 @@ public class Utils {
             return false;
         if(broker.contains(SPACE) || topic.contains(SPACE))
             return false;
-
 //        check estetics input
         return !name.isBlank() && !desc.isBlank() && !msg.isBlank();
     }
@@ -59,8 +60,8 @@ public class Utils {
 //        check notification section
         if(notificationType == -1) {
             return false;
-        }else if(notificationType == CUSTOM_NOTIFICATION) {
-            return keywordCustomNotification.isBlank();
+        }else if(notificationType == CUSTOM_NOTIFICATION && keywordCustomNotification.isBlank()) {
+            return false;
         }
 //        check aesthetics input
         return !name.isBlank() && !desc.isBlank();

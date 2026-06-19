@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
@@ -23,6 +24,7 @@ public class CreateReceiveActivity extends AppCompatActivity {
     Button create_btn;
     EditText name, description, broker, topic, keywordCustomNotification;
     RadioGroup notificationType;
+    RadioButton noNotificationBtn, allNotificationBtn, customNotificationBtn;
     DataBaseHelper dataBaseHelper;
 
     @Override
@@ -45,9 +47,12 @@ public class CreateReceiveActivity extends AppCompatActivity {
         topic = findViewById(R.id.topic_receiver);
         notificationType = findViewById(R.id.radioGroup_notification_receiver);
         keywordCustomNotification = findViewById(R.id.keyword_notification_receiver);
+        noNotificationBtn = findViewById(R.id.radioBtn_none_receiver);
+        allNotificationBtn = findViewById(R.id.radioBtn_all_receiver);
+        customNotificationBtn = findViewById(R.id.radioBtn_custom_receiver);
 
 //        set keyword edit text disable and active it only if user selected custom in radio btn
-        keywordCustomNotification.setFocusable(false);
+        keywordCustomNotification.setEnabled(false);
     }
 
     private void addListeners() {
@@ -57,19 +62,17 @@ public class CreateReceiveActivity extends AppCompatActivity {
         });
 
 //        activate or not keyword edit text only if custom radio button is selected
-        notificationType.setOnCheckedChangeListener((group, checkedId) -> {
-            keywordCustomNotification.setFocusable(checkedId == CUSTOM_NOTIFICATION);
-            Toast.makeText(CreateReceiveActivity.this, "notif: " + checkedId, Toast.LENGTH_SHORT).show();
-        });
+        notificationType.setOnCheckedChangeListener((group, checkedId) ->
+                keywordCustomNotification.setEnabled(checkedId == R.id.radioBtn_custom_receiver));
 
         create_btn.setOnClickListener(v -> {
-            int checkedId = notificationType.getCheckedRadioButtonId();
-            int type = 1;
-            if (checkedId == R.id.radioBtn_all_receiver) type = 2;
-            else if (checkedId == R.id.radioBtn_custom_receiver) type = CUSTOM_NOTIFICATION;
+            int typeNotification = -1;
+            if(noNotificationBtn.isChecked()) typeNotification = NO_NOTIFICATION;
+            else if(allNotificationBtn.isChecked()) typeNotification = ALL_NOTIFICATION;
+            else if(customNotificationBtn.isChecked()) typeNotification = CUSTOM_NOTIFICATION;
 
             if(!checkInputFormReceive(name.getText().toString(), description.getText().toString(), broker.getText().toString(),
-                    topic.getText().toString(), type, keywordCustomNotification.getText().toString())) {
+                    topic.getText().toString(), typeNotification, keywordCustomNotification.getText().toString())) {
                 Toast.makeText(CreateReceiveActivity.this, "Input not valid", Toast.LENGTH_SHORT).show();
                 return;
             }

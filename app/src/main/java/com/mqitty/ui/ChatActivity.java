@@ -2,6 +2,9 @@ package com.mqitty.ui;
 
 import static com.mqitty.utils.Utils.*;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.View;
@@ -34,7 +37,7 @@ import java.util.List;
 public class ChatActivity extends AppCompatActivity implements MqttManager.MessageListener {
 
     ImageView return_btn, send_msg_btn, more_option_btn;
-    CheckBox session_on_checkbtn;
+    CheckBox session_on_check_btn;
     Button clear_session_btn;
     EditText text_input_msg;
     LinearLayout chat_msg_container;
@@ -50,7 +53,7 @@ public class ChatActivity extends AppCompatActivity implements MqttManager.Messa
     private final MqttManager.SubscriptionListener subscriptionListener = count -> {
         runOnUiThread(() -> {
             boolean isSubscribed = MqttManager.getInstance().isSubscribed(receiverModel.getBroker(), receiverModel.getTopic());
-            session_on_checkbtn.setChecked(isSubscribed);
+            session_on_check_btn.setChecked(isSubscribed);
         });
     };
 
@@ -85,7 +88,7 @@ public class ChatActivity extends AppCompatActivity implements MqttManager.Messa
                 mqtt.subscribe(receiverModel.getTopic(), 1);
                 MqttManager.getInstance().addPersistentSubscription(ChatActivity.this, receiverModel.getBroker(), receiverModel.getTopic(), receiverModel.getId());
                 runOnUiThread(() -> {
-                    session_on_checkbtn.setChecked(true);
+                    session_on_check_btn.setChecked(true);
                 });
             }
 
@@ -144,6 +147,10 @@ public class ChatActivity extends AppCompatActivity implements MqttManager.Messa
             }
             TextView msgText = view.findViewById(R.id.msg_text);
             msgText.setText(message.getMessage());
+            msgText.setOnLongClickListener(v -> {
+                copyToClipboard(message.getMessage());
+                return true;
+            });
             TextView msgTime = view.findViewById(R.id.msg_time);
             msgTime.setText(message.getFormattedTimestamp());
             chat_msg_container.addView(view);
@@ -161,6 +168,10 @@ public class ChatActivity extends AppCompatActivity implements MqttManager.Messa
 
         TextView msgText = view.findViewById(R.id.msg_text);
         msgText.setText(messageModel.getMessage());
+        msgText.setOnLongClickListener(v -> {
+            copyToClipboard(messageModel.getMessage());
+            return true;
+        });
         TextView msgTime = view.findViewById(R.id.msg_time);
         msgTime.setText(messageModel.getFormattedTimestamp());
 
@@ -177,8 +188,8 @@ public class ChatActivity extends AppCompatActivity implements MqttManager.Messa
         more_option_btn = findViewById(R.id.more_option_btn);
         more_option_popup = findViewById(R.id.more_option_popup);
         clear_session_btn = findViewById(R.id.clear_session_btn);
-        session_on_checkbtn = findViewById(R.id.start_stop_session);
-        session_on_checkbtn.setChecked(MqttManager.getInstance().isSubscribed(receiverModel.getBroker(), receiverModel.getTopic()));
+        session_on_check_btn = findViewById(R.id.start_stop_session);
+        session_on_check_btn.setChecked(MqttManager.getInstance().isSubscribed(receiverModel.getBroker(), receiverModel.getTopic()));
         search_view_btn = findViewById(R.id.search_view);
 
         return_btn.setOnClickListener(v -> {
@@ -193,22 +204,22 @@ public class ChatActivity extends AppCompatActivity implements MqttManager.Messa
                 more_option_popup.setVisibility(View.VISIBLE);
             }
         });
-        session_on_checkbtn.setOnClickListener(v -> {
-            if(session_on_checkbtn.isChecked()) {
+        session_on_check_btn.setOnClickListener(v -> {
+            if(session_on_check_btn.isChecked()) {
                 mqtt.connect(new IMqttActionListener() {
                     @Override
                     public void onSuccess(IMqttToken asyncActionToken) {
                         mqtt.subscribe(receiverModel.getTopic(), 1);
                         MqttManager.getInstance().addPersistentSubscription(ChatActivity.this, receiverModel.getBroker(), receiverModel.getTopic(), receiverModel.getId());
                         runOnUiThread(() -> {
-                            session_on_checkbtn.setChecked(true);
+                            session_on_check_btn.setChecked(true);
                         });
                     }
 
                     @Override
                     public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
                         runOnUiThread(() -> {
-                            session_on_checkbtn.setChecked(false);
+                            session_on_check_btn.setChecked(false);
                             Toast.makeText(ChatActivity.this, "Connection failed", Toast.LENGTH_SHORT).show();
                         });
                     }
@@ -239,7 +250,7 @@ public class ChatActivity extends AppCompatActivity implements MqttManager.Messa
             return false;
         });
         send_msg_btn.setOnClickListener(v -> {
-            if (!session_on_checkbtn.isChecked()) {
+            if (!session_on_check_btn.isChecked()) {
                 Toast.makeText(ChatActivity.this, "Session is off. Please turn it on to send messages.", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -276,5 +287,14 @@ public class ChatActivity extends AppCompatActivity implements MqttManager.Messa
                     dataBaseHelper.deleteAllMessageFromChat(receiverModel.getId());
                 })
                 .setNegativeButton(android.R.string.no, null).show();
+    }
+
+    private void copyToClipboard(String text) {
+        ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText("Copied Message", text);
+        if (clipboard != null) {
+            clipboard.setPrimaryClip(clip);
+            Toast.makeText(this, "Message copied to clipboard", Toast.LENGTH_SHORT).show();
+        }
     }
 }

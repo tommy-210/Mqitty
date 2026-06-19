@@ -23,7 +23,6 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -31,9 +30,7 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.widget.ToggleButton;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import com.github.javiersantos.appupdater.enums.UpdateFrom;
 import com.mqitty.database.DataBaseHelper;
 import com.mqitty.manager.ReceiveManager;
