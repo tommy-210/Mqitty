@@ -50,3 +50,7 @@ dependencies {
     // App Updater
     implementation(libs.appupdater)
 }
+
+tasks.withType<JavaCompile> {
+    options.compilerArgs.add("-Xlint:deprecation")
+}

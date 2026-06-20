@@ -283,7 +283,10 @@ public class MainActivity extends AppCompatActivity {
             public boolean onQueryTextChange(String newText) {return false;}
             @Override
             public boolean onQueryTextSubmit(String query) {
-                refreshPanelData(query, filter_inverted_btn.isChecked(), getFilterMode());
+//                enable search only for send and receiver panel
+                if(settingsPanelContainer.getVisibility() == View.GONE) {
+                    refreshPanelData(query, filter_inverted_btn.isChecked(), getFilterMode());
+                }
                 return false;
             }
         });
