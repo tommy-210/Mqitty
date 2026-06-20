@@ -18,12 +18,13 @@ import static com.mqitty.utils.Utils.*;
 public class DataBaseHelper extends SQLiteOpenHelper {
 
     public static class SettingsDB {
+//        settings table
         public final static String TABLE = "SETTINGS_TABLE";
         public final static String COLUMN_ID = "ID";
         public final static String COLUMN_LABEL = "SETTINGS_LABEL";
         public final static String COLUMN_VALUE = "SETTINGS_VALUE";
 
-//        settings
+//        settings label
         public final static String THEME = "THEME_MODE";
         public final static String DEFAULT_PANEL = "DEFAULT_PANEL";
         public final static String LIMIT_TIME_MSG = "LIMIT_TIME_MSG";
@@ -31,6 +32,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
 
     class SendDB {
+//        send table
         final static String TABLE = "SEND_TABLE";
         final static String COLUMN_ID = "ID";
         final static String COLUMN_NAME = "SEND_NAME";
@@ -41,6 +43,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
 
     class ReceiverDB {
+//        receiver table
         final static String TABLE = "RECEIVER_TABLE";
         final static String COLUMN_ID = "ID";
         final static String COLUMN_NAME = "RECEIVER_NAME";
@@ -52,6 +55,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
 
     class ChatsDB {
+//        chat table
         final static String TABLE = "CHAT_TABLE_";
         final static String COLUMN_ID = "ID";
         final static String COLUMN_MSG = "CHAT_MESSAGE";
@@ -60,8 +64,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
 
     final static int DATABASE_VERSION = 6;
+//    initialization of instance to prevent double database
     private static DataBaseHelper instance;
-
     public static synchronized DataBaseHelper getInstance(Context context) {
         if (instance == null) {
             instance = new DataBaseHelper(context.getApplicationContext());
@@ -75,6 +79,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+//        create query for creation of table
         String createSendTable = "CREATE TABLE " + SendDB.TABLE + " (" +
                 SendDB.COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 SendDB.COLUMN_NAME + " TEXT, " +
@@ -97,30 +102,34 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 SettingsDB.COLUMN_LABEL + " TEXT, " +
                 SettingsDB.COLUMN_VALUE + " TEXT)";
 
+//        create table
         db.execSQL(createSendTable);
         db.execSQL(createReceiverTable);
         db.execSQL(createSettingsTable);
-
+//        initialize default/stored settings
         initializeSettings(db);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+//        upgrade database
+//        delete all table in db to recreate main table (send, receiver, settings)
         Cursor cursor = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table' AND name LIKE '" + ChatsDB.TABLE + "%'", null);
-        if (cursor != null) {
-            while (cursor.moveToNext()) {
-                db.execSQL("DROP TABLE IF EXISTS " + cursor.getString(0));
-            }
-            cursor.close();
+        if(cursor == null) return;
+        while (cursor.moveToNext()) {
+            db.execSQL("DROP TABLE IF EXISTS " + cursor.getString(0));
         }
-
+        cursor.close();
         db.execSQL("DROP TABLE IF EXISTS " + SendDB.TABLE);
         db.execSQL("DROP TABLE IF EXISTS " + ReceiverDB.TABLE);
         db.execSQL("DROP TABLE IF EXISTS " + SettingsDB.TABLE);
+//        recreate main table
         onCreate(db);
     }
 
+//    +++++++++++++++++++++++++++++++++++++++++++++++++++CHAT+++SECTION++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     private String getChatTable(int id) {
+//        get unique name of chat table that change with id
         return ChatsDB.TABLE.concat(String.valueOf(id));
     }
 
@@ -145,7 +154,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public boolean addOneMessage(int id, MessageModel messageModel) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-
+//        add elements to message in chat table
         contentValues.put(ChatsDB.COLUMN_MSG, messageModel.getMessage());
         contentValues.put(ChatsDB.COLUMN_IS_SEND, messageModel.isSend());
         contentValues.put(ChatsDB.COLUMN_TIMESTAMP, messageModel.getTimestamp());
@@ -156,9 +165,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     public List<MessageModel> getEveryoneMessageFromChatById(int id) {
         List<MessageModel> returnList = new ArrayList<>();
-
+//        request all elements from correct chat table
         String query = "SELECT * FROM " + getChatTable(id);
-
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(query, null);
 
@@ -168,12 +176,11 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 String MSG = cursor.getString(1);
                 boolean IS_SEND = cursor.getInt(2) == 1;
                 long TIMESTAMP = cursor.getLong(3);
-
+//                read all messages and add to response
                 MessageModel messageModel = new MessageModel(ID, MSG, IS_SEND, TIMESTAMP);
                 returnList.add(messageModel);
             }while(cursor.moveToNext());
         }
-
         cursor.close();
         return returnList;
     }
@@ -181,10 +188,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public List<MessageModel> getFilteredMessages(int id, String query) {
         List<MessageModel> returnList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
-
+//        request filtered message from chat
         String queryString = "SELECT * FROM " + getChatTable(id) + " WHERE " +
                 ChatsDB.COLUMN_MSG + " LIKE ?";
-
         String[] searchArgs = new String[]{"%" + query + "%"};
         Cursor cursor = db.rawQuery(queryString, searchArgs);
 
@@ -199,7 +205,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 returnList.add(messageModel);
             } while (cursor.moveToNext());
         }
-
+//        return only messages that contains filter query
         cursor.close();
         return returnList;
     }
@@ -212,6 +218,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
     
     public void deleteMessageTooOldFromChat(int id, long timeLimit) {
+//        After a certain period of time set in the settings, all messages
+//        that are too old are deleted to prevent the database from becoming too large.
         SQLiteDatabase db = this.getWritableDatabase();
         if(timeLimit == -1) {
             String setting = getSettingByLabel(SettingsDB.LIMIT_TIME_MSG);
@@ -221,6 +229,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         db.delete(getChatTable(id), ChatsDB.COLUMN_TIMESTAMP + " < ?", new String[]{String.valueOf(limitTimestamp)});
     }
 
+//    ++++++++++++++++++++++++++++++++++++++++++++++++++++++SEND+++SECTION+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     public long addOneSend(SendModel sendModel) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -232,20 +241,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         contentValues.put(SendDB.COLUMN_MSG, sendModel.getMessage());
 
         return db.insert(SendDB.TABLE, null, contentValues);
-    }
-
-    public long addOneReceiver(ReceiverModel receiverModel) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-
-        contentValues.put(ReceiverDB.COLUMN_NAME, receiverModel.getName());
-        contentValues.put(ReceiverDB.COLUMN_DESC, receiverModel.getDescription());
-        contentValues.put(ReceiverDB.COLUMN_BROKER, receiverModel.getBroker());
-        contentValues.put(ReceiverDB.COLUMN_TOPIC, receiverModel.getTopic());
-        contentValues.put(ReceiverDB.COLUMN_NOTIFICATION_TYPE, receiverModel.getNotificationType());
-        contentValues.put(ReceiverDB.COLUMN_KEYWORD_CUSTOM_NOTIFICATION, receiverModel.getKeywordCustomNotification());
-
-        return db.insert(ReceiverDB.TABLE, null, contentValues);
     }
 
     public List<SendModel> getFilteredSend(String query) {
@@ -270,36 +265,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
                 SendModel sendModel = new SendModel(ID, NAME, DESC, BROKER, TOPIC, MSG);
                 returnList.add(sendModel);
-            } while (cursor.moveToNext());
-        }
-
-        cursor.close();
-        return returnList;
-    }
-
-    public List<ReceiverModel> getFilteredReceive(String query) {
-        List<ReceiverModel> returnList = new ArrayList<>();
-        SQLiteDatabase db = this.getReadableDatabase();
-
-        String queryString = "SELECT * FROM " + ReceiverDB.TABLE + " WHERE " +
-                ReceiverDB.COLUMN_NAME + " LIKE ? OR " +
-                ReceiverDB.COLUMN_DESC + " LIKE ?";
-
-        String[] searchArgs = new String[]{"%" + query + "%", "%" + query + "%"};
-        Cursor cursor = db.rawQuery(queryString, searchArgs);
-
-        if (cursor.moveToFirst()) {
-            do {
-                int ID = cursor.getInt(0);
-                String NAME = cursor.getString(1);
-                String DESC = cursor.getString(2);
-                String BROKER = cursor.getString(3);
-                String TOPIC = cursor.getString(4);
-                int NOTIFICATION_TYPE = cursor.getInt(5);
-                String KEYWORD_CUSTOM_NOTIFICATION = cursor.getString(6);
-
-                ReceiverModel receiverModel = new ReceiverModel(ID, NAME, DESC, BROKER, TOPIC, NOTIFICATION_TYPE, KEYWORD_CUSTOM_NOTIFICATION);
-                returnList.add(receiverModel);
             } while (cursor.moveToNext());
         }
 
@@ -333,6 +298,95 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return returnList;
     }
 
+    public SendModel getSendById(int id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String queryString = "SELECT * FROM " + SendDB.TABLE + " WHERE " + SendDB.COLUMN_ID + " = " + id;
+        Cursor cursor = db.rawQuery(queryString, null);
+        SendModel sendModel = null;
+        if (cursor.moveToFirst()) {
+            String NAME = cursor.getString(1);
+            String DESC = cursor.getString(2);
+            String BROKER = cursor.getString(3);
+            String TOPIC = cursor.getString(4);
+            String MSG = cursor.getString(5);
+            sendModel = new SendModel(cursor.getInt(0), NAME, DESC, BROKER, TOPIC, MSG);
+        }
+        cursor.close();
+        return sendModel;
+    }
+
+    public boolean updateOneSend(SendModel sendModel) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(SendDB.COLUMN_NAME, sendModel.getName());
+        contentValues.put(SendDB.COLUMN_DESC, sendModel.getDescription());
+        contentValues.put(SendDB.COLUMN_BROKER, sendModel.getBroker());
+        contentValues.put(SendDB.COLUMN_TOPIC, sendModel.getTopic());
+        contentValues.put(SendDB.COLUMN_MSG, sendModel.getMessage());
+
+        int result = db.update(SendDB.TABLE, contentValues, SendDB.COLUMN_ID + " = ?", new String[]{String.valueOf(sendModel.getId())});
+        return result > 0;
+    }
+
+    public boolean deleteOneSend(SendModel sendModel) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        int result = db.delete(SendDB.TABLE, SendDB.COLUMN_ID + " = ?", new String[]{String.valueOf(sendModel.getId())});
+        return result > 0;
+    }
+
+    public void deleteAllFromSend() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "DELETE FROM " + SendDB.TABLE;
+
+        db.execSQL(query);
+    }
+
+//    +++++++++++++++++++++++++++++++++++++++++++++++++RECEIVER+++++SECTION+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    public long addOneReceiver(ReceiverModel receiverModel) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(ReceiverDB.COLUMN_NAME, receiverModel.getName());
+        contentValues.put(ReceiverDB.COLUMN_DESC, receiverModel.getDescription());
+        contentValues.put(ReceiverDB.COLUMN_BROKER, receiverModel.getBroker());
+        contentValues.put(ReceiverDB.COLUMN_TOPIC, receiverModel.getTopic());
+        contentValues.put(ReceiverDB.COLUMN_NOTIFICATION_TYPE, receiverModel.getNotificationType());
+        contentValues.put(ReceiverDB.COLUMN_KEYWORD_CUSTOM_NOTIFICATION, receiverModel.getKeywordCustomNotification());
+
+        return db.insert(ReceiverDB.TABLE, null, contentValues);
+    }
+
+    public List<ReceiverModel> getFilteredReceive(String query) {
+        List<ReceiverModel> returnList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String queryString = "SELECT * FROM " + ReceiverDB.TABLE + " WHERE " +
+                ReceiverDB.COLUMN_NAME + " LIKE ? OR " +
+                ReceiverDB.COLUMN_DESC + " LIKE ?";
+
+        String[] searchArgs = new String[]{"%" + query + "%", "%" + query + "%"};
+        Cursor cursor = db.rawQuery(queryString, searchArgs);
+
+        if (cursor.moveToFirst()) {
+            do {
+                int ID = cursor.getInt(0);
+                String NAME = cursor.getString(1);
+                String DESC = cursor.getString(2);
+                String BROKER = cursor.getString(3);
+                String TOPIC = cursor.getString(4);
+                int NOTIFICATION_TYPE = cursor.getInt(5);
+                String KEYWORD_CUSTOM_NOTIFICATION = cursor.getString(6);
+
+                ReceiverModel receiverModel = new ReceiverModel(ID, NAME, DESC, BROKER, TOPIC, NOTIFICATION_TYPE, KEYWORD_CUSTOM_NOTIFICATION);
+                returnList.add(receiverModel);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        return returnList;
+    }
+
     public List<ReceiverModel> getEveryoneReceiver() {
         List<ReceiverModel> returnList = new ArrayList<>();
 
@@ -360,23 +414,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return returnList;
     }
 
-    public SendModel getSendById(int id) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        String queryString = "SELECT * FROM " + SendDB.TABLE + " WHERE " + SendDB.COLUMN_ID + " = " + id;
-        Cursor cursor = db.rawQuery(queryString, null);
-        SendModel sendModel = null;
-        if (cursor.moveToFirst()) {
-            String NAME = cursor.getString(1);
-            String DESC = cursor.getString(2);
-            String BROKER = cursor.getString(3);
-            String TOPIC = cursor.getString(4);
-            String MSG = cursor.getString(5);
-            sendModel = new SendModel(cursor.getInt(0), NAME, DESC, BROKER, TOPIC, MSG);
-        }
-        cursor.close();
-        return sendModel;
-    }
-
     public ReceiverModel getReceiverById(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
         String queryString = "SELECT * FROM " + ReceiverDB.TABLE + " WHERE " + ReceiverDB.COLUMN_ID + " = " + id;
@@ -396,20 +433,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return receiverModel;
     }
 
-    public boolean updateOneSend(SendModel sendModel) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-
-        contentValues.put(SendDB.COLUMN_NAME, sendModel.getName());
-        contentValues.put(SendDB.COLUMN_DESC, sendModel.getDescription());
-        contentValues.put(SendDB.COLUMN_BROKER, sendModel.getBroker());
-        contentValues.put(SendDB.COLUMN_TOPIC, sendModel.getTopic());
-        contentValues.put(SendDB.COLUMN_MSG, sendModel.getMessage());
-
-        int result = db.update(SendDB.TABLE, contentValues, SendDB.COLUMN_ID + " = ?", new String[]{String.valueOf(sendModel.getId())});
-        return result > 0;
-    }
-
     public boolean updateOneReceiver(ReceiverModel receiverModel) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -425,23 +448,10 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return result > 0;
     }
 
-    public boolean deleteOneSend(SendModel sendModel) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        int result = db.delete(SendDB.TABLE, SendDB.COLUMN_ID + " = ?", new String[]{String.valueOf(sendModel.getId())});
-        return result > 0;
-    }
-
     public boolean deleteOneReceiver(ReceiverModel receiverModel) {
         SQLiteDatabase db = this.getWritableDatabase();
         int result = db.delete(ReceiverDB.TABLE, ReceiverDB.COLUMN_ID + " = ?", new String[]{String.valueOf(receiverModel.getId())});
         return result > 0;
-    }
-
-    public void deleteAllFromSend() {
-        SQLiteDatabase db = this.getWritableDatabase();
-        String query = "DELETE FROM " + SendDB.TABLE;
-
-        db.execSQL(query);
     }
 
     public void deleteAllFromReceiver() {
@@ -451,6 +461,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         db.execSQL(query);
     }
 
+//    ++++++++++++++++++++++++++++++++++++++++++++++++++++++++SETTINGS++++SECTION+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     public void initializeSettings() {
         SQLiteDatabase db = this.getWritableDatabase();
         initializeSettings(db);
@@ -474,6 +485,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
 
     private void insertSetting(SQLiteDatabase db, String label, String value) {
+//        insert value to settings
         ContentValues contentValues = new ContentValues();
         contentValues.put(SettingsDB.COLUMN_LABEL, label);
         contentValues.put(SettingsDB.COLUMN_VALUE, value);
@@ -481,6 +493,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
 
     public boolean updateSetting(String label, String value) {
+//        update a settings from label
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(SettingsDB.COLUMN_VALUE, value);
@@ -496,6 +509,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
 
     public String getSettingByLabel(String label) {
+//        get a value of settings from label
         SQLiteDatabase db = this.getReadableDatabase();
         String query = "SELECT " + SettingsDB.COLUMN_VALUE + " FROM " + SettingsDB.TABLE + " WHERE " + SettingsDB.COLUMN_LABEL + " = ?";
         Cursor cursor = db.rawQuery(query, new String[]{label});
@@ -508,6 +522,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
 
     public Map<String, String> getAllSettings() {
+//        get all settings
         Map<String, String> settingsMap = new HashMap<>();
         SQLiteDatabase db = this.getReadableDatabase();
         String query = "SELECT * FROM " + SettingsDB.TABLE;

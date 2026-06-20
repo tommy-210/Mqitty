@@ -30,43 +30,40 @@ public class CreateSendActivity extends AppCompatActivity {
         setContentView(R.layout.activity_create_send);
 
         initComponents();
-
         addListeners();
     }
 
     private void initComponents() {
         return_btn = findViewById(R.id.return_btn);
-        create_btn = findViewById(R.id.save_send_btn);
+//        form section
         name = findViewById(R.id.name_msg);
         description = findViewById(R.id.description_msg);
         broker = findViewById(R.id.broker_msg);
         topic = findViewById(R.id.topic_msg);
         message = findViewById(R.id.message_msg);
+        create_btn = findViewById(R.id.save_send_btn);
     }
 
     private void addListeners() {
-        return_btn.setOnClickListener(v -> {
-            returnToMainActivity();
-        });
-
+//        return to main activity
+        return_btn.setOnClickListener(v -> returnToMainActivity());
+//        create send model
         create_btn.setOnClickListener(v -> {
-            boolean checkInput = checkInputFormSend(name.getText().toString(), description.getText().toString(), broker.getText().toString(), topic.getText().toString(), message.getText().toString());
-
-            if(!checkInput) {
+//            check if input from are correct
+            if(!checkInputFormSend(name.getText().toString(), description.getText().toString(), broker.getText().toString(),
+                                    topic.getText().toString(), message.getText().toString())) {
                 Toast.makeText(CreateSendActivity.this, "Input not valid", Toast.LENGTH_SHORT).show();
                 return;
             }
-
-            dataBaseHelper = DataBaseHelper.getInstance(this);
-
             //create send message model
+            dataBaseHelper = DataBaseHelper.getInstance(this);
             SendModel sendModel = new SendModel(-1, name.getText().toString(), description.getText().toString(), broker.getText().toString(),
                                                 topic.getText().toString(), message.getText().toString());
-            
+//            add send model to db, and check response
             long id = dataBaseHelper.addOneSend(sendModel);
             if (id != -1) {
                 sendModel.setId((int) id);
-                Toast.makeText(CreateSendActivity.this, "Success!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(CreateSendActivity.this, "Send creation successfully!", Toast.LENGTH_SHORT).show();
                 returnToMainActivity();
             } else {
                 Toast.makeText(CreateSendActivity.this, "Error saving", Toast.LENGTH_SHORT).show();

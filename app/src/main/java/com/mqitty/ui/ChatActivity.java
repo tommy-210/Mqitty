@@ -1,7 +1,6 @@
 package com.mqitty.ui;
 
 import static com.mqitty.utils.Utils.*;
-
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -31,11 +30,11 @@ import com.mqitty.mqtt.Mqtt;
 import com.mqitty.mqtt.MqttManager;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ChatActivity extends AppCompatActivity implements MqttManager.MessageListener {
 
+//    initialization layout elements
     ImageView return_btn, send_msg_btn, more_option_btn;
     CheckBox session_on_check_btn;
     Button clear_session_btn;
@@ -44,69 +43,59 @@ public class ChatActivity extends AppCompatActivity implements MqttManager.Messa
     ScrollView scroll_chat_msg_container;
     SearchView search_view_btn;
     FrameLayout more_option_popup;
+//    initialization components
     ReceiverModel receiverModel;
     DataBaseHelper dataBaseHelper;
     Mqtt mqtt;
-
+//    id of current receiver/chat
     public static int currentChatReceiverId = -1;
-
-    private final MqttManager.SubscriptionListener subscriptionListener = count -> {
-        runOnUiThread(() -> {
-            boolean isSubscribed = MqttManager.getInstance().isSubscribed(receiverModel.getBroker(), receiverModel.getTopic());
-            session_on_check_btn.setChecked(isSubscribed);
-        });
-    };
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+//        create layout
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_chat);
 
-//        initialization of databasehelper and receivermodel
+//        initialization of database and receiverModel
         int id = getIntent().getIntExtra("id", -1);
         dataBaseHelper = DataBaseHelper.getInstance(this);
         receiverModel = dataBaseHelper.getReceiverById(id);
-
         if(receiverModel == null) {
             Toast.makeText(ChatActivity.this, "Error loading data", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
-
+//        create table in database for chat
         dataBaseHelper.createChatTable(receiverModel.getId());
-
+//        request mqtt instance of this chat
         mqtt = MqttManager.getInstance().getMqtt(ChatActivity.this, receiverModel.getBroker());
 
+//        initialization components and listeners
         initComponents();
+        addListeners();
+//        init mqttManager and start connection
         MqttManager.getInstance().addSubscriptionListener(subscriptionListener);
         MqttManager.getInstance().addMessageListener(this);
-
         mqtt.connect(new IMqttActionListener() {
             @Override
             public void onSuccess(IMqttToken asyncActionToken) {
                 mqtt.subscribe(receiverModel.getTopic(), 1);
                 MqttManager.getInstance().addPersistentSubscription(ChatActivity.this, receiverModel.getBroker(), receiverModel.getTopic(), receiverModel.getId());
-                runOnUiThread(() -> {
-                    session_on_check_btn.setChecked(true);
-                });
+                runOnUiThread(() -> session_on_check_btn.setChecked(true));
             }
-
             @Override
             public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
                 runOnUiThread(() -> Toast.makeText(ChatActivity.this, "Connection failed", Toast.LENGTH_SHORT).show());
             }
         });
-
         reloadAllMessages();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (receiverModel != null) {
-            currentChatReceiverId = receiverModel.getId();
-        }
+        if (receiverModel != null) currentChatReceiverId = receiverModel.getId();
     }
 
     @Override
@@ -124,30 +113,146 @@ public class ChatActivity extends AppCompatActivity implements MqttManager.Messa
 
     @Override
     public void onMessageArrived(String topic, String message, boolean wasSentByUs) {
+//        check if msg arrived is for this chat
         if (topic.equals(receiverModel.getTopic())) {
             if (wasSentByUs) return;
-            MessageModel newMessage = new MessageModel(-1, message, wasSentByUs, System.currentTimeMillis());
+//            create message and add to ui/db
+            MessageModel newMessage = new MessageModel(-1, message, false, System.currentTimeMillis());
             runOnUiThread(() -> addOneMessage(newMessage));
         }
     }
 
+    private void initComponents() {
+//        header section (return btn, three dots popup)
+        return_btn = findViewById(R.id.return_btn);
+        more_option_btn = findViewById(R.id.more_option_btn);
+        more_option_popup = findViewById(R.id.more_option_popup);
+        clear_session_btn = findViewById(R.id.clear_session_btn);
+        session_on_check_btn = findViewById(R.id.start_stop_session);
+//        main section (contain all messages)
+        scroll_chat_msg_container = findViewById(R.id.scroll_chat_msg_container);
+        chat_msg_container = findViewById(R.id.chat_msg_container);
+//        send msg section
+        send_msg_btn = findViewById(R.id.chat_send_msg_btn);
+        text_input_msg = findViewById(R.id.chat_input_msg);
+        search_view_btn = findViewById(R.id.search_view);
+//        initialization ui element
+        session_on_check_btn.setChecked(MqttManager.getInstance().isSubscribed(receiverModel.getBroker(), receiverModel.getTopic()));
+    }
+
+    private void addListeners() {
+//        return to main activity
+        return_btn.setOnClickListener(v -> {
+            startActivity(changeActivity(ChatActivity.this, MainActivity.class, EXTRA_PANEL, PANEL_RECEIVE));
+            finish();
+        });
+//        enable or disable popup
+        more_option_btn.setOnClickListener(v -> {
+            more_option_popup.setVisibility(more_option_popup.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+        });
+//        turn on or off session of chat
+        session_on_check_btn.setOnClickListener(v -> {
+            if(session_on_check_btn.isChecked()) {
+//                initialization connect with mqtt server
+                mqtt.connect(new IMqttActionListener() {
+                    @Override
+                    public void onSuccess(IMqttToken asyncActionToken) {
+//                        create stable/persistent connection to server
+                        mqtt.subscribe(receiverModel.getTopic(), 1);
+                        MqttManager.getInstance().addPersistentSubscription(ChatActivity.this, receiverModel.getBroker(), receiverModel.getTopic(), receiverModel.getId());
+                        runOnUiThread(() -> session_on_check_btn.setChecked(true));
+                    }
+                    @Override
+                    public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                        runOnUiThread(() -> {
+                            session_on_check_btn.setChecked(false);
+                            Toast.makeText(ChatActivity.this, "Connection failed", Toast.LENGTH_SHORT).show();
+                        });
+                    }
+                });
+            }else {
+//                disconnect mqtt connection
+                mqtt.unsubscribe(receiverModel.getTopic());
+                MqttManager.getInstance().removePersistentSubscription(receiverModel.getBroker(), receiverModel.getTopic());
+            }
+        });
+//        clear session (remove all messages from chat)
+        clear_session_btn.setOnClickListener(v -> {
+            showConfirmDeleteMessagesDialog();
+            reloadAllMessages();
+        });
+//        search section to search a specific message
+        search_view_btn.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextChange(String newText) { return false; }
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+//                reload all filtered messages with query
+                reloadMessages(dataBaseHelper.getFilteredMessages(receiverModel.getId(), query));
+                return false;
+            }
+        });
+//        remove search filter on close search bar
+        search_view_btn.setOnCloseListener(() -> {
+            reloadAllMessages();
+            return false;
+        });
+//        send message
+        send_msg_btn.setOnClickListener(v -> {
+//            handle error (session off, no text)
+            if (!session_on_check_btn.isChecked()) {
+                Toast.makeText(ChatActivity.this, "Session is off. Please turn it on to send messages.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            String msgText = text_input_msg.getText().toString();
+            if (msgText.isEmpty()) {
+                return;
+            }
+//            add one message to chat
+            MessageModel newMessage = new MessageModel(-1, msgText, true, System.currentTimeMillis());
+            MqttManager.getInstance().addToSentQueue(msgText);
+//            check if mqtt and database added message correctly
+            boolean mqttSuccess = mqtt.publish(receiverModel.getTopic(), msgText);
+            boolean databaseSuccess = dataBaseHelper.addOneMessage(receiverModel.getId(), newMessage);
+            if(mqttSuccess && databaseSuccess) {
+                text_input_msg.setText("");
+                addOneMessage(newMessage);
+                Toast.makeText(ChatActivity.this, "Message send:\n" + newMessage.getMessage(), Toast.LENGTH_SHORT).show();
+            } else {
+                MqttManager.getInstance().checkAndRemoveFromSentQueue(msgText);
+                Toast.makeText(ChatActivity.this, "Error sending message", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private final MqttManager.SubscriptionListener subscriptionListener = count -> {
+        runOnUiThread(() -> {
+            boolean isSubscribed = MqttManager.getInstance().isSubscribed(receiverModel.getBroker(), receiverModel.getTopic());
+            session_on_check_btn.setChecked(isSubscribed);
+        });
+    };
+
     private void reloadAllMessages() {
-        List<MessageModel> messageList = dataBaseHelper.getEveryoneMessageFromChatById(receiverModel.getId());
-        reloadMessages(messageList);
+//        reload all messages from db
+        reloadMessages(dataBaseHelper.getEveryoneMessageFromChatById(receiverModel.getId()));
     }
 
     private void reloadMessages(List<MessageModel> messageList) {
+//        reload messages from a list
         chat_msg_container.removeAllViews();
         for (MessageModel message : messageList) {
+//            create a view (based on message_send_model.xml and message_receive_model.xml)  for each message
             View view;
             if (message.isSend()) {
                 view = getLayoutInflater().inflate(R.layout.message_send_model, chat_msg_container, false);
             } else {
                 view = getLayoutInflater().inflate(R.layout.message_receive_model, chat_msg_container, false);
             }
+//            add all elements of view (message text, timestamp)
             TextView msgText = view.findViewById(R.id.msg_text);
             msgText.setText(message.getMessage());
             msgText.setOnLongClickListener(v -> {
+//                add listener on long click to copy message in clipboard of devices
                 copyToClipboard(message.getMessage());
                 return true;
             });
@@ -155,17 +260,19 @@ public class ChatActivity extends AppCompatActivity implements MqttManager.Messa
             msgTime.setText(message.getFormattedTimestamp());
             chat_msg_container.addView(view);
         }
+//        scroll to end of chat
         scroll_chat_msg_container.post(() -> scroll_chat_msg_container.fullScroll(View.FOCUS_DOWN));
     }
 
     private void addOneMessage(MessageModel messageModel) {
+//        add one message to chat
         View view;
         if (messageModel.isSend()) {
             view = getLayoutInflater().inflate(R.layout.message_send_model, chat_msg_container, false);
         } else {
             view = getLayoutInflater().inflate(R.layout.message_receive_model, chat_msg_container, false);
         }
-
+//        create and set elements of layout
         TextView msgText = view.findViewById(R.id.msg_text);
         msgText.setText(messageModel.getMessage());
         msgText.setOnLongClickListener(v -> {
@@ -179,105 +286,7 @@ public class ChatActivity extends AppCompatActivity implements MqttManager.Messa
         scroll_chat_msg_container.post(() -> scroll_chat_msg_container.fullScroll(View.FOCUS_DOWN));
     }
 
-    private void initComponents() {
-        return_btn = findViewById(R.id.return_btn);
-        send_msg_btn = findViewById(R.id.chat_send_msg_btn);
-        text_input_msg = findViewById(R.id.chat_input_msg);
-        chat_msg_container = findViewById(R.id.chat_msg_container);
-        scroll_chat_msg_container = findViewById(R.id.scroll_chat_msg_container);
-        more_option_btn = findViewById(R.id.more_option_btn);
-        more_option_popup = findViewById(R.id.more_option_popup);
-        clear_session_btn = findViewById(R.id.clear_session_btn);
-        session_on_check_btn = findViewById(R.id.start_stop_session);
-        session_on_check_btn.setChecked(MqttManager.getInstance().isSubscribed(receiverModel.getBroker(), receiverModel.getTopic()));
-        search_view_btn = findViewById(R.id.search_view);
-
-        return_btn.setOnClickListener(v -> {
-//            return to main activity
-            startActivity(changeActivity(ChatActivity.this, MainActivity.class, EXTRA_PANEL, PANEL_RECEIVE));
-            finish();
-        });
-        more_option_btn.setOnClickListener(v -> {
-            if (more_option_popup.getVisibility() == View.VISIBLE) {
-                more_option_popup.setVisibility(View.GONE);
-            } else {
-                more_option_popup.setVisibility(View.VISIBLE);
-            }
-        });
-        session_on_check_btn.setOnClickListener(v -> {
-            if(session_on_check_btn.isChecked()) {
-                mqtt.connect(new IMqttActionListener() {
-                    @Override
-                    public void onSuccess(IMqttToken asyncActionToken) {
-                        mqtt.subscribe(receiverModel.getTopic(), 1);
-                        MqttManager.getInstance().addPersistentSubscription(ChatActivity.this, receiverModel.getBroker(), receiverModel.getTopic(), receiverModel.getId());
-                        runOnUiThread(() -> {
-                            session_on_check_btn.setChecked(true);
-                        });
-                    }
-
-                    @Override
-                    public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
-                        runOnUiThread(() -> {
-                            session_on_check_btn.setChecked(false);
-                            Toast.makeText(ChatActivity.this, "Connection failed", Toast.LENGTH_SHORT).show();
-                        });
-                    }
-                });
-            }else {
-                mqtt.unsubscribe(receiverModel.getTopic());
-                MqttManager.getInstance().removePersistentSubscription(receiverModel.getBroker(), receiverModel.getTopic());
-            }
-        });
-        clear_session_btn.setOnClickListener(v -> {
-            showConfirmDeleteMsgsDialog();
-            reloadAllMessages();
-        });
-        search_view_btn.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextChange(String newText) { return false; }
-
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                Toast.makeText(ChatActivity.this, "Filter: " + query, Toast.LENGTH_SHORT).show();
-                List<MessageModel> messages = dataBaseHelper.getFilteredMessages(receiverModel.getId(), query);
-                reloadMessages(messages);
-                return false;
-            }
-        });
-        search_view_btn.setOnCloseListener(() -> {
-            reloadAllMessages();
-            return false;
-        });
-        send_msg_btn.setOnClickListener(v -> {
-            if (!session_on_check_btn.isChecked()) {
-                Toast.makeText(ChatActivity.this, "Session is off. Please turn it on to send messages.", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            String msgText = text_input_msg.getText().toString();
-            if (msgText.isEmpty()) {
-                return;
-            }
-//            add one message to chat
-            MessageModel newMessage = new MessageModel(-1, msgText, true, System.currentTimeMillis());
-
-            MqttManager.getInstance().addToSentQueue(msgText);
-
-            boolean mqttSuccess = mqtt.publish(receiverModel.getTopic(), msgText);
-            boolean databaseSuccess = dataBaseHelper.addOneMessage(receiverModel.getId(), newMessage);
-
-            if(mqttSuccess && databaseSuccess) {
-                text_input_msg.setText("");
-                addOneMessage(newMessage);
-                Toast.makeText(ChatActivity.this, "Message send:\n" + newMessage.getMessage(), Toast.LENGTH_SHORT).show();
-            } else {
-                MqttManager.getInstance().checkAndRemoveFromSentQueue(msgText);
-                Toast.makeText(ChatActivity.this, "Error sending message", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    private void showConfirmDeleteMsgsDialog() throws Resources.NotFoundException {
+    private void showConfirmDeleteMessagesDialog() throws Resources.NotFoundException {
         new AlertDialog.Builder(this)
                 .setTitle("Confirm deletion")
                 .setMessage("Do you really want to delete all messages of this chat?")
@@ -290,6 +299,7 @@ public class ChatActivity extends AppCompatActivity implements MqttManager.Messa
     }
 
     private void copyToClipboard(String text) {
+//        copy text into clipboard of device
         ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData clip = ClipData.newPlainText("Copied Message", text);
         if (clipboard != null) {

@@ -2,10 +2,8 @@ package com.mqitty.utils;
 
 import android.content.Context;
 import android.content.Intent;
-
 import com.mqitty.model.ReceiverModel;
 import com.mqitty.model.SendModel;
-
 import java.util.List;
 
 public class Utils {

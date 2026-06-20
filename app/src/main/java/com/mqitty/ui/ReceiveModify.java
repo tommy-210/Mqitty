@@ -35,28 +35,30 @@ public class ReceiveModify  extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_modify_receiver);
 
+//        get current receiverModel and check
         int id = getIntent().getIntExtra("id", -1);
         dataBaseHelper = DataBaseHelper.getInstance(this);
         receiverModel = dataBaseHelper.getReceiverById(id);
-
         if (receiverModel == null) {
             Toast.makeText(this, "Error loading data", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
 
+//        initialization components, set info from database, add listeners
         initComponents();
-
         setComponentsText();
-
         addListeners();
     }
 
     private void initComponents() {
+        return_btn = findViewById(R.id.return_btn);
+//        form input
         name = findViewById(R.id.name_receiver);
         description = findViewById(R.id.description_receiver);
         broker = findViewById(R.id.broker_receiver);
         topic = findViewById(R.id.topic_receiver);
+//        notification section
         notificationType = findViewById(R.id.radioGroup_notification_receiver);
         noNotificationBtn = findViewById(R.id.radioBtn_none_receiver);
         allNotificationBtn = findViewById(R.id.radioBtn_all_receiver);
@@ -65,7 +67,6 @@ public class ReceiveModify  extends AppCompatActivity {
 
         save = findViewById(R.id.save_receiver_btn);
         delete = findViewById(R.id.delete_receive_btn);
-        return_btn = findViewById(R.id.return_btn);
     }
 
     private void setComponentsText() {
@@ -81,11 +82,10 @@ public class ReceiveModify  extends AppCompatActivity {
 
     private void addListeners() {
         return_btn.setOnClickListener(v -> returnToMain());
-
 //        activate or not keyword edit text only if custom radio button is selected
         notificationType.setOnCheckedChangeListener((group, checkedId) ->
                 keywordCustomNotification.setEnabled(checkedId == R.id.radioBtn_custom_receiver));
-
+//        save new config of receiverModel
         save.setOnClickListener(v -> {
             int typeNotification = -1;
             if(noNotificationBtn.isChecked()) typeNotification = NO_NOTIFICATION;
@@ -97,14 +97,14 @@ public class ReceiveModify  extends AppCompatActivity {
                 Toast.makeText(ReceiveModify.this, "Input not valid", Toast.LENGTH_SHORT).show();
                 return;
             }
-
+//            update info of receiverModel
             receiverModel.setName(name.getText().toString());
             receiverModel.setDescription(description.getText().toString());
             receiverModel.setBroker(broker.getText().toString());
             receiverModel.setTopic(topic.getText().toString());
             receiverModel.setNotificationType(typeNotification);
             receiverModel.setKeywordCustomNotification(keywordCustomNotification.getText().toString());
-
+//            update db
             boolean success = dataBaseHelper.updateOneReceiver(receiverModel);
             if(success) {
                 Toast.makeText(ReceiveModify.this, "Update: " + receiverModel.getName(), Toast.LENGTH_SHORT).show();
@@ -113,7 +113,7 @@ public class ReceiveModify  extends AppCompatActivity {
                 Toast.makeText(ReceiveModify.this, "Error", Toast.LENGTH_SHORT).show();
             }
         });
-
+//        delete receiverModel
         delete.setOnClickListener(v -> {
             boolean success = dataBaseHelper.deleteOneReceiver(receiverModel);
             if(success) {
@@ -133,6 +133,7 @@ public class ReceiveModify  extends AppCompatActivity {
     }
 
     private int getRadioBtnId(int value) {
+//        get id of radio button
         if(value == NO_NOTIFICATION) return noNotificationBtn.getId();
         else if(value == ALL_NOTIFICATION) return allNotificationBtn.getId();
         else if(value == CUSTOM_NOTIFICATION) return customNotificationBtn.getId();

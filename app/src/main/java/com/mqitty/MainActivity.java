@@ -110,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void checkUpdates(boolean manual) {
+//        check if app is updated
         if(!manual && isCheckUpdatesDone) {
             return;
         }
@@ -171,6 +172,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void checkNotificationPermission() {
+//        check if app has permission for notification
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) !=
                     PackageManager.PERMISSION_GRANTED) {
@@ -229,7 +231,7 @@ public class MainActivity extends AppCompatActivity {
     private void loadSettings() {
         Map<String, String> settings = dataBaseHelper.getAllSettings();
         if (settings.isEmpty()) return;
-
+//        theme
         String theme = settings.get(DataBaseHelper.SettingsDB.THEME);
         if (theme != null) {
             applyTheme(theme);
@@ -245,17 +247,17 @@ public class MainActivity extends AppCompatActivity {
                     break;
             }
         }
-
+//        default panel
         String panel = settings.get(DataBaseHelper.SettingsDB.DEFAULT_PANEL);
         if (panel != null) {
             default_panel_dropdown.setSelection(Integer.parseInt(panel));
         }
-
+//        time limit for messages
         String limit = settings.get(DataBaseHelper.SettingsDB.LIMIT_TIME_MSG);
         if (limit != null) {
             limit_time_msg.setText(limit);
         }
-
+//        enable notification
         boolean isEnableNotification = Boolean.parseBoolean(settings.get(DataBaseHelper.SettingsDB.NOTIFICATION_ENABLE));
         notification_enable.setChecked(isEnableNotification);
     }
@@ -279,10 +281,8 @@ public class MainActivity extends AppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextChange(String newText) {return false;}
-
             @Override
             public boolean onQueryTextSubmit(String query) {
-//                Toast.makeText(MainActivity.this, "Filter: " + query, Toast.LENGTH_SHORT).show();
                 refreshPanelData(query, filter_inverted_btn.isChecked(), getFilterMode());
                 return false;
             }
@@ -297,22 +297,26 @@ public class MainActivity extends AppCompatActivity {
             if(settingsPanelContainer.getVisibility() == View.GONE) {
                 filter_popup.setVisibility(filter_popup.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
             }else {
+//                in settings panel close filter popup
                 filter_popup.setVisibility(View.GONE);
             }
         });
+//        clear panel from elements
         clear_panel_btn.setOnClickListener(v -> {
             showConfirmDeleteElementsDialog(getCurrentContainer());
             refreshPanelData(null, filter_inverted_btn.isChecked(), getFilterMode());
         });
+//        filter mode
         filter_radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
             refreshPanelData(null, filter_inverted_btn.isChecked(), getFilterMode());
         });
+//        invert sort of elements
         filter_inverted_btn.setOnClickListener(v -> {
             String query = searchView.getQuery().toString();
             if (query.isEmpty()) query = null;
             refreshPanelData(query, filter_inverted_btn.isChecked(), getFilterMode());
         });
-
+//        swipe to refresh panel
         swipeRefreshLayout.setOnRefreshListener(() -> {
             refreshPanelData(null, filter_inverted_btn.isChecked(), getFilterMode());
             swipeRefreshLayout.setRefreshing(false);
@@ -344,7 +348,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onNothingSelected(AdapterView<?> parent) {}
         });
-
 //        default panel dropdown popup
         ArrayAdapter<String> adapter_panel = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, items_panel);
         default_panel_dropdown.setAdapter(adapter_panel);
@@ -356,7 +359,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onNothingSelected(AdapterView<?> parent) {}
         });
-
 //        limit time to store messages in chat
         limit_time_msg.addTextChangedListener(new TextWatcher() {
             @Override
@@ -374,14 +376,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {}
         });
-
+//        enable notification checkbox
         notification_enable.setOnClickListener(v -> {
             dataBaseHelper.updateSetting(DataBaseHelper.SettingsDB.NOTIFICATION_ENABLE, String.valueOf(notification_enable.isChecked()));
         });
-
 //        check updates btn
         check_updates_btn.setOnClickListener(v -> checkUpdates(true));
-
 //        button for project repository
         Button githubBtn = findViewById(R.id.github_btn);
         if (githubBtn != null) {
@@ -393,6 +393,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showConfirmDeleteElementsDialog(String panel) throws Resources.NotFoundException {
+//        dialog to confirm deletion of all elements
         new AlertDialog.Builder(this)
                 .setTitle("Confirm deletion")
                 .setMessage("Do you really want to delete all elements of " + panel + " panel?")
@@ -410,6 +411,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showPanel(ViewGroup panelToShow) {
+//        decide which panel show
         sendPanelContainer.setVisibility(View.GONE);
         receivePanelContainer.setVisibility(View.GONE);
         settingsPanelContainer.setVisibility(View.GONE);
@@ -451,6 +453,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void refreshPanelData(String filterQuery, boolean invert, int filterMode) {
+//        choose which panel refresh
         String panel = getCurrentContainer();
         if(panel.equals(VALUE_SEND)) {
             refreshSendPanelData(filterQuery, invert, filterMode);
@@ -522,6 +525,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void addListenerOnSends(View view, SendModel sendModel) {
+//        start modify activity
         view.setOnLongClickListener(v -> {
             startActivity(changeActivity(MainActivity.this, SendModify.class, EXTRA_ELEMENT_ID, sendModel.getId()));
             return false;

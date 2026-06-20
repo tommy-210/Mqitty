@@ -30,24 +30,24 @@ public class SendModify extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_modify_send);
 
+//        get current sendModel from db
         int id = getIntent().getIntExtra("id", -1);
         dataBaseHelper = DataBaseHelper.getInstance(this);
         sendModel = dataBaseHelper.getSendById(id);
-
         if (sendModel == null) {
             Toast.makeText(this, "Error loading data", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
-
+//        initialization of components, set previously info, add listeners
         initComponents();
-
         setComponentsText();
-
         addListeners();
     }
 
     private void initComponents() {
+        return_btn = findViewById(R.id.return_btn);
+//        form input
         name = findViewById(R.id.name_msg);
         description = findViewById(R.id.description_msg);
         broker = findViewById(R.id.broker_msg);
@@ -56,7 +56,6 @@ public class SendModify extends AppCompatActivity {
 
         save = findViewById(R.id.modify_send_btn);
         delete = findViewById(R.id.delete_send_btn);
-        return_btn = findViewById(R.id.return_btn);
     }
 
     private void setComponentsText() {
@@ -69,21 +68,21 @@ public class SendModify extends AppCompatActivity {
 
     private void addListeners() {
         return_btn.setOnClickListener(v -> returnToMain());
-
+//        save new info of sandModel
         save.setOnClickListener(v -> {
-            boolean checkInput = checkInputFormSend(name.getText().toString(), description.getText().toString(), broker.getText().toString(), topic.getText().toString(), message.getText().toString());
-
-            if(!checkInput) {
+//            check input from mistake
+            if(!checkInputFormSend(name.getText().toString(), description.getText().toString(), broker.getText().toString(),
+                                    topic.getText().toString(), message.getText().toString())) {
                 Toast.makeText(SendModify.this, "Input not valid", Toast.LENGTH_SHORT).show();
                 return;
             }
-            
+//            update info in sendModel
             sendModel.setName(name.getText().toString());
             sendModel.setDescription(description.getText().toString());
             sendModel.setBroker(broker.getText().toString());
             sendModel.setTopic(topic.getText().toString());
             sendModel.setMessage(message.getText().toString());
-
+//            update db
             boolean success = dataBaseHelper.updateOneSend(sendModel);
             if(success) {
                 Toast.makeText(SendModify.this, "Update: " + sendModel.getName(), Toast.LENGTH_SHORT).show();
@@ -92,7 +91,7 @@ public class SendModify extends AppCompatActivity {
                 Toast.makeText(SendModify.this, "Error", Toast.LENGTH_SHORT).show();
             }
         });
-
+//        delete sendModel
         delete.setOnClickListener(v -> {
             boolean success = dataBaseHelper.deleteOneSend(sendModel);
             if(success) {
