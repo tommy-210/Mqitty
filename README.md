@@ -56,11 +56,19 @@ This project is built with:
 - **Dynamic Theming**: Support for Light Mode, Dark Mode, and System Default.
 - **Data Persistence**: All your brokers and configurations are stored locally using SQLite.
 - **Notification manager**: The app features notification management that allows you to monitor the progress of conversations.
-
-<p align="left">
-  <img src="assetsReadme/Mqitty-notification.jpg" alt="Mqitty Notification" width="200"/>
-  <img src="assetsReadme/Mqitty-multi-message-notification.jpg" alt="Mqitty Messages Notification" width="200"/>
+<p>
+  <img src="assetsReadme/Mqitty-send_panel.jpg" alt="dark mode" width="200"/>
+  
 </p>
+
+<div align="left">
+  <p>
+    <img src="assetsReadme/Mqitty-notification.jpg" alt="Mqitty Notification" width="200"/>
+  </p>
+  <p>
+    <img src="assetsReadme/Mqitty-multi-message-notification.jpg" alt="Mqitty Messages Notification" width="200"/>
+  </p>
+</div>
 
 ---
 ## 📜 Documentation
