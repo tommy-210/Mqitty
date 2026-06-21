@@ -58,7 +58,9 @@ This project is built with:
 - **Notification manager**: The app features notification management that allows you to monitor the progress of conversations.
 <p>
   <img src="assetsReadme/Mqitty-send_panel.jpg" alt="dark mode" width="200"/>
-  
+  <img src="assetsReadme/Mqitty-send-light.jpg" alt="dark mode" width="200"/>
+  <img src="assetsReadme/Mqitty-settings.jpg" alt="Mqitty settings" width="200"/>
+  <img src="assetsReadme/Mqitty-chat.jpg" alt="Mqitty chat" width="200"/>
 </p>
 
 <div align="left">
@@ -90,6 +92,8 @@ there is also a button to check if there are any updates available.
 > | Topic       | topic to distinguish who to send the message to |         mqitty/test/send |
 > | Message     |          the message you want to send           |                   Test-1 |
 >
+> <img src="assetsReadme/Mqitty-create-send.jpg" alt="Mqitty creation send" width="200"/>
+>
 > #### Receiver element:
 >
 > | Text Field          |                 Explanation                  |                      Example | 
@@ -102,12 +106,16 @@ there is also a button to check if there are any updates available.
 > | Keyword to filter   |    is the keyword to filter notifications    |                       filter |
 >
 > The ```Keyword to filter``` text field is **enabled only if you choose Custom** in the notification selection
+>
+> <img src="assetsReadme/Mqitty-create-receiver.jpg" alt="Mqitty creation receiver" width="200"/>
 
 ### Filter, Search & Sort
 > At the top of each panel there is a search bar that allows you to **search** (by **name** and **description**) for a specific item.
 > Instead, when you are **inside a chat** you can do the same search by clicking on the **three dots**.
 > 
 > You can decide how to **order the elements** based on the **name**, the **broker** and in a **custom** way (which is the creation way).
+>
+> <img src="assetsReadme/Mqitty-filter-popup.jpg" alt="Mqitty filter" width="200"/>
 
 ### ⚠️ Warnings
 
