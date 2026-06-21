@@ -292,8 +292,10 @@ public class ChatActivity extends AppCompatActivity implements MqttManager.Messa
                 .setMessage("Do you really want to delete all messages of this chat?")
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
+//                    delete all messages from db and clear chat ui
                     Toast.makeText(ChatActivity.this, "Yes", Toast.LENGTH_SHORT).show();
                     dataBaseHelper.deleteAllMessageFromChat(receiverModel.getId());
+                    chat_msg_container.removeAllViews();
                 })
                 .setNegativeButton(android.R.string.no, null).show();
     }
